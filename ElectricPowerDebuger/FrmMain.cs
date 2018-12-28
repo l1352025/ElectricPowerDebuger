@@ -7,16 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using ElectricPowerDebuger.Function;
+using ElectricPowerDebuger.Common;
 
 namespace ElectricPowerDebuger
 {
     public partial class FrmMain : Form
     {
-        public static string SystemConfigPath = Application.StartupPath +  @"\Config.xml";  // 配置文件路径
+        public static string SystemConfigPath = Application.ExecutablePath +  @".cfg";  // 配置文件路径
 
-        Control concSimulator = new ConcSimulator();
-        Control dataMonitor = new DataMonitor();
-        Control logManager = new LogManager();
+        private static Control concSimulatorCurrent = new ConcSimulator_North();
+        private static Control dataMonitor = new DataMonitor();
+        private static Control logManager = new LogManager();
 
         public delegate void FormEventNotify(string msg);
         public static event FormEventNotify ProtocolVerChanged;
@@ -26,11 +27,13 @@ namespace ElectricPowerDebuger
         {
             InitializeComponent();
             this.Text = Application.ProductName + "_Ver" + Application.ProductVersion + "   " + Application.CompanyName;
-            this.tabPage1.Controls.Add(concSimulator);
+            this.tabPage1.Controls.Add(concSimulatorCurrent);
             this.tabPage2.Controls.Add(dataMonitor);
             this.tabPage3.Controls.Add(logManager);
 
-            Common.XmlHelper.CheckXmlFile(SystemConfigPath);
+            XmlHelper.CheckXmlFile(SystemConfigPath);
+
+            combProtoVer.Text = XmlHelper.GetNodeDefValue(SystemConfigPath, "Config/Global/ProtocolVer", "北网-版本");
         }
 
         private void combProtoVer_SelectedIndexChanged(object sender, EventArgs e)
@@ -40,37 +43,37 @@ namespace ElectricPowerDebuger
                 return;
             }
 
-            Common.XmlHelper.SetNodeValue(SystemConfigPath, "Config/Global", "ProtocolVer", combProtoVer.Text);
+            XmlHelper.SetNodeValue(SystemConfigPath, "Config/Global", "ProtocolVer", combProtoVer.Text);
 
-            this.tabPage1.Controls.Remove(concSimulator);
+            this.tabPage1.Controls.Remove(concSimulatorCurrent);
 
-            concSimulator.Dispose();
+            //concSimulatorCurrent.Dispose();
 
             switch (combProtoVer.Text)
             {
                 case "南网-版本":
-                    concSimulator = new ConcSimulator();
+                    concSimulatorCurrent = new ConcSimulator();
                     break;
 
                 case "北网-版本":
                 case "尼泊尔-版本":
                 default:
-                    concSimulator = new ConcSimulator_North();
+                    concSimulatorCurrent = new ConcSimulator_North();
                     break;
             }
 
-            this.tabPage1.Controls.Add(concSimulator);
+            this.tabPage1.Controls.Add(concSimulatorCurrent);
             
             if (ProtocolVerChanged != null)
             {
-            //    ProtocolVerChanged(combProtoVer.Text);
+                //ProtocolVerChanged(combProtoVer.Text);
             }
         }
 
         private void chkAutoSave_CheckedChanged(object sender, EventArgs e)
         {
             string isAutoSave = chkAutoSave.Checked ? "true" : "false";
-            Common.XmlHelper.SetNodeValue(SystemConfigPath, "Config/Global", "AutoSaveLog", isAutoSave);
+            XmlHelper.SetNodeValue(SystemConfigPath, "Config/Global", "AutoSaveLog", isAutoSave);
 
             if(LogAutoSaveStateChanged != null)
             {

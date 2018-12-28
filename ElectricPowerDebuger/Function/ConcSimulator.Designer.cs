@@ -81,6 +81,12 @@
             this.优先级 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.状态 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.结果 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sNDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.表具地址DataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.任务IDDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.优先级DataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.状态DataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.结果DataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cnMenuDocument = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiAddTask = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDelTask = new System.Windows.Forms.ToolStripMenuItem();
@@ -129,12 +135,6 @@
             this.timerConcSim = new System.Windows.Forms.Timer(this.components);
             this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDlg = new System.Windows.Forms.SaveFileDialog();
-            this.sNDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.表具地址DataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.任务IDDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.优先级DataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.状态DataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.结果DataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -706,6 +706,48 @@
             this.结果.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.结果.Width = 80;
             // 
+            // sNDataGridViewTextBoxColumn1
+            // 
+            this.sNDataGridViewTextBoxColumn1.DataPropertyName = "SN";
+            this.sNDataGridViewTextBoxColumn1.HeaderText = "SN";
+            this.sNDataGridViewTextBoxColumn1.Name = "sNDataGridViewTextBoxColumn1";
+            this.sNDataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // 表具地址DataGridViewTextBoxColumn1
+            // 
+            this.表具地址DataGridViewTextBoxColumn1.DataPropertyName = "表具地址";
+            this.表具地址DataGridViewTextBoxColumn1.HeaderText = "表具地址";
+            this.表具地址DataGridViewTextBoxColumn1.Name = "表具地址DataGridViewTextBoxColumn1";
+            this.表具地址DataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // 任务IDDataGridViewTextBoxColumn1
+            // 
+            this.任务IDDataGridViewTextBoxColumn1.DataPropertyName = "任务ID";
+            this.任务IDDataGridViewTextBoxColumn1.HeaderText = "任务ID";
+            this.任务IDDataGridViewTextBoxColumn1.Name = "任务IDDataGridViewTextBoxColumn1";
+            this.任务IDDataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // 优先级DataGridViewTextBoxColumn1
+            // 
+            this.优先级DataGridViewTextBoxColumn1.DataPropertyName = "优先级";
+            this.优先级DataGridViewTextBoxColumn1.HeaderText = "优先级";
+            this.优先级DataGridViewTextBoxColumn1.Name = "优先级DataGridViewTextBoxColumn1";
+            this.优先级DataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // 状态DataGridViewTextBoxColumn1
+            // 
+            this.状态DataGridViewTextBoxColumn1.DataPropertyName = "状态";
+            this.状态DataGridViewTextBoxColumn1.HeaderText = "状态";
+            this.状态DataGridViewTextBoxColumn1.Name = "状态DataGridViewTextBoxColumn1";
+            this.状态DataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // 结果DataGridViewTextBoxColumn1
+            // 
+            this.结果DataGridViewTextBoxColumn1.DataPropertyName = "结果";
+            this.结果DataGridViewTextBoxColumn1.HeaderText = "结果";
+            this.结果DataGridViewTextBoxColumn1.Name = "结果DataGridViewTextBoxColumn1";
+            this.结果DataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
             // cnMenuDocument
             // 
             this.cnMenuDocument.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1063,48 +1105,6 @@
             // openFileDlg
             // 
             this.openFileDlg.FileName = "openFileDialog1";
-            // 
-            // sNDataGridViewTextBoxColumn1
-            // 
-            this.sNDataGridViewTextBoxColumn1.DataPropertyName = "SN";
-            this.sNDataGridViewTextBoxColumn1.HeaderText = "SN";
-            this.sNDataGridViewTextBoxColumn1.Name = "sNDataGridViewTextBoxColumn1";
-            this.sNDataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // 表具地址DataGridViewTextBoxColumn1
-            // 
-            this.表具地址DataGridViewTextBoxColumn1.DataPropertyName = "表具地址";
-            this.表具地址DataGridViewTextBoxColumn1.HeaderText = "表具地址";
-            this.表具地址DataGridViewTextBoxColumn1.Name = "表具地址DataGridViewTextBoxColumn1";
-            this.表具地址DataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // 任务IDDataGridViewTextBoxColumn1
-            // 
-            this.任务IDDataGridViewTextBoxColumn1.DataPropertyName = "任务ID";
-            this.任务IDDataGridViewTextBoxColumn1.HeaderText = "任务ID";
-            this.任务IDDataGridViewTextBoxColumn1.Name = "任务IDDataGridViewTextBoxColumn1";
-            this.任务IDDataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // 优先级DataGridViewTextBoxColumn1
-            // 
-            this.优先级DataGridViewTextBoxColumn1.DataPropertyName = "优先级";
-            this.优先级DataGridViewTextBoxColumn1.HeaderText = "优先级";
-            this.优先级DataGridViewTextBoxColumn1.Name = "优先级DataGridViewTextBoxColumn1";
-            this.优先级DataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // 状态DataGridViewTextBoxColumn1
-            // 
-            this.状态DataGridViewTextBoxColumn1.DataPropertyName = "状态";
-            this.状态DataGridViewTextBoxColumn1.HeaderText = "状态";
-            this.状态DataGridViewTextBoxColumn1.Name = "状态DataGridViewTextBoxColumn1";
-            this.状态DataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // 结果DataGridViewTextBoxColumn1
-            // 
-            this.结果DataGridViewTextBoxColumn1.DataPropertyName = "结果";
-            this.结果DataGridViewTextBoxColumn1.HeaderText = "结果";
-            this.结果DataGridViewTextBoxColumn1.Name = "结果DataGridViewTextBoxColumn1";
-            this.结果DataGridViewTextBoxColumn1.ReadOnly = true;
             // 
             // ConcSimulator
             // 
