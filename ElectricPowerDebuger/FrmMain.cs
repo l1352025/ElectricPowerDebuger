@@ -47,7 +47,7 @@ namespace ElectricPowerDebuger
 
             this.tabPage1.Controls.Remove(concSimulatorCurrent);
 
-            //concSimulatorCurrent.Dispose();
+            concSimulatorCurrent.Dispose();
 
             switch (combProtoVer.Text)
             {

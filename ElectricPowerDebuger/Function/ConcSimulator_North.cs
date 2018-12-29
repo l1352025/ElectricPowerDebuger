@@ -43,5 +43,73 @@ namespace ElectricPowerDebuger.Function
             tabPage.Controls.Add(usrCtrl);
 
         }
+
+        #region 串口处理
+        private void cbxPortNum_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btPortCtrl_Click(object sender, EventArgs e)
+        {
+
+        }
+        #endregion 
+
+        #region 循环抄表
+        private void btLoopCtrl_Click(object sender, EventArgs e)
+        {
+
+        }
+        #endregion
+
+        #region 命令处理
+
+        private void AllCmdButton_Click(object sender, EventArgs e)
+        {
+            AllCmdItem_Clicked(sender, null);
+        }
+        private void AllCmdItem_Clicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            string cmdText = "";
+
+            if (sender is Button)
+            {
+                cmdText = ((Button)sender).Text;
+            }
+            else if (sender is ToolStripItem)
+            {
+                if (e != null)
+                {
+                    cmdText = e.ClickedItem.Text;
+                }
+                else
+                {
+                    cmdText = ((ToolStripItem)sender).Text;
+                }
+            }
+
+            switch(cmdText)
+            {
+                case "":
+
+                    break;
+
+                case "1":
+
+                    break;
+
+                default:
+
+                    break;
+            }
+
+        }
+        #endregion
+
+        #region 有参数的命令处理
+
+
+        #endregion
     }
 }
