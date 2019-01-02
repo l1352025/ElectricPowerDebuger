@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label12 = new System.Windows.Forms.Label();
             this.btPortCtrl = new System.Windows.Forms.Button();
             this.cbxPortNum = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.grpLoopReadAmeter = new System.Windows.Forms.GroupBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.cbxTimeout = new System.Windows.Forms.ComboBox();
@@ -53,7 +55,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.grpRecentCmd = new System.Windows.Forms.GroupBox();
             this.btRecentUse3 = new System.Windows.Forms.Button();
             this.btRecentUse1 = new System.Windows.Forms.Button();
             this.btRecentUse4 = new System.Windows.Forms.Button();
@@ -63,6 +65,16 @@
             this.btRecentUse2 = new System.Windows.Forms.Button();
             this.btReadAllDoc = new System.Windows.Forms.Button();
             this.grpCmdMenu = new System.Windows.Forms.GroupBox();
+            this.grpParamCmd = new System.Windows.Forms.GroupBox();
+            this.cbxParam1 = new System.Windows.Forms.ComboBox();
+            this.txtParam3 = new System.Windows.Forms.TextBox();
+            this.rbtParam2 = new System.Windows.Forms.RadioButton();
+            this.rbtParam1 = new System.Windows.Forms.RadioButton();
+            this.txtParam2 = new System.Windows.Forms.TextBox();
+            this.txtParam1 = new System.Windows.Forms.TextBox();
+            this.btParamConfirm = new System.Windows.Forms.Button();
+            this.lbParam2 = new System.Windows.Forms.Label();
+            this.lbParam1 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.h初始化ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.硬件初始化ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -136,27 +148,55 @@
             this.读取子节点概要信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.读取中心节点邻居表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.grpParamCmd = new System.Windows.Forms.GroupBox();
-            this.lbParam1 = new System.Windows.Forms.Label();
-            this.lbParam2 = new System.Windows.Forms.Label();
-            this.btConfirm = new System.Windows.Forms.Button();
-            this.txtParam1 = new System.Windows.Forms.TextBox();
-            this.txtParam2 = new System.Windows.Forms.TextBox();
-            this.rbtParam1 = new System.Windows.Forms.RadioButton();
-            this.rbtParam2 = new System.Windows.Forms.RadioButton();
-            this.txtParam3 = new System.Windows.Forms.TextBox();
-            this.cbxParam1 = new System.Windows.Forms.ComboBox();
+            this.rtbMsg = new System.Windows.Forms.RichTextBox();
+            this.dgvDoc = new System.Windows.Forms.DataGridView();
+            this.dsDoc = new System.Data.DataSet();
+            this.dtbDoc = new System.Data.DataTable();
+            this.序号 = new System.Data.DataColumn();
+            this.模块地址 = new System.Data.DataColumn();
+            this.表地址 = new System.Data.DataColumn();
+            this.协议类型 = new System.Data.DataColumn();
+            this.版本 = new System.Data.DataColumn();
+            this.升级状态 = new System.Data.DataColumn();
+            this.发送 = new System.Data.DataColumn();
+            this.接收 = new System.Data.DataColumn();
+            this.读数 = new System.Data.DataColumn();
+            this.lbDocCnt = new System.Windows.Forms.Label();
+            this.lbCenterAddr = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lbCmdStatus = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.grpLoopReadAmeter.SuspendLayout();
+            this.grpRecentCmd.SuspendLayout();
             this.grpCmdMenu.SuspendLayout();
+            this.grpParamCmd.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            this.grpParamCmd.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvDoc)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dsDoc)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dtbDoc)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -174,21 +214,21 @@
             this.splitContainer1.Panel1.Controls.Add(this.btPortCtrl);
             this.splitContainer1.Panel1.Controls.Add(this.cbxPortNum);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
-            this.splitContainer1.Panel1.Controls.Add(this.groupBox4);
-            this.splitContainer1.Panel1.Controls.Add(this.groupBox3);
+            this.splitContainer1.Panel1.Controls.Add(this.grpLoopReadAmeter);
+            this.splitContainer1.Panel1.Controls.Add(this.grpRecentCmd);
             this.splitContainer1.Panel1.Controls.Add(this.grpCmdMenu);
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(1342, 682);
-            this.splitContainer1.SplitterDistance = 370;
+            this.splitContainer1.SplitterDistance = 369;
             this.splitContainer1.TabIndex = 0;
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(152, 15);
+            this.label12.Location = new System.Drawing.Point(152, 16);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(71, 12);
             this.label12.TabIndex = 6;
@@ -196,7 +236,7 @@
             // 
             // btPortCtrl
             // 
-            this.btPortCtrl.Location = new System.Drawing.Point(229, 9);
+            this.btPortCtrl.Location = new System.Drawing.Point(232, 10);
             this.btPortCtrl.Name = "btPortCtrl";
             this.btPortCtrl.Size = new System.Drawing.Size(98, 24);
             this.btPortCtrl.TabIndex = 5;
@@ -216,39 +256,39 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 15);
+            this.label1.Location = new System.Drawing.Point(9, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 12);
             this.label1.TabIndex = 3;
             this.label1.Text = "端口设置";
             // 
-            // groupBox4
+            // grpLoopReadAmeter
             // 
-            this.groupBox4.Controls.Add(this.label11);
-            this.groupBox4.Controls.Add(this.label10);
-            this.groupBox4.Controls.Add(this.cbxTimeout);
-            this.groupBox4.Controls.Add(this.cbxRetryCnt);
-            this.groupBox4.Controls.Add(this.btLoopCtrl);
-            this.groupBox4.Controls.Add(this.txtRemainCnt);
-            this.groupBox4.Controls.Add(this.txtSuccessRate);
-            this.groupBox4.Controls.Add(this.txtRecvCnt);
-            this.groupBox4.Controls.Add(this.txtDelayTime);
-            this.groupBox4.Controls.Add(this.label8);
-            this.groupBox4.Controls.Add(this.txtSendCnt);
-            this.groupBox4.Controls.Add(this.label7);
-            this.groupBox4.Controls.Add(this.label9);
-            this.groupBox4.Controls.Add(this.label5);
-            this.groupBox4.Controls.Add(this.label6);
-            this.groupBox4.Controls.Add(this.txtLoopCnt);
-            this.groupBox4.Controls.Add(this.label4);
-            this.groupBox4.Controls.Add(this.label3);
-            this.groupBox4.Controls.Add(this.label2);
-            this.groupBox4.Location = new System.Drawing.Point(2, 512);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(363, 165);
-            this.groupBox4.TabIndex = 2;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "循环抄表";
+            this.grpLoopReadAmeter.Controls.Add(this.label11);
+            this.grpLoopReadAmeter.Controls.Add(this.label10);
+            this.grpLoopReadAmeter.Controls.Add(this.cbxTimeout);
+            this.grpLoopReadAmeter.Controls.Add(this.cbxRetryCnt);
+            this.grpLoopReadAmeter.Controls.Add(this.btLoopCtrl);
+            this.grpLoopReadAmeter.Controls.Add(this.txtRemainCnt);
+            this.grpLoopReadAmeter.Controls.Add(this.txtSuccessRate);
+            this.grpLoopReadAmeter.Controls.Add(this.txtRecvCnt);
+            this.grpLoopReadAmeter.Controls.Add(this.txtDelayTime);
+            this.grpLoopReadAmeter.Controls.Add(this.label8);
+            this.grpLoopReadAmeter.Controls.Add(this.txtSendCnt);
+            this.grpLoopReadAmeter.Controls.Add(this.label7);
+            this.grpLoopReadAmeter.Controls.Add(this.label9);
+            this.grpLoopReadAmeter.Controls.Add(this.label5);
+            this.grpLoopReadAmeter.Controls.Add(this.label6);
+            this.grpLoopReadAmeter.Controls.Add(this.txtLoopCnt);
+            this.grpLoopReadAmeter.Controls.Add(this.label4);
+            this.grpLoopReadAmeter.Controls.Add(this.label3);
+            this.grpLoopReadAmeter.Controls.Add(this.label2);
+            this.grpLoopReadAmeter.Location = new System.Drawing.Point(3, 490);
+            this.grpLoopReadAmeter.Name = "grpLoopReadAmeter";
+            this.grpLoopReadAmeter.Size = new System.Drawing.Size(363, 143);
+            this.grpLoopReadAmeter.TabIndex = 2;
+            this.grpLoopReadAmeter.TabStop = false;
+            this.grpLoopReadAmeter.Text = "循环抄表";
             // 
             // label11
             // 
@@ -435,22 +475,22 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "循环次数";
             // 
-            // groupBox3
+            // grpRecentCmd
             // 
-            this.groupBox3.Controls.Add(this.btRecentUse3);
-            this.groupBox3.Controls.Add(this.btRecentUse1);
-            this.groupBox3.Controls.Add(this.btRecentUse4);
-            this.groupBox3.Controls.Add(this.btStartNetwork);
-            this.groupBox3.Controls.Add(this.btQueryRouteState);
-            this.groupBox3.Controls.Add(this.btRedownAllDoc);
-            this.groupBox3.Controls.Add(this.btRecentUse2);
-            this.groupBox3.Controls.Add(this.btReadAllDoc);
-            this.groupBox3.Location = new System.Drawing.Point(3, 49);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(365, 138);
-            this.groupBox3.TabIndex = 1;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "常用命令";
+            this.grpRecentCmd.Controls.Add(this.btRecentUse3);
+            this.grpRecentCmd.Controls.Add(this.btRecentUse1);
+            this.grpRecentCmd.Controls.Add(this.btRecentUse4);
+            this.grpRecentCmd.Controls.Add(this.btStartNetwork);
+            this.grpRecentCmd.Controls.Add(this.btQueryRouteState);
+            this.grpRecentCmd.Controls.Add(this.btRedownAllDoc);
+            this.grpRecentCmd.Controls.Add(this.btRecentUse2);
+            this.grpRecentCmd.Controls.Add(this.btReadAllDoc);
+            this.grpRecentCmd.Location = new System.Drawing.Point(2, 45);
+            this.grpRecentCmd.Name = "grpRecentCmd";
+            this.grpRecentCmd.Size = new System.Drawing.Size(365, 138);
+            this.grpRecentCmd.TabIndex = 1;
+            this.grpRecentCmd.TabStop = false;
+            this.grpRecentCmd.Text = "常用命令";
             // 
             // btRecentUse3
             // 
@@ -538,10 +578,108 @@
             this.grpCmdMenu.Controls.Add(this.menuStrip1);
             this.grpCmdMenu.Location = new System.Drawing.Point(3, 203);
             this.grpCmdMenu.Name = "grpCmdMenu";
-            this.grpCmdMenu.Size = new System.Drawing.Size(362, 292);
+            this.grpCmdMenu.Size = new System.Drawing.Size(362, 281);
             this.grpCmdMenu.TabIndex = 0;
             this.grpCmdMenu.TabStop = false;
             this.grpCmdMenu.Text = "命令菜单";
+            // 
+            // grpParamCmd
+            // 
+            this.grpParamCmd.Controls.Add(this.cbxParam1);
+            this.grpParamCmd.Controls.Add(this.txtParam3);
+            this.grpParamCmd.Controls.Add(this.rbtParam2);
+            this.grpParamCmd.Controls.Add(this.rbtParam1);
+            this.grpParamCmd.Controls.Add(this.txtParam2);
+            this.grpParamCmd.Controls.Add(this.txtParam1);
+            this.grpParamCmd.Controls.Add(this.btParamConfirm);
+            this.grpParamCmd.Controls.Add(this.lbParam2);
+            this.grpParamCmd.Controls.Add(this.lbParam1);
+            this.grpParamCmd.Location = new System.Drawing.Point(151, 20);
+            this.grpParamCmd.Name = "grpParamCmd";
+            this.grpParamCmd.Size = new System.Drawing.Size(204, 255);
+            this.grpParamCmd.TabIndex = 1;
+            this.grpParamCmd.TabStop = false;
+            this.grpParamCmd.Text = "当前命令名";
+            // 
+            // cbxParam1
+            // 
+            this.cbxParam1.FormattingEnabled = true;
+            this.cbxParam1.Location = new System.Drawing.Point(131, 91);
+            this.cbxParam1.Name = "cbxParam1";
+            this.cbxParam1.Size = new System.Drawing.Size(58, 20);
+            this.cbxParam1.TabIndex = 5;
+            // 
+            // txtParam3
+            // 
+            this.txtParam3.Location = new System.Drawing.Point(24, 127);
+            this.txtParam3.Multiline = true;
+            this.txtParam3.Name = "txtParam3";
+            this.txtParam3.Size = new System.Drawing.Size(165, 48);
+            this.txtParam3.TabIndex = 4;
+            // 
+            // rbtParam2
+            // 
+            this.rbtParam2.AutoSize = true;
+            this.rbtParam2.Location = new System.Drawing.Point(78, 92);
+            this.rbtParam2.Name = "rbtParam2";
+            this.rbtParam2.Size = new System.Drawing.Size(47, 16);
+            this.rbtParam2.TabIndex = 3;
+            this.rbtParam2.Text = "rbt2";
+            this.rbtParam2.UseVisualStyleBackColor = true;
+            // 
+            // rbtParam1
+            // 
+            this.rbtParam1.AutoSize = true;
+            this.rbtParam1.Checked = true;
+            this.rbtParam1.Location = new System.Drawing.Point(24, 92);
+            this.rbtParam1.Name = "rbtParam1";
+            this.rbtParam1.Size = new System.Drawing.Size(47, 16);
+            this.rbtParam1.TabIndex = 3;
+            this.rbtParam1.TabStop = true;
+            this.rbtParam1.Text = "rbt1";
+            this.rbtParam1.UseVisualStyleBackColor = true;
+            // 
+            // txtParam2
+            // 
+            this.txtParam2.Location = new System.Drawing.Point(78, 56);
+            this.txtParam2.Name = "txtParam2";
+            this.txtParam2.Size = new System.Drawing.Size(111, 21);
+            this.txtParam2.TabIndex = 2;
+            // 
+            // txtParam1
+            // 
+            this.txtParam1.Location = new System.Drawing.Point(78, 28);
+            this.txtParam1.Name = "txtParam1";
+            this.txtParam1.Size = new System.Drawing.Size(111, 21);
+            this.txtParam1.TabIndex = 2;
+            // 
+            // btParamConfirm
+            // 
+            this.btParamConfirm.Location = new System.Drawing.Point(24, 181);
+            this.btParamConfirm.Name = "btParamConfirm";
+            this.btParamConfirm.Size = new System.Drawing.Size(165, 25);
+            this.btParamConfirm.TabIndex = 1;
+            this.btParamConfirm.Text = "确定";
+            this.btParamConfirm.UseVisualStyleBackColor = true;
+            this.btParamConfirm.Click += new System.EventHandler(this.btParamConfirm_Click);
+            // 
+            // lbParam2
+            // 
+            this.lbParam2.AutoSize = true;
+            this.lbParam2.Location = new System.Drawing.Point(22, 59);
+            this.lbParam2.Name = "lbParam2";
+            this.lbParam2.Size = new System.Drawing.Size(47, 12);
+            this.lbParam2.TabIndex = 0;
+            this.lbParam2.Text = "label13";
+            // 
+            // lbParam1
+            // 
+            this.lbParam1.AutoSize = true;
+            this.lbParam1.Location = new System.Drawing.Point(22, 31);
+            this.lbParam1.Name = "lbParam1";
+            this.lbParam1.Size = new System.Drawing.Size(47, 12);
+            this.lbParam1.TabIndex = 0;
+            this.lbParam1.Text = "label13";
             // 
             // menuStrip1
             // 
@@ -582,19 +720,19 @@
             // 硬件初始化ToolStripMenuItem
             // 
             this.硬件初始化ToolStripMenuItem.Name = "硬件初始化ToolStripMenuItem";
-            this.硬件初始化ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.硬件初始化ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.硬件初始化ToolStripMenuItem.Text = "硬件初始化";
             // 
             // 参数区初始化ToolStripMenuItem
             // 
             this.参数区初始化ToolStripMenuItem.Name = "参数区初始化ToolStripMenuItem";
-            this.参数区初始化ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.参数区初始化ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.参数区初始化ToolStripMenuItem.Text = "参数区初始化";
             // 
             // 数据区初始化ToolStripMenuItem
             // 
             this.数据区初始化ToolStripMenuItem.Name = "数据区初始化ToolStripMenuItem";
-            this.数据区初始化ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.数据区初始化ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.数据区初始化ToolStripMenuItem.Text = "数据区初始化";
             // 
             // h数据转发ToolStripMenuItem
@@ -716,25 +854,25 @@
             // 发送测试ToolStripMenuItem
             // 
             this.发送测试ToolStripMenuItem.Name = "发送测试ToolStripMenuItem";
-            this.发送测试ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.发送测试ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.发送测试ToolStripMenuItem.Text = "发送测试";
             // 
             // 从节点点名ToolStripMenuItem
             // 
             this.从节点点名ToolStripMenuItem.Name = "从节点点名ToolStripMenuItem";
-            this.从节点点名ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.从节点点名ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.从节点点名ToolStripMenuItem.Text = "从节点点名";
             // 
             // 报文通信测试ToolStripMenuItem
             // 
             this.报文通信测试ToolStripMenuItem.Name = "报文通信测试ToolStripMenuItem";
-            this.报文通信测试ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.报文通信测试ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.报文通信测试ToolStripMenuItem.Text = "报文通信测试";
             // 
             // 发射功率测试ToolStripMenuItem
             // 
             this.发射功率测试ToolStripMenuItem.Name = "发射功率测试ToolStripMenuItem";
-            this.发射功率测试ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.发射功率测试ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.发射功率测试ToolStripMenuItem.Text = "发射功率测试";
             // 
             // h控制命令ToolStripMenuItem
@@ -1003,21 +1141,21 @@
             // 路由重启ToolStripMenuItem
             // 
             this.路由重启ToolStripMenuItem.Name = "路由重启ToolStripMenuItem";
-            this.路由重启ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.路由重启ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.路由重启ToolStripMenuItem.Text = "路由重启";
             this.路由重启ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 路由暂停ToolStripMenuItem
             // 
             this.路由暂停ToolStripMenuItem.Name = "路由暂停ToolStripMenuItem";
-            this.路由暂停ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.路由暂停ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.路由暂停ToolStripMenuItem.Text = "路由暂停";
             this.路由暂停ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 路由恢复ToolStripMenuItem
             // 
             this.路由恢复ToolStripMenuItem.Name = "路由恢复ToolStripMenuItem";
-            this.路由恢复ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.路由恢复ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.路由恢复ToolStripMenuItem.Text = "路由恢复";
             this.路由恢复ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -1135,111 +1273,324 @@
             this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Size = new System.Drawing.Size(968, 682);
-            this.splitContainer2.SplitterDistance = 322;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.lbCenterAddr);
+            this.splitContainer2.Panel1.Controls.Add(this.lbDocCnt);
+            this.splitContainer2.Panel1.Controls.Add(this.dgvDoc);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.lbCmdStatus);
+            this.splitContainer2.Panel2.Controls.Add(this.label14);
+            this.splitContainer2.Panel2.Controls.Add(this.label15);
+            this.splitContainer2.Panel2.Controls.Add(this.label16);
+            this.splitContainer2.Panel2.Controls.Add(this.label17);
+            this.splitContainer2.Panel2.Controls.Add(this.label18);
+            this.splitContainer2.Panel2.Controls.Add(this.label19);
+            this.splitContainer2.Panel2.Controls.Add(this.label20);
+            this.splitContainer2.Panel2.Controls.Add(this.label13);
+            this.splitContainer2.Panel2.Controls.Add(this.rtbMsg);
+            this.splitContainer2.Size = new System.Drawing.Size(969, 682);
+            this.splitContainer2.SplitterDistance = 354;
             this.splitContainer2.TabIndex = 0;
             // 
-            // grpParamCmd
+            // rtbMsg
             // 
-            this.grpParamCmd.Controls.Add(this.cbxParam1);
-            this.grpParamCmd.Controls.Add(this.txtParam3);
-            this.grpParamCmd.Controls.Add(this.rbtParam2);
-            this.grpParamCmd.Controls.Add(this.rbtParam1);
-            this.grpParamCmd.Controls.Add(this.txtParam2);
-            this.grpParamCmd.Controls.Add(this.txtParam1);
-            this.grpParamCmd.Controls.Add(this.btConfirm);
-            this.grpParamCmd.Controls.Add(this.lbParam2);
-            this.grpParamCmd.Controls.Add(this.lbParam1);
-            this.grpParamCmd.Location = new System.Drawing.Point(151, 20);
-            this.grpParamCmd.Name = "grpParamCmd";
-            this.grpParamCmd.Size = new System.Drawing.Size(204, 255);
-            this.grpParamCmd.TabIndex = 1;
-            this.grpParamCmd.TabStop = false;
-            this.grpParamCmd.Text = "当前命令名";
+            this.rtbMsg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbMsg.Location = new System.Drawing.Point(-5, 28);
+            this.rtbMsg.Name = "rtbMsg";
+            this.rtbMsg.Size = new System.Drawing.Size(612, 630);
+            this.rtbMsg.TabIndex = 0;
+            this.rtbMsg.Text = "";
             // 
-            // lbParam1
+            // dgvDoc
             // 
-            this.lbParam1.AutoSize = true;
-            this.lbParam1.Location = new System.Drawing.Point(22, 31);
-            this.lbParam1.Name = "lbParam1";
-            this.lbParam1.Size = new System.Drawing.Size(47, 12);
-            this.lbParam1.TabIndex = 0;
-            this.lbParam1.Text = "label13";
+            this.dgvDoc.AllowUserToAddRows = false;
+            this.dgvDoc.AllowUserToDeleteRows = false;
+            this.dgvDoc.AllowUserToOrderColumns = true;
+            this.dgvDoc.AllowUserToResizeRows = false;
+            this.dgvDoc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvDoc.AutoGenerateColumns = false;
+            this.dgvDoc.BackgroundColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.ScrollBar;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvDoc.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.dgvDoc.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dgvDoc.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn2,
+            this.dataGridViewTextBoxColumn3,
+            this.dataGridViewTextBoxColumn4,
+            this.dataGridViewTextBoxColumn5,
+            this.dataGridViewTextBoxColumn6,
+            this.dataGridViewTextBoxColumn7,
+            this.dataGridViewTextBoxColumn8,
+            this.dataGridViewTextBoxColumn9});
+            this.dgvDoc.DataMember = "Table1";
+            this.dgvDoc.DataSource = this.dsDoc;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvDoc.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dgvDoc.Location = new System.Drawing.Point(-1, 28);
+            this.dgvDoc.Name = "dgvDoc";
+            this.dgvDoc.RowHeadersVisible = false;
+            this.dgvDoc.RowTemplate.Height = 23;
+            this.dgvDoc.Size = new System.Drawing.Size(356, 653);
+            this.dgvDoc.TabIndex = 0;
             // 
-            // lbParam2
+            // dsDoc
             // 
-            this.lbParam2.AutoSize = true;
-            this.lbParam2.Location = new System.Drawing.Point(22, 59);
-            this.lbParam2.Name = "lbParam2";
-            this.lbParam2.Size = new System.Drawing.Size(47, 12);
-            this.lbParam2.TabIndex = 0;
-            this.lbParam2.Text = "label13";
+            this.dsDoc.DataSetName = "NewDataSet";
+            this.dsDoc.Tables.AddRange(new System.Data.DataTable[] {
+            this.dtbDoc});
             // 
-            // btConfirm
+            // dtbDoc
             // 
-            this.btConfirm.Location = new System.Drawing.Point(24, 181);
-            this.btConfirm.Name = "btConfirm";
-            this.btConfirm.Size = new System.Drawing.Size(165, 25);
-            this.btConfirm.TabIndex = 1;
-            this.btConfirm.Text = "确定";
-            this.btConfirm.UseVisualStyleBackColor = true;
+            this.dtbDoc.Columns.AddRange(new System.Data.DataColumn[] {
+            this.序号,
+            this.模块地址,
+            this.表地址,
+            this.协议类型,
+            this.版本,
+            this.升级状态,
+            this.发送,
+            this.接收,
+            this.读数});
+            this.dtbDoc.TableName = "Table1";
             // 
-            // txtParam1
+            // 序号
             // 
-            this.txtParam1.Location = new System.Drawing.Point(78, 28);
-            this.txtParam1.Name = "txtParam1";
-            this.txtParam1.Size = new System.Drawing.Size(111, 21);
-            this.txtParam1.TabIndex = 2;
+            this.序号.AllowDBNull = false;
+            this.序号.ColumnName = "序号";
+            this.序号.DataType = typeof(int);
             // 
-            // txtParam2
+            // 模块地址
             // 
-            this.txtParam2.Location = new System.Drawing.Point(78, 56);
-            this.txtParam2.Name = "txtParam2";
-            this.txtParam2.Size = new System.Drawing.Size(111, 21);
-            this.txtParam2.TabIndex = 2;
+            this.模块地址.Caption = "模块地址";
+            this.模块地址.ColumnName = "模块地址";
             // 
-            // rbtParam1
+            // 表地址
             // 
-            this.rbtParam1.AutoSize = true;
-            this.rbtParam1.Checked = true;
-            this.rbtParam1.Location = new System.Drawing.Point(24, 92);
-            this.rbtParam1.Name = "rbtParam1";
-            this.rbtParam1.Size = new System.Drawing.Size(47, 16);
-            this.rbtParam1.TabIndex = 3;
-            this.rbtParam1.TabStop = true;
-            this.rbtParam1.Text = "rbt1";
-            this.rbtParam1.UseVisualStyleBackColor = true;
+            this.表地址.ColumnName = "表地址";
             // 
-            // rbtParam2
+            // 协议类型
             // 
-            this.rbtParam2.AutoSize = true;
-            this.rbtParam2.Location = new System.Drawing.Point(78, 92);
-            this.rbtParam2.Name = "rbtParam2";
-            this.rbtParam2.Size = new System.Drawing.Size(47, 16);
-            this.rbtParam2.TabIndex = 3;
-            this.rbtParam2.Text = "rbt2";
-            this.rbtParam2.UseVisualStyleBackColor = true;
+            this.协议类型.ColumnName = "协议类型";
             // 
-            // txtParam3
+            // 版本
             // 
-            this.txtParam3.Location = new System.Drawing.Point(24, 127);
-            this.txtParam3.Multiline = true;
-            this.txtParam3.Name = "txtParam3";
-            this.txtParam3.Size = new System.Drawing.Size(165, 48);
-            this.txtParam3.TabIndex = 4;
+            this.版本.ColumnName = "版本";
             // 
-            // cbxParam1
+            // 升级状态
             // 
-            this.cbxParam1.FormattingEnabled = true;
-            this.cbxParam1.Location = new System.Drawing.Point(131, 91);
-            this.cbxParam1.Name = "cbxParam1";
-            this.cbxParam1.Size = new System.Drawing.Size(58, 20);
-            this.cbxParam1.TabIndex = 5;
+            this.升级状态.ColumnName = "升级状态";
+            // 
+            // 发送
+            // 
+            this.发送.ColumnName = "发送";
+            this.发送.DataType = typeof(int);
+            // 
+            // 接收
+            // 
+            this.接收.ColumnName = "接收";
+            this.接收.DataType = typeof(int);
+            // 
+            // 读数
+            // 
+            this.读数.ColumnName = "读数";
+            // 
+            // lbDocCnt
+            // 
+            this.lbDocCnt.AutoSize = true;
+            this.lbDocCnt.Location = new System.Drawing.Point(3, 9);
+            this.lbDocCnt.Name = "lbDocCnt";
+            this.lbDocCnt.Size = new System.Drawing.Size(71, 12);
+            this.lbDocCnt.TabIndex = 1;
+            this.lbDocCnt.Text = "档案列表[0]";
+            // 
+            // lbCenterAddr
+            // 
+            this.lbCenterAddr.AutoSize = true;
+            this.lbCenterAddr.Location = new System.Drawing.Point(140, 9);
+            this.lbCenterAddr.Name = "lbCenterAddr";
+            this.lbCenterAddr.Size = new System.Drawing.Size(101, 12);
+            this.lbCenterAddr.TabIndex = 1;
+            this.lbCenterAddr.Text = "集中器地址：未知";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(3, 9);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(89, 12);
+            this.label13.TabIndex = 1;
+            this.label13.Text = "通信记录及解析";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.BackColor = System.Drawing.SystemColors.Control;
+            this.label14.Location = new System.Drawing.Point(316, 9);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(29, 12);
+            this.label14.TabIndex = 16;
+            this.label14.Text = "解析";
+            // 
+            // label15
+            // 
+            this.label15.BackColor = System.Drawing.Color.Green;
+            this.label15.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label15.Location = new System.Drawing.Point(304, 10);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(10, 10);
+            this.label15.TabIndex = 13;
+            this.label15.Text = " ";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.BackColor = System.Drawing.SystemColors.Control;
+            this.label16.Location = new System.Drawing.Point(233, 9);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(29, 12);
+            this.label16.TabIndex = 15;
+            this.label16.Text = "接收";
+            // 
+            // label17
+            // 
+            this.label17.BackColor = System.Drawing.Color.Black;
+            this.label17.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label17.Location = new System.Drawing.Point(288, 10);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(10, 10);
+            this.label17.TabIndex = 12;
+            this.label17.Text = " ";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.BackColor = System.Drawing.SystemColors.Control;
+            this.label18.Location = new System.Drawing.Point(180, 9);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(29, 12);
+            this.label18.TabIndex = 14;
+            this.label18.Text = "发送";
+            // 
+            // label19
+            // 
+            this.label19.BackColor = System.Drawing.Color.DarkRed;
+            this.label19.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label19.Location = new System.Drawing.Point(221, 10);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(10, 10);
+            this.label19.TabIndex = 11;
+            this.label19.Text = " ";
+            // 
+            // label20
+            // 
+            this.label20.BackColor = System.Drawing.Color.Blue;
+            this.label20.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label20.Location = new System.Drawing.Point(168, 10);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(10, 10);
+            this.label20.TabIndex = 10;
+            this.label20.Text = " ";
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "序号";
+            this.dataGridViewTextBoxColumn1.HeaderText = "序号";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "模块地址";
+            this.dataGridViewTextBoxColumn2.HeaderText = "模块地址";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.Width = 90;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.DataPropertyName = "表地址";
+            this.dataGridViewTextBoxColumn3.HeaderText = "表地址";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.Width = 90;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.DataPropertyName = "协议类型";
+            this.dataGridViewTextBoxColumn4.HeaderText = "协议类型";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            this.dataGridViewTextBoxColumn4.Width = 80;
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            this.dataGridViewTextBoxColumn5.DataPropertyName = "版本";
+            this.dataGridViewTextBoxColumn5.HeaderText = "版本";
+            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            this.dataGridViewTextBoxColumn5.Width = 50;
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            this.dataGridViewTextBoxColumn6.DataPropertyName = "升级状态";
+            this.dataGridViewTextBoxColumn6.HeaderText = "升级状态";
+            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            this.dataGridViewTextBoxColumn6.Width = 60;
+            // 
+            // dataGridViewTextBoxColumn7
+            // 
+            this.dataGridViewTextBoxColumn7.DataPropertyName = "发送";
+            this.dataGridViewTextBoxColumn7.HeaderText = "发送";
+            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            this.dataGridViewTextBoxColumn7.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn8
+            // 
+            this.dataGridViewTextBoxColumn8.DataPropertyName = "接收";
+            this.dataGridViewTextBoxColumn8.HeaderText = "接收";
+            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+            this.dataGridViewTextBoxColumn8.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn9
+            // 
+            this.dataGridViewTextBoxColumn9.DataPropertyName = "读数";
+            this.dataGridViewTextBoxColumn9.HeaderText = "读数";
+            this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
+            this.dataGridViewTextBoxColumn9.Width = 90;
+            // 
+            // lbCmdStatus
+            // 
+            this.lbCmdStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbCmdStatus.BackColor = System.Drawing.Color.GreenYellow;
+            this.lbCmdStatus.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lbCmdStatus.Location = new System.Drawing.Point(1, 659);
+            this.lbCmdStatus.Name = "lbCmdStatus";
+            this.lbCmdStatus.Size = new System.Drawing.Size(609, 21);
+            this.lbCmdStatus.TabIndex = 17;
+            this.lbCmdStatus.Text = "命令执行中...";
+            this.lbCmdStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ConcSimulator_North
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSize = true;
             this.Controls.Add(this.splitContainer1);
             this.Name = "ConcSimulator_North";
@@ -1249,17 +1600,24 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
+            this.grpLoopReadAmeter.ResumeLayout(false);
+            this.grpLoopReadAmeter.PerformLayout();
+            this.grpRecentCmd.ResumeLayout(false);
             this.grpCmdMenu.ResumeLayout(false);
             this.grpCmdMenu.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
             this.grpParamCmd.ResumeLayout(false);
             this.grpParamCmd.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvDoc)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dsDoc)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dtbDoc)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1324,8 +1682,8 @@
         private System.Windows.Forms.ToolStripMenuItem 路由恢复ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem h路由数据转发ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem h文件传输ToolStripMenuItem;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox grpLoopReadAmeter;
+        private System.Windows.Forms.GroupBox grpRecentCmd;
         private System.Windows.Forms.ToolStripMenuItem h水表上报ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 启动抄收水表数据ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 停止抄收水表数据ToolStripMenuItem;
@@ -1379,10 +1737,43 @@
         private System.Windows.Forms.RadioButton rbtParam1;
         private System.Windows.Forms.TextBox txtParam2;
         private System.Windows.Forms.TextBox txtParam1;
-        private System.Windows.Forms.Button btConfirm;
+        private System.Windows.Forms.Button btParamConfirm;
         private System.Windows.Forms.Label lbParam2;
         private System.Windows.Forms.Label lbParam1;
         private System.Windows.Forms.ComboBox cbxParam1;
         private System.Windows.Forms.TextBox txtParam3;
+        private System.Windows.Forms.DataGridView dgvDoc;
+        private System.Windows.Forms.RichTextBox rtbMsg;
+        private System.Data.DataSet dsDoc;
+        private System.Data.DataTable dtbDoc;
+        private System.Data.DataColumn 序号;
+        private System.Data.DataColumn 模块地址;
+        private System.Data.DataColumn 表地址;
+        private System.Data.DataColumn 协议类型;
+        private System.Data.DataColumn 版本;
+        private System.Data.DataColumn 升级状态;
+        private System.Data.DataColumn 发送;
+        private System.Data.DataColumn 接收;
+        private System.Data.DataColumn 读数;
+        private System.Windows.Forms.Label lbCenterAddr;
+        private System.Windows.Forms.Label lbDocCnt;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
+        private System.Windows.Forms.Label lbCmdStatus;
     }
 }

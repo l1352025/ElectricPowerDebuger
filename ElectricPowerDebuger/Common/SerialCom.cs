@@ -15,6 +15,7 @@ namespace ElectricPowerDebuger.Common
     {
         public delegate void EventHandle(byte[] readBuffer); //接收数据处理函数委托
         public event EventHandle DataReceivedEvent;          //接收到数据引发事件
+        public event EventHandler UnexpectedClosedEvent;     //端口异常关闭引发事件
 
         public SerialPort serialPort;   //串行端口
         Thread thread;
@@ -198,23 +199,29 @@ namespace ElectricPowerDebuger.Common
             int timeValue = 0;
             switch (serialPort.BaudRate)
             {
-                case 1200: timeValue = 24; break;
-                case 2400: timeValue = 12; break;
-                case 4800: timeValue = 10; break;
-                case 9600: timeValue = 10; break;
-                case 19200: timeValue = 10; break;
-                case 38400: timeValue = 10; break;
-                case 56000: timeValue = 10; break;
-                case 57600: timeValue = 10; break;
-                case 115200: timeValue = 10; break;              
+                case 1200: timeValue = 80; break;
+                case 2400: timeValue = 60; break;
+                case 4800: timeValue = 40; break;
+                case 9600: timeValue = 40; break;
+                case 19200: timeValue = 30; break;
+                case 38400: timeValue = 30; break;
+                case 56000: timeValue = 30; break;
+                case 57600: timeValue = 30; break;
+                case 115200: timeValue = 20; break;              
             }
+
+            //timeValue = (int)((float)(10 * 11) / serialPort.BaudRate * 1000 + 0.5);
 
             while (_keepReading)
             {
-                if (serialPort.IsOpen)
+                if (false == serialPort.IsOpen)
                 {
-                    Thread.Sleep(100);
-                    continue;
+                    _keepReading = false;
+                    if(UnexpectedClosedEvent != null)
+                    {
+                        UnexpectedClosedEvent(null, null);
+                    }
+                    return;
                 }
 
                 try
@@ -232,7 +239,7 @@ namespace ElectricPowerDebuger.Common
                             Thread.Sleep(5);
                         }
                         ts = DateTime.Now - dt;
-                    } while (ts.TotalMilliseconds < timeValue); //判断一帧是否已接收完
+                    } while (ts.TotalMilliseconds < timeValue);  //判断一帧是否已接收完
                 }
                 catch (Exception ex)
                 {
@@ -246,7 +253,7 @@ namespace ElectricPowerDebuger.Common
                     DataReceivedEvent(rxBuf);
                     readBuf.Clear();
                 }
-                Thread.Sleep(50);
+                Thread.Sleep(10);
             }
         }
     }
