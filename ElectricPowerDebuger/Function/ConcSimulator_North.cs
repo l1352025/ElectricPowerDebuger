@@ -11,6 +11,7 @@ using System.Threading;
 using ElectricPowerDebuger.Common;
 using System.IO.Ports;
 using System.IO;
+using ElectricPowerDebuger.Protocol;
 
 namespace ElectricPowerDebuger.Function
 {
@@ -34,12 +35,18 @@ namespace ElectricPowerDebuger.Function
         private string _strMsgMain = "";
         private string _strMsgSub = "";
 
+        private static byte[] TempBuf = new byte[512];
+        private static string _strDocCnt = "0";
+        private static string _strCenterAddr = "201900008888";
+        private static byte _fsn = 0;
+
         public ConcSimulator_North()
         {
             InitializeComponent();
             this.Dock = DockStyle.Fill;
 
             FrmMain.ProtocolVerChanged += OnProtoVerChanged;
+            _configPath = FrmMain.SystemConfigPath;
 
             DataRow row = dtbDoc.NewRow();
             row[序号] = 100;
@@ -62,6 +69,7 @@ namespace ElectricPowerDebuger.Function
             _thrTransceiver.IsBackground = true;
             _thrTransceiver.Start();
 
+            UpdateRecentCmdName();
 
         }
 
@@ -249,19 +257,12 @@ namespace ElectricPowerDebuger.Function
                         _IsSendNewCmd = true;
                         enableUI = true;
 
-                        if (cmd.Params[0] != "")
+                        if (cmd.GrpName != "")
                         {
-                            msg = cmd.Params[0] + "失败";
-
-                            if (cmd.Params[0].Contains("模组检测"))
-                            {
-                                enableUI = false;
-                                string model = XmlHelper.GetNodeDefValue(_configPath, "/Config/Model", "NH01A");
-                                msg += "：" + "连接的可能不是";
-                            }
+                            msg = cmd.GrpName + "失败";
                             ShowMsg(msg + "\r\n\r\n", Color.Red);
                         }
-                        else if (cmd.Params.Count < 4 || cmd.Params[3] != "自定义")
+                        else
                         {
                             msg = cmd.Name + "失败";
                             ShowMsg(msg + "\r\n\r\n", Color.Red);
@@ -277,8 +278,6 @@ namespace ElectricPowerDebuger.Function
                         _strMsgBuf = "";
                         _strMsgMain = "";
                         _strMsgSub = "";
-                        cmd.Params[0] = "";
-                        cmd.Params[2] = "";
                         cmd.Name = "Idle状态";
 
                         if (enableUI)
@@ -307,21 +306,9 @@ namespace ElectricPowerDebuger.Function
                     {
                         if (_sendQueue.Count == 0)
                         {
-                            if (cmd.Params[0] != "")
-                            {
-                                msg = cmd.Params[0] + "成功" + (_strMsgSub != "" ? "：" + _strMsgSub : "");
-                                ShowMsg(msg + "\r\n\r\n", Color.Blue);
-                            }
-                            else if (_strMsgMain != "")
-                            {
-                                ShowMsg(_strMsgMain + "\r\n\r\n", Color.Blue);
-                            }
-
                             _strMsgBuf = "";
                             _strMsgMain = "";
                             _strMsgSub = "";
-                            cmd.Params[0] = "";
-                            cmd.Params[2] = "";
                             cmd.Name = "Idle状态";
 
                             UiOperateEnable();
@@ -359,6 +346,7 @@ namespace ElectricPowerDebuger.Function
         private void AllCmdItem_Clicked(object sender, ToolStripItemClickedEventArgs e)
         {
             string cmdText = "";
+            bool isParamCmd = true;
 
             if (sender is Button)
             {
@@ -376,41 +364,139 @@ namespace ElectricPowerDebuger.Function
                 }
             }
 
-            switch(cmdText)
+            if(cmdText.StartsWith("0"))
             {
-                case "":
+                cmdText = cmdText.Trim().Split(' ').Last();
+            }
 
+            HideParamCmdGrp();
+
+            switch (cmdText)
+            {
+                case "数据转发":
+                    lbParam1.Text = "协议类型";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 透明传输");
+                    cbxParam1.Items.Add("1 DL/T645-97");
+                    cbxParam1.Items.Add("2 DL/T645-07");
+                    cbxParam1.Location = new Point(78, 28);
+                    cbxParam1.Visible = true;
+                    lbParam2.Text = "报文内容：";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    txtParam3.Location = new Point(24, 83);
+                    txtParam3.Visible = true;
+                    btParamConfirm.Location = new Point(24, 146);
                     break;
 
                 case "1":
+                    
+                    break;
+
+                case "2":
+
+                    break;
+
+                case "3":
 
                     break;
 
                 default:
-
+                    SendToCmdQueue(cmdText);
+                    isParamCmd = false;
                     break;
             }
 
+            if(isParamCmd)
+            {
+                grpParamCmd.Text = cmdText;
+                grpParamCmd.Visible = true;
+            }
 
+            UpdateRecentCmdName(cmdText);
 
+        }
+
+        private void HideParamCmdGrp()
+        {
+            lbParam1.Visible = false;
+            lbParam2.Visible = false;
+            txtParam1.Visible = false;
+            txtParam2.Visible = false;
+            txtParam3.Visible = false;
+            rbtParam1.Visible = false;
+            rbtParam2.Visible = false;
+            cbxParam1.Visible = false;
+            chkParam1.Visible = false;
+            grpParamCmd.Visible = false;
+        }
+
+        private void UpdateRecentCmdName(string cmdText = "")
+        {
+            string recentFixedCmds = "读出全部档案/重下全部档案/启动组网/查询路由运行状态";
+
+            string recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North/RecentCmds");
+            if(recentCmds == "")
+            {
+                recentCmds = "添加主节点/查询主节点地址/查询厂商代码和版本/查询无线通信参数";
+            }
+
+            if( !recentCmds.Contains(cmdText) && !recentFixedCmds.Contains(cmdText) && cmdText != "")
+            {
+                if (cmdText != "")
+                {
+                    recentCmds = recentCmds.Substring(recentCmds.IndexOf("/") + 1) + "/" + cmdText;
+                }
+
+                string[] strs = recentCmds.Split('/');
+                btRecentUse1.Text = strs[0];
+                btRecentUse2.Text = strs[1];
+                btRecentUse3.Text = strs[2];
+                btRecentUse4.Text = strs[3];
+                XmlHelper.SetNodeValue(_configPath, "/Config/ConcSimulator_North", "RecentCmds", recentCmds);
+            }
+
+        }
+
+        private void btParamConfirm_Click(object sender, EventArgs e)
+        {
+            string cmdText = grpParamCmd.Text;
+
+            SendToCmdQueue(cmdText);
         }
 
         private void SendToCmdQueue(string cmdName)
         {
-            Command cmd;
-            if(PreparedCmd == null)
+            Command cmd = new Command(cmdName);
+            int txLen = 0;
+
+            cmd.SendFunc = SendCmd;
+            cmd.RecvFunc = RecvCmd;
+            cmd.TimeWaitMS = 1000;
+            cmd.RetryTimes = 1;
+
+            TempBuf[txLen++] = 0x68;
+            TempBuf[txLen++] = 0;       // length
+            TempBuf[txLen++] = 0;
+            TempBuf[txLen++] = 0x4A;    // ctrl
+            TempBuf[txLen++] = 0;       // info-1~5
+            TempBuf[txLen++] = 0;
+            TempBuf[txLen++] = 0;
+            TempBuf[txLen++] = 0;
+            TempBuf[txLen++] = 0;
+            TempBuf[txLen++] = _fsn++;   // info-6
+
+            if(cmd.Name == "" || cmd.Name == "")
             {
-                cmd = new Command(cmdName);
-            }
-            else
-            {
-                cmd = PreparedCmd;
+                Util.GetByteAddrFromString(_strCenterAddr, TempBuf, txLen, true);
             }
 
-            switch(cmd.Name)
+            switch (cmd.Name)
             {
                 case "":
-
+                    
                     break;
 
                 case "1":
@@ -424,6 +510,8 @@ namespace ElectricPowerDebuger.Function
 
             if (cmd == null) return;
 
+            cmd.TxBuf = new byte[txLen];
+            Array.Copy(TempBuf, 0, cmd.TxBuf, 0, txLen);
             _sendQueue.Enqueue(cmd);
 
             _IsSendNewCmd = true;
@@ -431,13 +519,6 @@ namespace ElectricPowerDebuger.Function
 
         #endregion
 
-        #region 命令发送（有参数的）
-        private void btParamConfirm_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        #endregion
 
         #region 报文生成、解析
         // 发送报文
@@ -470,17 +551,52 @@ namespace ElectricPowerDebuger.Function
         // 接收报文
         private void RecvCmd(Command cmd)
         {
-            string msg = "", strVal = "", strTmp;
+            string msg = "", cmdName = "", strVal = "", strTmp;
             int index = 0, strLen = 0;
 
             if (cmd.RxBuf == null || cmd.RxBuf.Length == 0) return;
 
             byte[] buf = cmd.RxBuf;
 
-            msg = "  " + cmd.Name + "\r\n"
-                + "    Rx：" + Util.GetStringHexFromByte(buf, 0, buf.Length, " ") + "\r\n";
-            ShowMsg(msg, Color.DarkRed);
+            ProtoLocal_North.FrameFormat frame = ProtoLocal_North.ExplainRxPacket(buf);
 
+            TreeNode tree = ProtoLocal_North.GetProtoTree(buf);
+
+            if(tree != null && tree.Nodes.Count > 3)
+            {
+                for(int i = 3; i < tree.Nodes.Count; i++)
+                {
+                    strVal += tree.Nodes[i].Text + "\r\n";
+
+                    if(tree.Nodes[i].Text.Contains("具体项Fn  ："))
+                    {
+                        cmdName = tree.Nodes[i].Text.Trim().Split(' ').Last();
+                    }
+                }
+
+                if (tree.Nodes[tree.Nodes.Count -1].Text.Contains("数据载荷"))
+                {
+                    foreach(TreeNode nodeL1 in tree.Nodes[tree.Nodes.Count - 1].Nodes)
+                    {
+                        strVal += "\t" + nodeL1.Text + "\r\n";
+
+                        foreach (TreeNode nodeL2 in nodeL1.Nodes)
+                        {
+                            strVal += "\t\t" + nodeL2.Text + "\r\n";
+
+                            foreach (TreeNode nodeL3 in nodeL2.Nodes)
+                            {
+                                strVal += "\t\t" + nodeL3.Text + "\r\n";
+                            }
+                        }
+                    }
+                }
+            }
+
+            msg = "  " + cmdName + "\r\n"
+                + "    Rx：" + Util.GetStringHexFromByte(buf, 0, buf.Length, " ") + "\r\n"
+                + strVal;
+            ShowMsg(msg, Color.DarkRed);
 
         }
         #endregion

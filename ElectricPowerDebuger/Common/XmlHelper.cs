@@ -51,6 +51,9 @@ namespace ElectricPowerDebuger.Common
             XmlElement ConcSimulatorNode = (XmlElement)doc.CreateElement("ConcSimulator");
             ConfigNode.AppendChild(ConcSimulatorNode);
 
+            XmlElement ConcSimulatorNode_North = (XmlElement)doc.CreateElement("ConcSimulator_North");
+            ConfigNode.AppendChild(ConcSimulatorNode_North);
+
             XmlElement DataMonitorNode = (XmlElement)doc.CreateElement("DataMonitor");
             ConfigNode.AppendChild(DataMonitorNode);
 

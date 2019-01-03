@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label12 = new System.Windows.Forms.Label();
             this.btPortCtrl = new System.Windows.Forms.Button();
@@ -148,8 +148,18 @@
             this.读取子节点概要信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.读取中心节点邻居表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.rtbMsg = new System.Windows.Forms.RichTextBox();
+            this.lbCenterAddr = new System.Windows.Forms.Label();
+            this.lbDocCnt = new System.Windows.Forms.Label();
             this.dgvDoc = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dsDoc = new System.Data.DataSet();
             this.dtbDoc = new System.Data.DataTable();
             this.序号 = new System.Data.DataColumn();
@@ -161,9 +171,7 @@
             this.发送 = new System.Data.DataColumn();
             this.接收 = new System.Data.DataColumn();
             this.读数 = new System.Data.DataColumn();
-            this.lbDocCnt = new System.Windows.Forms.Label();
-            this.lbCenterAddr = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
+            this.lbCmdStatus = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
@@ -171,16 +179,18 @@
             this.label18 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lbCmdStatus = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.rtbMsg = new System.Windows.Forms.RichTextBox();
+            this.序号DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.模块地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.表地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.协议类型DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.版本DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.升级状态DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.发送DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.接收DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.读数DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.chkParam1 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -485,7 +495,7 @@
             this.grpRecentCmd.Controls.Add(this.btRedownAllDoc);
             this.grpRecentCmd.Controls.Add(this.btRecentUse2);
             this.grpRecentCmd.Controls.Add(this.btReadAllDoc);
-            this.grpRecentCmd.Location = new System.Drawing.Point(2, 45);
+            this.grpRecentCmd.Location = new System.Drawing.Point(3, 49);
             this.grpRecentCmd.Name = "grpRecentCmd";
             this.grpRecentCmd.Size = new System.Drawing.Size(365, 138);
             this.grpRecentCmd.TabIndex = 1;
@@ -576,7 +586,7 @@
             // 
             this.grpCmdMenu.Controls.Add(this.grpParamCmd);
             this.grpCmdMenu.Controls.Add(this.menuStrip1);
-            this.grpCmdMenu.Location = new System.Drawing.Point(3, 203);
+            this.grpCmdMenu.Location = new System.Drawing.Point(3, 193);
             this.grpCmdMenu.Name = "grpCmdMenu";
             this.grpCmdMenu.Size = new System.Drawing.Size(362, 281);
             this.grpCmdMenu.TabIndex = 0;
@@ -585,6 +595,7 @@
             // 
             // grpParamCmd
             // 
+            this.grpParamCmd.Controls.Add(this.chkParam1);
             this.grpParamCmd.Controls.Add(this.cbxParam1);
             this.grpParamCmd.Controls.Add(this.txtParam3);
             this.grpParamCmd.Controls.Add(this.rbtParam2);
@@ -600,21 +611,22 @@
             this.grpParamCmd.TabIndex = 1;
             this.grpParamCmd.TabStop = false;
             this.grpParamCmd.Text = "当前命令名";
+            this.grpParamCmd.Visible = false;
             // 
             // cbxParam1
             // 
             this.cbxParam1.FormattingEnabled = true;
-            this.cbxParam1.Location = new System.Drawing.Point(131, 91);
+            this.cbxParam1.Location = new System.Drawing.Point(78, 114);
             this.cbxParam1.Name = "cbxParam1";
-            this.cbxParam1.Size = new System.Drawing.Size(58, 20);
+            this.cbxParam1.Size = new System.Drawing.Size(111, 20);
             this.cbxParam1.TabIndex = 5;
             // 
             // txtParam3
             // 
-            this.txtParam3.Location = new System.Drawing.Point(24, 127);
+            this.txtParam3.Location = new System.Drawing.Point(25, 161);
             this.txtParam3.Multiline = true;
             this.txtParam3.Name = "txtParam3";
-            this.txtParam3.Size = new System.Drawing.Size(165, 48);
+            this.txtParam3.Size = new System.Drawing.Size(165, 57);
             this.txtParam3.TabIndex = 4;
             // 
             // rbtParam2
@@ -655,7 +667,7 @@
             // 
             // btParamConfirm
             // 
-            this.btParamConfirm.Location = new System.Drawing.Point(24, 181);
+            this.btParamConfirm.Location = new System.Drawing.Point(24, 224);
             this.btParamConfirm.Name = "btParamConfirm";
             this.btParamConfirm.Size = new System.Drawing.Size(165, 25);
             this.btParamConfirm.TabIndex = 1;
@@ -666,20 +678,20 @@
             // lbParam2
             // 
             this.lbParam2.AutoSize = true;
-            this.lbParam2.Location = new System.Drawing.Point(22, 59);
+            this.lbParam2.Location = new System.Drawing.Point(22, 60);
             this.lbParam2.Name = "lbParam2";
-            this.lbParam2.Size = new System.Drawing.Size(47, 12);
+            this.lbParam2.Size = new System.Drawing.Size(41, 12);
             this.lbParam2.TabIndex = 0;
-            this.lbParam2.Text = "label13";
+            this.lbParam2.Text = "label2";
             // 
             // lbParam1
             // 
             this.lbParam1.AutoSize = true;
-            this.lbParam1.Location = new System.Drawing.Point(22, 31);
+            this.lbParam1.Location = new System.Drawing.Point(22, 30);
             this.lbParam1.Name = "lbParam1";
-            this.lbParam1.Size = new System.Drawing.Size(47, 12);
+            this.lbParam1.Size = new System.Drawing.Size(41, 12);
             this.lbParam1.TabIndex = 0;
-            this.lbParam1.Text = "label13";
+            this.lbParam1.Text = "label1";
             // 
             // menuStrip1
             // 
@@ -720,19 +732,19 @@
             // 硬件初始化ToolStripMenuItem
             // 
             this.硬件初始化ToolStripMenuItem.Name = "硬件初始化ToolStripMenuItem";
-            this.硬件初始化ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.硬件初始化ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.硬件初始化ToolStripMenuItem.Text = "硬件初始化";
             // 
             // 参数区初始化ToolStripMenuItem
             // 
             this.参数区初始化ToolStripMenuItem.Name = "参数区初始化ToolStripMenuItem";
-            this.参数区初始化ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.参数区初始化ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.参数区初始化ToolStripMenuItem.Text = "参数区初始化";
             // 
             // 数据区初始化ToolStripMenuItem
             // 
             this.数据区初始化ToolStripMenuItem.Name = "数据区初始化ToolStripMenuItem";
-            this.数据区初始化ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.数据区初始化ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.数据区初始化ToolStripMenuItem.Text = "数据区初始化";
             // 
             // h数据转发ToolStripMenuItem
@@ -854,25 +866,25 @@
             // 发送测试ToolStripMenuItem
             // 
             this.发送测试ToolStripMenuItem.Name = "发送测试ToolStripMenuItem";
-            this.发送测试ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.发送测试ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.发送测试ToolStripMenuItem.Text = "发送测试";
             // 
             // 从节点点名ToolStripMenuItem
             // 
             this.从节点点名ToolStripMenuItem.Name = "从节点点名ToolStripMenuItem";
-            this.从节点点名ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.从节点点名ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.从节点点名ToolStripMenuItem.Text = "从节点点名";
             // 
             // 报文通信测试ToolStripMenuItem
             // 
             this.报文通信测试ToolStripMenuItem.Name = "报文通信测试ToolStripMenuItem";
-            this.报文通信测试ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.报文通信测试ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.报文通信测试ToolStripMenuItem.Text = "报文通信测试";
             // 
             // 发射功率测试ToolStripMenuItem
             // 
             this.发射功率测试ToolStripMenuItem.Name = "发射功率测试ToolStripMenuItem";
-            this.发射功率测试ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.发射功率测试ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.发射功率测试ToolStripMenuItem.Text = "发射功率测试";
             // 
             // h控制命令ToolStripMenuItem
@@ -1141,21 +1153,21 @@
             // 路由重启ToolStripMenuItem
             // 
             this.路由重启ToolStripMenuItem.Name = "路由重启ToolStripMenuItem";
-            this.路由重启ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.路由重启ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.路由重启ToolStripMenuItem.Text = "路由重启";
             this.路由重启ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 路由暂停ToolStripMenuItem
             // 
             this.路由暂停ToolStripMenuItem.Name = "路由暂停ToolStripMenuItem";
-            this.路由暂停ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.路由暂停ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.路由暂停ToolStripMenuItem.Text = "路由暂停";
             this.路由暂停ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 路由恢复ToolStripMenuItem
             // 
             this.路由恢复ToolStripMenuItem.Name = "路由恢复ToolStripMenuItem";
-            this.路由恢复ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.路由恢复ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.路由恢复ToolStripMenuItem.Text = "路由恢复";
             this.路由恢复ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -1206,14 +1218,14 @@
             // 启动抄收水表数据ToolStripMenuItem
             // 
             this.启动抄收水表数据ToolStripMenuItem.Name = "启动抄收水表数据ToolStripMenuItem";
-            this.启动抄收水表数据ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.启动抄收水表数据ToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.启动抄收水表数据ToolStripMenuItem.Text = "启动抄收水表数据";
             this.启动抄收水表数据ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 停止抄收水表数据ToolStripMenuItem
             // 
             this.停止抄收水表数据ToolStripMenuItem.Name = "停止抄收水表数据ToolStripMenuItem";
-            this.停止抄收水表数据ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.停止抄收水表数据ToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.停止抄收水表数据ToolStripMenuItem.Text = "停止抄收水表数据";
             this.停止抄收水表数据ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -1296,16 +1308,23 @@
             this.splitContainer2.SplitterDistance = 354;
             this.splitContainer2.TabIndex = 0;
             // 
-            // rtbMsg
+            // lbCenterAddr
             // 
-            this.rtbMsg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rtbMsg.Location = new System.Drawing.Point(-5, 28);
-            this.rtbMsg.Name = "rtbMsg";
-            this.rtbMsg.Size = new System.Drawing.Size(612, 630);
-            this.rtbMsg.TabIndex = 0;
-            this.rtbMsg.Text = "";
+            this.lbCenterAddr.AutoSize = true;
+            this.lbCenterAddr.Location = new System.Drawing.Point(140, 9);
+            this.lbCenterAddr.Name = "lbCenterAddr";
+            this.lbCenterAddr.Size = new System.Drawing.Size(101, 12);
+            this.lbCenterAddr.TabIndex = 1;
+            this.lbCenterAddr.Text = "集中器地址：未知";
+            // 
+            // lbDocCnt
+            // 
+            this.lbDocCnt.AutoSize = true;
+            this.lbDocCnt.Location = new System.Drawing.Point(3, 9);
+            this.lbDocCnt.Name = "lbDocCnt";
+            this.lbDocCnt.Size = new System.Drawing.Size(71, 12);
+            this.lbDocCnt.TabIndex = 1;
+            this.lbDocCnt.Text = "档案列表[0]";
             // 
             // dgvDoc
             // 
@@ -1318,14 +1337,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvDoc.AutoGenerateColumns = false;
             this.dgvDoc.BackgroundColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.ScrollBar;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvDoc.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.ScrollBar;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvDoc.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle11;
             this.dgvDoc.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgvDoc.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn1,
@@ -1336,23 +1355,95 @@
             this.dataGridViewTextBoxColumn6,
             this.dataGridViewTextBoxColumn7,
             this.dataGridViewTextBoxColumn8,
-            this.dataGridViewTextBoxColumn9});
+            this.dataGridViewTextBoxColumn9,
+            this.序号DataGridViewTextBoxColumn,
+            this.模块地址DataGridViewTextBoxColumn,
+            this.表地址DataGridViewTextBoxColumn,
+            this.协议类型DataGridViewTextBoxColumn,
+            this.版本DataGridViewTextBoxColumn,
+            this.升级状态DataGridViewTextBoxColumn,
+            this.发送DataGridViewTextBoxColumn,
+            this.接收DataGridViewTextBoxColumn,
+            this.读数DataGridViewTextBoxColumn});
             this.dgvDoc.DataMember = "Table1";
             this.dgvDoc.DataSource = this.dsDoc;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvDoc.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvDoc.DefaultCellStyle = dataGridViewCellStyle12;
             this.dgvDoc.Location = new System.Drawing.Point(-1, 28);
             this.dgvDoc.Name = "dgvDoc";
             this.dgvDoc.RowHeadersVisible = false;
             this.dgvDoc.RowTemplate.Height = 23;
             this.dgvDoc.Size = new System.Drawing.Size(356, 653);
             this.dgvDoc.TabIndex = 0;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "序号";
+            this.dataGridViewTextBoxColumn1.HeaderText = "序号";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "模块地址";
+            this.dataGridViewTextBoxColumn2.HeaderText = "模块地址";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.Width = 90;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.DataPropertyName = "表地址";
+            this.dataGridViewTextBoxColumn3.HeaderText = "表地址";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.Width = 90;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.DataPropertyName = "协议类型";
+            this.dataGridViewTextBoxColumn4.HeaderText = "协议类型";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            this.dataGridViewTextBoxColumn4.Width = 80;
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            this.dataGridViewTextBoxColumn5.DataPropertyName = "版本";
+            this.dataGridViewTextBoxColumn5.HeaderText = "版本";
+            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            this.dataGridViewTextBoxColumn5.Width = 50;
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            this.dataGridViewTextBoxColumn6.DataPropertyName = "升级状态";
+            this.dataGridViewTextBoxColumn6.HeaderText = "升级状态";
+            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            this.dataGridViewTextBoxColumn6.Width = 60;
+            // 
+            // dataGridViewTextBoxColumn7
+            // 
+            this.dataGridViewTextBoxColumn7.DataPropertyName = "发送";
+            this.dataGridViewTextBoxColumn7.HeaderText = "发送";
+            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            this.dataGridViewTextBoxColumn7.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn8
+            // 
+            this.dataGridViewTextBoxColumn8.DataPropertyName = "接收";
+            this.dataGridViewTextBoxColumn8.HeaderText = "接收";
+            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+            this.dataGridViewTextBoxColumn8.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn9
+            // 
+            this.dataGridViewTextBoxColumn9.DataPropertyName = "读数";
+            this.dataGridViewTextBoxColumn9.HeaderText = "读数";
+            this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
+            this.dataGridViewTextBoxColumn9.Width = 90;
             // 
             // dsDoc
             // 
@@ -1415,32 +1506,17 @@
             // 
             this.读数.ColumnName = "读数";
             // 
-            // lbDocCnt
+            // lbCmdStatus
             // 
-            this.lbDocCnt.AutoSize = true;
-            this.lbDocCnt.Location = new System.Drawing.Point(3, 9);
-            this.lbDocCnt.Name = "lbDocCnt";
-            this.lbDocCnt.Size = new System.Drawing.Size(71, 12);
-            this.lbDocCnt.TabIndex = 1;
-            this.lbDocCnt.Text = "档案列表[0]";
-            // 
-            // lbCenterAddr
-            // 
-            this.lbCenterAddr.AutoSize = true;
-            this.lbCenterAddr.Location = new System.Drawing.Point(140, 9);
-            this.lbCenterAddr.Name = "lbCenterAddr";
-            this.lbCenterAddr.Size = new System.Drawing.Size(101, 12);
-            this.lbCenterAddr.TabIndex = 1;
-            this.lbCenterAddr.Text = "集中器地址：未知";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(3, 9);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(89, 12);
-            this.label13.TabIndex = 1;
-            this.label13.Text = "通信记录及解析";
+            this.lbCmdStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbCmdStatus.BackColor = System.Drawing.Color.GreenYellow;
+            this.lbCmdStatus.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lbCmdStatus.Location = new System.Drawing.Point(1, 659);
+            this.lbCmdStatus.Name = "lbCmdStatus";
+            this.lbCmdStatus.Size = new System.Drawing.Size(609, 21);
+            this.lbCmdStatus.TabIndex = 17;
+            this.lbCmdStatus.Text = "命令执行中...";
+            this.lbCmdStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label14
             // 
@@ -1512,80 +1588,89 @@
             this.label20.TabIndex = 10;
             this.label20.Text = " ";
             // 
-            // dataGridViewTextBoxColumn1
+            // label13
             // 
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "序号";
-            this.dataGridViewTextBoxColumn1.HeaderText = "序号";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.Width = 40;
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(3, 9);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(89, 12);
+            this.label13.TabIndex = 1;
+            this.label13.Text = "通信记录及解析";
             // 
-            // dataGridViewTextBoxColumn2
+            // rtbMsg
             // 
-            this.dataGridViewTextBoxColumn2.DataPropertyName = "模块地址";
-            this.dataGridViewTextBoxColumn2.HeaderText = "模块地址";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.Width = 90;
+            this.rtbMsg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbMsg.Location = new System.Drawing.Point(-5, 28);
+            this.rtbMsg.Name = "rtbMsg";
+            this.rtbMsg.Size = new System.Drawing.Size(612, 630);
+            this.rtbMsg.TabIndex = 0;
+            this.rtbMsg.Text = "";
             // 
-            // dataGridViewTextBoxColumn3
+            // 序号DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn3.DataPropertyName = "表地址";
-            this.dataGridViewTextBoxColumn3.HeaderText = "表地址";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            this.dataGridViewTextBoxColumn3.Width = 90;
+            this.序号DataGridViewTextBoxColumn.DataPropertyName = "序号";
+            this.序号DataGridViewTextBoxColumn.HeaderText = "序号";
+            this.序号DataGridViewTextBoxColumn.Name = "序号DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn4
+            // 模块地址DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn4.DataPropertyName = "协议类型";
-            this.dataGridViewTextBoxColumn4.HeaderText = "协议类型";
-            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            this.dataGridViewTextBoxColumn4.Width = 80;
+            this.模块地址DataGridViewTextBoxColumn.DataPropertyName = "模块地址";
+            this.模块地址DataGridViewTextBoxColumn.HeaderText = "模块地址";
+            this.模块地址DataGridViewTextBoxColumn.Name = "模块地址DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn5
+            // 表地址DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn5.DataPropertyName = "版本";
-            this.dataGridViewTextBoxColumn5.HeaderText = "版本";
-            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            this.dataGridViewTextBoxColumn5.Width = 50;
+            this.表地址DataGridViewTextBoxColumn.DataPropertyName = "表地址";
+            this.表地址DataGridViewTextBoxColumn.HeaderText = "表地址";
+            this.表地址DataGridViewTextBoxColumn.Name = "表地址DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn6
+            // 协议类型DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn6.DataPropertyName = "升级状态";
-            this.dataGridViewTextBoxColumn6.HeaderText = "升级状态";
-            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-            this.dataGridViewTextBoxColumn6.Width = 60;
+            this.协议类型DataGridViewTextBoxColumn.DataPropertyName = "协议类型";
+            this.协议类型DataGridViewTextBoxColumn.HeaderText = "协议类型";
+            this.协议类型DataGridViewTextBoxColumn.Name = "协议类型DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn7
+            // 版本DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn7.DataPropertyName = "发送";
-            this.dataGridViewTextBoxColumn7.HeaderText = "发送";
-            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-            this.dataGridViewTextBoxColumn7.Width = 40;
+            this.版本DataGridViewTextBoxColumn.DataPropertyName = "版本";
+            this.版本DataGridViewTextBoxColumn.HeaderText = "版本";
+            this.版本DataGridViewTextBoxColumn.Name = "版本DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn8
+            // 升级状态DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn8.DataPropertyName = "接收";
-            this.dataGridViewTextBoxColumn8.HeaderText = "接收";
-            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
-            this.dataGridViewTextBoxColumn8.Width = 40;
+            this.升级状态DataGridViewTextBoxColumn.DataPropertyName = "升级状态";
+            this.升级状态DataGridViewTextBoxColumn.HeaderText = "升级状态";
+            this.升级状态DataGridViewTextBoxColumn.Name = "升级状态DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn9
+            // 发送DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn9.DataPropertyName = "读数";
-            this.dataGridViewTextBoxColumn9.HeaderText = "读数";
-            this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
-            this.dataGridViewTextBoxColumn9.Width = 90;
+            this.发送DataGridViewTextBoxColumn.DataPropertyName = "发送";
+            this.发送DataGridViewTextBoxColumn.HeaderText = "发送";
+            this.发送DataGridViewTextBoxColumn.Name = "发送DataGridViewTextBoxColumn";
             // 
-            // lbCmdStatus
+            // 接收DataGridViewTextBoxColumn
             // 
-            this.lbCmdStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lbCmdStatus.BackColor = System.Drawing.Color.GreenYellow;
-            this.lbCmdStatus.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lbCmdStatus.Location = new System.Drawing.Point(1, 659);
-            this.lbCmdStatus.Name = "lbCmdStatus";
-            this.lbCmdStatus.Size = new System.Drawing.Size(609, 21);
-            this.lbCmdStatus.TabIndex = 17;
-            this.lbCmdStatus.Text = "命令执行中...";
-            this.lbCmdStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.接收DataGridViewTextBoxColumn.DataPropertyName = "接收";
+            this.接收DataGridViewTextBoxColumn.HeaderText = "接收";
+            this.接收DataGridViewTextBoxColumn.Name = "接收DataGridViewTextBoxColumn";
+            // 
+            // 读数DataGridViewTextBoxColumn
+            // 
+            this.读数DataGridViewTextBoxColumn.DataPropertyName = "读数";
+            this.读数DataGridViewTextBoxColumn.HeaderText = "读数";
+            this.读数DataGridViewTextBoxColumn.Name = "读数DataGridViewTextBoxColumn";
+            // 
+            // chkParam1
+            // 
+            this.chkParam1.AutoSize = true;
+            this.chkParam1.Location = new System.Drawing.Point(24, 139);
+            this.chkParam1.Name = "chkParam1";
+            this.chkParam1.Size = new System.Drawing.Size(78, 16);
+            this.chkParam1.TabIndex = 6;
+            this.chkParam1.Text = "checkBox1";
+            this.chkParam1.UseVisualStyleBackColor = true;
             // 
             // ConcSimulator_North
             // 
@@ -1775,5 +1860,15 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
         private System.Windows.Forms.Label lbCmdStatus;
+        private System.Windows.Forms.CheckBox chkParam1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 序号DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 模块地址DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 表地址DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 协议类型DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 版本DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 升级状态DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 发送DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 接收DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 读数DataGridViewTextBoxColumn;
     }
 }

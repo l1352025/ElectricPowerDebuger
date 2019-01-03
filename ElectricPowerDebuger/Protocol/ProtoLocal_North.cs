@@ -436,6 +436,8 @@ namespace ElectricPowerDebuger.Protocol
             string strCommType;
             byte relayCnt;
 
+            if (frame.Length == 0) return null;
+
             // parentNode--帧长
             strTmp = "帧长  ：" + frame.Length;
             parentNode.Nodes.Add(strTmp);
@@ -546,7 +548,7 @@ namespace ElectricPowerDebuger.Protocol
             }
 
             // parentNode--AFN
-            strTmp = "功能码AFN ：" + ("0x" + frame.Afn.ToString("X2")).PadRight(4) + " " + ExplainAFN(frame.Afn);
+            strTmp = "功能码AFN ：" + (frame.Afn.ToString("X2") + "H").PadRight(4) + " " + ExplainAFN(frame.Afn);
             parentNode.Nodes.Add(strTmp);
             
             // parentNode--Fn

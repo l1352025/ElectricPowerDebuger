@@ -12,7 +12,8 @@ namespace ElectricPowerDebuger.Common
         public string Name;
         public byte[] TxBuf;
         public byte[] RxBuf;
-        public List<string> Params;
+        public List<object> Params;
+        public string GrpName;
         public int TimeWaitMS;
         public int RetryTimes;
         public bool IsEnable;
@@ -34,7 +35,8 @@ namespace ElectricPowerDebuger.Common
             RetryTimes = retryTimes;
             SendFunc = sendFunc;
             RecvFunc = recvFunc;
-            Params = new List<string>();
+            Params = new List<object>();
+            GrpName = "";
         }
     };
 }
