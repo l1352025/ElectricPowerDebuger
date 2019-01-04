@@ -55,8 +55,8 @@ namespace ElectricPowerDebuger.Function
             row[协议类型] = "(2) 07电表";
             row[版本] = "000032";
             row[升级状态] = "未升级";
-            row[发送] = 123456;
-            row[接收] = 123456;
+            row[发送] = 12345;
+            row[接收] = 12345;
             row[读数] = "123456.78 kWh";
             dtbDoc.Rows.Add(row);
 
@@ -364,7 +364,7 @@ namespace ElectricPowerDebuger.Function
                 }
             }
 
-            if(cmdText.StartsWith("0"))
+            if(cmdText.Trim().Contains(" "))
             {
                 cmdText = cmdText.Trim().Split(' ').Last();
             }
@@ -374,6 +374,8 @@ namespace ElectricPowerDebuger.Function
             switch (cmdText)
             {
                 case "数据转发":
+                case "路由数据转发":
+                case "读取计量箱相关事件":
                     lbParam1.Text = "协议类型";
                     lbParam1.Location = new Point(22, 30);
                     lbParam1.Visible = true;
@@ -381,26 +383,173 @@ namespace ElectricPowerDebuger.Function
                     cbxParam1.Items.Add("0 透明传输");
                     cbxParam1.Items.Add("1 DL/T645-97");
                     cbxParam1.Items.Add("2 DL/T645-07");
-                    cbxParam1.Location = new Point(78, 28);
+                    cbxParam1.Location = new Point(78, 27);
+                    cbxParam1.Width = 111;
                     cbxParam1.Visible = true;
-                    lbParam2.Text = "报文内容：";
+                    lbParam2.Text = "目标地址";
                     lbParam2.Location = new Point(22, 60);
                     lbParam2.Visible = true;
-                    txtParam3.Location = new Point(24, 83);
+                    txtParam2.Location = new Point(78, 57);
+                    txtParam2.Width = 111;
+                    txtParam2.Visible = true;
+                    lbParam3.Text = "报文内容：";
+                    lbParam3.Location = new Point(22, 90);
+                    lbParam3.Visible = true;
+                    if(cmdText == "路由数据转发")
+                    {
+                        chkParam1.Text = "通信延时相关";
+                        chkParam1.Location = new Point(95, 90);
+                        chkParam1.Visible = true;
+                    }
+                    txtParam3.Location = new Point(24, 113);
                     txtParam3.Visible = true;
-                    btParamConfirm.Location = new Point(24, 146);
+                    btParamConfirm.Location = new Point(24, 176);
                     break;
 
-                case "1":
-                    
+                case "查询从节点侦听信息":
+                    lbParam1.Text = "起始序号(0-255)";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "0";
+                    txtParam1.Location = new Point(118, 27);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    lbParam2.Text = "节点数量(1-16)";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    txtParam2.Text = "16";
+                    txtParam2.Location = new Point(118, 57);
+                    txtParam2.Width = 71;
+                    txtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
                     break;
 
-                case "2":
+                case "查询本地通信模块AFN索引":
 
                     break;
 
-                case "3":
+                case "发送测试":
 
+                    break;
+
+                case "本地通信模块报文通信测试":
+
+                    break;
+
+                case "发射功率测试":
+
+                    break;
+
+                case "设置主节点地址":
+
+                    break;
+
+                case "允许/禁止从节点上报":
+
+                    break;
+
+                case "设置从节点监控最大超时时间":
+
+                    break;
+
+                case "设置无线通信参数":
+
+                    break;
+
+                case "设置场强门限":
+
+                    break;
+
+                case "查询从节点信息":
+                case "查询未抄读成功的从节点信息":
+                case "查询主动注册的从节点信息":
+
+                    break;
+
+                case "查询从节点的上一级路由信息":
+                case "查询无线从节点的中继路由信息":
+
+                    break;
+
+                case "查询在网状态更新信息":
+
+                    break;
+
+                case "添加从节点":
+
+                    break;
+
+                case "删除从节点":
+
+                    break;
+
+                case "设置从节点固定中继路径":
+
+                    break;
+
+                case "激活从节点主动注册":
+
+                    break;
+
+                case "设置网络规模":
+
+                    break;
+
+                case "文件传输":
+                    lbParam1.Text = "文件标识：";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 清除下装文件");
+                    cbxParam1.Items.Add("3 主节点模块升级");
+                    cbxParam1.Items.Add("7 主节点和子节点模块升级");
+                    cbxParam1.Items.Add("8 子节点模块升级");
+                    cbxParam1.Location = new Point(24, 57);
+                    cbxParam1.Width = 165;
+                    cbxParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
+                    break;
+
+                case "设置广播维护开关":
+                    lbParam1.Text = "维护开关";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    rbtParam1.Text = "开启";
+                    rbtParam1.Location = new Point(88, 27);
+                    rbtParam1.Width = 47;
+                    rbtParam1.Visible = true;
+                    rbtParam2.Text = "关闭";
+                    rbtParam2.Location = new Point(142, 27);
+                    rbtParam2.Width = 47;
+                    rbtParam2.Visible = true;
+                    lbParam2.Text = "维护时间(时:分)";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    txtParam2.Text = DateTime.Now.AddHours(1).ToString("HH:mm");
+                    txtParam2.Location = new Point(130, 57);
+                    txtParam2.Width = 59;
+                    txtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
+                    break;
+
+                case "读取子节点参数信息":
+                    lbParam1.Text = "读取类型";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 档案信息");
+                    cbxParam1.Items.Add("1 邻居表");
+                    cbxParam1.Items.Add("2 路径表");
+                    cbxParam1.Location = new Point(78, 27);
+                    cbxParam1.Width = 111;
+                    cbxParam1.Visible = true;
+                    lbParam2.Text = "节点地址";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    txtParam2.Location = new Point(78, 57);
+                    txtParam2.Width = 111;
+                    txtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
                     break;
 
                 default:
@@ -423,6 +572,8 @@ namespace ElectricPowerDebuger.Function
         {
             lbParam1.Visible = false;
             lbParam2.Visible = false;
+            lbParam3.Visible = false;
+            lbParam4.Visible = false;
             txtParam1.Visible = false;
             txtParam2.Visible = false;
             txtParam3.Visible = false;
@@ -435,22 +586,23 @@ namespace ElectricPowerDebuger.Function
 
         private void UpdateRecentCmdName(string cmdText = "")
         {
-            string recentFixedCmds = "读出全部档案/重下全部档案/启动组网/查询路由运行状态";
+            string recentFixedCmds = "读出全部档案;重下全部档案;启动组网;查询路由运行状态";
 
             string recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North/RecentCmds");
             if(recentCmds == "")
             {
-                recentCmds = "添加主节点/查询主节点地址/查询厂商代码和版本/查询无线通信参数";
+                recentCmds = "添加主节点;查询主节点地址;查询厂商代码和版本;查询无线通信参数";
             }
 
-            if( !recentCmds.Contains(cmdText) && !recentFixedCmds.Contains(cmdText) && cmdText != "")
+            if( (!recentCmds.Split(';').Contains(cmdText) && !recentFixedCmds.Split(';').Contains(cmdText))
+                || (cmdText == ""))
             {
                 if (cmdText != "")
                 {
-                    recentCmds = recentCmds.Substring(recentCmds.IndexOf("/") + 1) + "/" + cmdText;
+                    recentCmds = recentCmds.Substring(recentCmds.IndexOf(";") + 1) + ";" + cmdText;
                 }
 
-                string[] strs = recentCmds.Split('/');
+                string[] strs = recentCmds.Split(';');
                 btRecentUse1.Text = strs[0];
                 btRecentUse2.Text = strs[1];
                 btRecentUse3.Text = strs[2];
@@ -469,8 +621,8 @@ namespace ElectricPowerDebuger.Function
 
         private void SendToCmdQueue(string cmdName)
         {
-            Command cmd = new Command(cmdName);
             int txLen = 0;
+            Command cmd = new Command(cmdName);
 
             cmd.SendFunc = SendCmd;
             cmd.RecvFunc = RecvCmd;
@@ -486,7 +638,7 @@ namespace ElectricPowerDebuger.Function
             TempBuf[txLen++] = 0;
             TempBuf[txLen++] = 0;
             TempBuf[txLen++] = 0;
-            TempBuf[txLen++] = _fsn++;   // info-6
+            TempBuf[txLen++] = _fsn++;  // info-6 
 
             if(cmd.Name == "" || cmd.Name == "")
             {

@@ -145,7 +145,7 @@ namespace ElectricPowerDebuger.Protocol
             new CmdExplain(0x05, "控制命令",    5, "设置无线通信参数",            Color.Black, ExplainCtrlCmd_SetWirelessCommParam),
             new CmdExplain(0x05, "控制命令",    51, "启动全网感知",               Color.Red, ExplainCtrlCmd_StartWholeNetworkSense),  /* 北网扩展 */
             new CmdExplain(0x05, "控制命令",    100, "设置场强门限",              Color.Black, ExplainCtrlCmd_SetRssiThreshold),
-            new CmdExplain(0x05, "控制命令",    101, "设置中心节点时钟",          Color.Black, ExplainCtrlCmd_SetMainNodeClock),
+            new CmdExplain(0x05, "控制命令",    101, "设置中心节点时间",          Color.Black, ExplainCtrlCmd_SetMainNodeClock),
 
             new CmdExplain(0x06, "主动上报",    1, "上报从节点信息",                Color.Blue, ExplainAutoReport_SubNodeInfo),
             new CmdExplain(0x06, "主动上报",    2, "上报抄读数据",                  Color.Blue, ExplainAutoReport_ReadData),
@@ -156,7 +156,7 @@ namespace ElectricPowerDebuger.Protocol
 
             new CmdExplain(0x10, "路由查询",    1, "查询从节点数量",                 Color.Magenta, ExplainRouteQuery_SubNodeCount),
             new CmdExplain(0x10, "路由查询",    2, "查询从节点信息",                 Color.Magenta, ExplainRouteQuery_SubNodeInfo),
-            new CmdExplain(0x10, "路由查询",    3, "查询从节点的中继路由信息",       Color.Magenta, ExplainRouteQuery_SubNodeRelayInfo),
+            new CmdExplain(0x10, "路由查询",    3, "查询从节点的上一级路由信息",       Color.Magenta, ExplainRouteQuery_SubNodeRelayInfo),
             new CmdExplain(0x10, "路由查询",    4, "查询路由运行状态",               Color.Magenta, ExplainRouteQuery_RouteRunningState),
             new CmdExplain(0x10, "路由查询",    5, "查询未抄读成功的从节点信息",     Color.Magenta, ExplainRouteQuery_ReadFailedSubNodeInfo),
             new CmdExplain(0x10, "路由查询",    6, "查询主动注册的从节点信息",       Color.Magenta, ExplainRouteQuery_AutoRegSubNodeInfo),
@@ -186,7 +186,7 @@ namespace ElectricPowerDebuger.Protocol
             new CmdExplain(0x14, "路由数据抄读",    2, "路由请求集中器时钟",           Color.Black, ExplainRouteDataRead_RequestConcentratorClock),
             new CmdExplain(0x14, "路由数据抄读",    3, "请求依通信延时修正通信数据",   Color.Black, ExplainRouteDataRead_RequstAdjustCommData),
 
-            new CmdExplain(0x15, "文件传输",    1, "文件传输方式1",                   Color.Black, ExplainFileTransfer_TransferModeOne),
+            new CmdExplain(0x15, "文件传输",    1, "文件传输",                      Color.Black, ExplainFileTransfer_TransferModeOne),
 
             new CmdExplain(0x20, "水表上报",    1, "启动抄收水表数据",              Color.Red, ExplainWaterMeterReport_ReadWaterMeterDataStart),        /* 北网扩展 */
             new CmdExplain(0x20, "水表上报",    2, "停止抄收水表数据",              Color.Red, ExplainWaterMeterReport_ReadWaterMeterDataStop),         /* 北网扩展 */
@@ -2244,11 +2244,11 @@ namespace ElectricPowerDebuger.Protocol
 
         private static TreeNode ExplainRouteQuery_ReadFailedSubNodeInfo(FrameFormat frame)
         {
-            return ExplainRouteQuery_ReadFailedSubNodeInfo(frame);
+            return ExplainRouteQuery_SubNodeInfo(frame);
         }
         private static TreeNode ExplainRouteQuery_AutoRegSubNodeInfo(FrameFormat frame)
         {
-            return ExplainRouteQuery_ReadFailedSubNodeInfo(frame);
+            return ExplainRouteQuery_SubNodeInfo(frame);
         }
         private static TreeNode ExplainRouteQuery_WirelessSubNodeRouteInfo(FrameFormat frame)
         {
@@ -3343,15 +3343,107 @@ namespace ElectricPowerDebuger.Protocol
         #region F0 内部调试
         private static TreeNode ExplainInnerTest_ReadLogByType(FrameFormat frame)
         {
-            TreeNode node = null;
+            TreeNode payloadNode = new TreeNode("数据载荷");
+            string strTmp = "";
+            byte[] buf = frame.DataBuf;
+            int index = 0;
 
-            return node;
+            if (frame.CtrlWord.StartFlag)
+            {
+                // 请求 
+                if (buf == null) return null;
+
+                if (buf.Length < 8) return payloadNode;
+
+                strTmp = "读取规则：";
+                switch (buf[index])
+                {
+                    case 0x00: strTmp += "时-日志"; break;
+                    case 0x01: strTmp += "日-日志"; break;
+                    case 0x02: strTmp += "月-日志"; break;
+                    default: strTmp += "无法识别"; break;
+                }
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+                strTmp = "读取时间：" + buf[index] + "/" + buf[index + 1] + " " + buf[index + 2] + "时";
+                payloadNode.Nodes.Add(strTmp);
+                index += 3;
+                strTmp = "记录包号：" + (buf[index] + (buf[index + 1] << 8) + (buf[index + 1] << 16) + (buf[index + 1] << 24));
+                payloadNode.Nodes.Add(strTmp);
+                index += 4;
+            }
+            else
+            {
+                // 应答 
+                if (buf == null) return null;
+
+                if (buf.Length < 5) return payloadNode;
+
+                strTmp = "回复标志：";
+                switch (buf[index])
+                {
+                    case 0x00: strTmp += "记录未结束"; break;
+                    case 0x01: strTmp += "当前时段记录正常结束"; break;
+                    case 0x02: strTmp += "当前时段记录异常结束"; break;
+                    case 0x03: strTmp += "当前时段记录不存在"; break;
+                    case 0x04: strTmp += "当前包序号错误"; break;
+                    default: strTmp += "无法识别"; break;
+                }
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+                strTmp = "记录包号：" + (buf[index] + (buf[index + 1] << 8) + (buf[index + 1] << 16) + (buf[index + 1] << 24));
+                payloadNode.Nodes.Add(strTmp);
+                index += 4;
+                strTmp = "记录数据：" + (buf.Length - index) + " byte";
+                payloadNode.Nodes.Add(strTmp);
+            }
+
+            return payloadNode;
         }
         private static TreeNode ExplainInnerTest_SetBroadcastMaintain(FrameFormat frame)
         {
-            TreeNode node = null;
+            TreeNode payloadNode = new TreeNode("数据载荷");
+            string strTmp = "";
+            byte[] buf = frame.DataBuf;
+            int index = 0;
 
-            return node;
+            if (frame.CtrlWord.StartFlag)
+            {
+                // 请求 
+                if (buf == null) return null;
+
+                if (buf.Length < 9) return payloadNode;
+
+                strTmp = "广播维护开关：";
+                switch (buf[index])
+                {
+                    case 0x00: strTmp += "关闭"; break;
+                    case 0x01: strTmp += "开启"; break;
+                    default: strTmp += "无法识别"; break;
+                }
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+
+                strTmp = "当前时间：" + (DateTime.Now.Year/100)
+                        + buf[index + 5].ToString("X2") + "/"
+                        + buf[index + 4].ToString("X2") + "/"
+                        + buf[index + 3].ToString("X2") + " "
+                        + buf[index + 2].ToString("X2") + ":"
+                        + buf[index + 1].ToString("X2") + ":"
+                        + buf[index + 0].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 6;
+                strTmp = "维护时间：" + buf[index + 1].ToString("X2") + ":" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 2;
+            }
+            else
+            {
+                // 应答 - 确认/否认
+                
+            }
+
+            return payloadNode;
         }
         private static TreeNode ExplainInnerTest_ReadSubNodeParamsInfo(FrameFormat frame)
         {
