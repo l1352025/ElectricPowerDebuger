@@ -129,8 +129,8 @@ namespace ElectricPowerDebuger.Protocol
             new CmdExplain(0x03, "查询数据",    7, "查询从节点监控最大超时时间",  Color.Magenta, ExplainDataQuery_SubNodeListenMaxTimeoutTime),
             new CmdExplain(0x03, "查询数据",    8, "查询无线通信参数",            Color.Magenta, ExplainDataQuery_WirelessCommParam),
             new CmdExplain(0x03, "查询数据",    9, "查询广播通信延时",            Color.Magenta, ExplainDataQuery_BroadcastDelayTime),
-            new CmdExplain(0x03, "查询数据",    10, "查询本地通信模块运行模式",   Color.Magenta, ExplainDataQuery_LocalCommModuleRunningMode),
-            new CmdExplain(0x03, "查询数据",    11, "查询本地通信模块AFN索引",    Color.Magenta, ExplainDataQuery_LocalCommModuleAfnIndex),
+            new CmdExplain(0x03, "查询数据",    10, "查询本地通信模块的运行模式",   Color.Magenta, ExplainDataQuery_LocalCommModuleRunningMode),
+            new CmdExplain(0x03, "查询数据",    11, "查询本地通信模块的AFN索引",    Color.Magenta, ExplainDataQuery_LocalCommModuleAfnIndex),
             new CmdExplain(0x03, "查询数据",    100, "查询场强门限",              Color.Magenta, ExplainDataQuery_RssiThreshold),
 
             new CmdExplain(0x04, "链路接口测试",  1, "发送测试",                   Color.Black, ExplainDataLinkTest_SendTest),
@@ -696,16 +696,27 @@ namespace ElectricPowerDebuger.Protocol
 
             return payloadNode;
         }
+
         private static readonly string[] CommProtoTbl = new string[]
         {
-            "双向水表",
+            "双向水表",       // 0x00
             "645-97电表",
             "645-07电表",
             "单向水表",
-            "未知",       // 保留
+            "未知",           // 0x04 保留
             "燃气表",
             "热表",
             "698电表",
+        };
+
+        private static readonly String[] BaudRateTbl = new String[]
+        {
+            "自适应",
+            "1200",
+            "2400",
+            "4800",
+            "9600",
+            "19200"
         };
 
         private static TreeNode ExplainDataTransfer_ReadAmeterBoxOpenEvent(FrameFormat frame)
@@ -1242,7 +1253,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 if (buf.Length < 1) return payloadNode;
 
-                strTmp = "AFN：" + ExplainAFN(buf[index]);
+                strTmp = "AFN功能码：" + ExplainAFN(buf[index]);
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
             }
@@ -1256,7 +1267,7 @@ namespace ElectricPowerDebuger.Protocol
                 byte u8Temp, u8AFN, u8Fn = 0;
 
                 u8AFN = buf[index];
-                strTmp = "AFN：" + ExplainAFN(u8AFN);
+                strTmp = "AFN功能码：" + ExplainAFN(u8AFN);
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
 
@@ -1271,7 +1282,7 @@ namespace ElectricPowerDebuger.Protocol
                         u8Fn++;
                         if((u8Temp & 0x01) > 0)
                         {
-                            strTmp = "F" + u8Fn +  "：" + ExplainFn(u8AFN, u8Fn);
+                            strTmp = ("F" + u8Fn +  "：").PadRight(4) + ExplainFn(u8AFN, u8Fn);
                             node.Nodes.Add(strTmp);
                         }
                         u8Temp >>= 1;

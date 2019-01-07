@@ -39,13 +39,13 @@ namespace ElectricPowerDebuger.Function
         private static string _strDocCnt = "0";
         private static string _strCenterAddr = "201900008888";
         private static byte _fsn = 0;
+        private static string _currProtol;
 
         public ConcSimulator_North()
         {
             InitializeComponent();
             this.Dock = DockStyle.Fill;
 
-            FrmMain.ProtocolVerChanged += OnProtoVerChanged;
             _configPath = FrmMain.SystemConfigPath;
 
             DataRow row = dtbDoc.NewRow();
@@ -69,31 +69,8 @@ namespace ElectricPowerDebuger.Function
             _thrTransceiver.IsBackground = true;
             _thrTransceiver.Start();
 
+            _currProtol = XmlHelper.GetNodeDefValue(_configPath, "Config/Global/ProtocolVer", "");
             UpdateRecentCmdName();
-
-        }
-
-        private void OnProtoVerChanged(string msg)
-        {
-            switch (msg)
-            {
-                case "国网-版本":
-                    usrCtrl = new ConcSimulator_North();
-                    break;
-
-                case "南网-版本":
-                    usrCtrl = new ConcSimulator();
-                    break;
-
-                default:
-                    usrCtrl = new ConcSimulator();
-                    break;
-            }
-            FrmMain.ProtocolVerChanged -= OnProtoVerChanged;
-
-            Control tabPage = this.Parent;
-            tabPage.Controls.Remove(this);
-            tabPage.Controls.Add(usrCtrl);
 
         }
 
@@ -383,6 +360,7 @@ namespace ElectricPowerDebuger.Function
                     cbxParam1.Items.Add("0 透明传输");
                     cbxParam1.Items.Add("1 DL/T645-97");
                     cbxParam1.Items.Add("2 DL/T645-07");
+                    cbxParam1.SelectedIndex = 0;
                     cbxParam1.Location = new Point(78, 27);
                     cbxParam1.Width = 111;
                     cbxParam1.Visible = true;
@@ -424,75 +402,361 @@ namespace ElectricPowerDebuger.Function
                     btParamConfirm.Location = new Point(24, 90);
                     break;
 
-                case "查询本地通信模块AFN索引":
-
+                case "查询本地通信模块的AFN索引":
+                    lbParam1.Text = "AFN功能码：";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("00H 确认/否认");
+                    cbxParam1.Items.Add("01H 初始化");
+                    cbxParam1.Items.Add("02H 数据转发");
+                    cbxParam1.Items.Add("03H 查询数据");
+                    cbxParam1.Items.Add("04H 链路接口测试");
+                    cbxParam1.Items.Add("05H 控制命令");
+                    cbxParam1.Items.Add("06H 主动上报");
+                    cbxParam1.Items.Add("10H 路由查询");
+                    cbxParam1.Items.Add("11H 路由设置");
+                    cbxParam1.Items.Add("12H 路由控制");
+                    cbxParam1.Items.Add("13H 路由数据转发");
+                    cbxParam1.Items.Add("14H 路由数据抄读");
+                    cbxParam1.Items.Add("15H 文件传输");
+                    cbxParam1.Items.Add("20H 水表上报");
+                    cbxParam1.Items.Add("F0H 内部调试");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(24, 57);
+                    cbxParam1.Width = 165;
+                    cbxParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
                     break;
 
                 case "发送测试":
-
+                    lbParam1.Text = "持续时间(0-255秒)";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "60";
+                    txtParam1.Location = new Point(118, 27);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 60);
                     break;
 
                 case "本地通信模块报文通信测试":
-
+                    lbParam1.Text = "通信速率";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 自适应");
+                    cbxParam1.Items.Add("1 1200");
+                    cbxParam1.Items.Add("2 2400");
+                    cbxParam1.Items.Add("3 4800");
+                    cbxParam1.Items.Add("4 9600");
+                    cbxParam1.Items.Add("5 19200");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(78, 27);
+                    cbxParam1.Width = 111;
+                    cbxParam1.Visible = true;
+                    lbParam2.Text = "协议类型";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    cbxParam2.Items.Clear();
+                    cbxParam2.Items.Add("0 透明传输");
+                    cbxParam2.Items.Add("1 DL/T645-97");
+                    cbxParam2.Items.Add("2 DL/T645-07");
+                    cbxParam2.SelectedIndex = 0;
+                    cbxParam2.Location = new Point(78, 57);
+                    cbxParam2.Width = 111;
+                    cbxParam2.Visible = true;
+                    lbParam4.Text = "目标地址";
+                    lbParam4.Location = new Point(22, 90);
+                    lbParam4.Visible = true;
+                    txtParam1.Location = new Point(78, 87);
+                    txtParam1.Width = 111;
+                    txtParam1.Visible = true;
+                    lbParam3.Text = "报文内容：";
+                    lbParam3.Location = new Point(22, 120);
+                    lbParam3.Visible = true;
+                    txtParam3.Location = new Point(24, 117);
+                    txtParam3.Visible = true;
+                    btParamConfirm.Location = new Point(24, 176);
                     break;
 
                 case "发射功率测试":
-
+                    string chanel;
+                    if (_currProtol.Contains("北网"))
+                    {
+                        chanel = "(0-65)";
+                    }
+                    else // 尼泊尔
+                    {
+                        chanel = "(0-23)";
+                    }
+                    lbParam1.Text = "信道索引" + chanel;
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "0";
+                    txtParam1.Location = new Point(118, 27);
+                    txtParam1.Width = 71;
+                    lbParam2.Text = "测试码流";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    cbxParam2.Items.Clear();
+                    cbxParam2.Items.Add("0 比特0无穷序列");
+                    cbxParam2.Items.Add("1 比特1无穷序列");
+                    cbxParam2.Items.Add("4 比特0/1交替序列");
+                    cbxParam2.SelectedIndex = 2;
+                    cbxParam2.Location = new Point(78, 57);
+                    cbxParam2.Width = 111;
+                    cbxParam2.Visible = true;
+                    lbParam3.Text = "持续时间(0-255秒)";
+                    lbParam3.Location = new Point(22, 90);
+                    lbParam3.Visible = true;
+                    txtParam2.Text = "16";
+                    txtParam2.Location = new Point(118, 87);
+                    txtParam2.Width = 71;
+                    txtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 120);
                     break;
 
                 case "设置主节点地址":
-
+                    lbParam1.Text = "节点地址";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "";
+                    txtParam1.Location = new Point(78, 27);
+                    txtParam1.Width = 111;
+                    txtParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 60);
                     break;
 
                 case "允许/禁止从节点上报":
-
+                    lbParam1.Text = "事件上报";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    rbtParam1.Text = "允许";
+                    rbtParam1.Location = new Point(88, 27);
+                    rbtParam1.Width = 47;
+                    rbtParam1.Visible = true;
+                    rbtParam2.Text = "禁止";
+                    rbtParam2.Location = new Point(142, 27);
+                    rbtParam2.Width = 47;
+                    rbtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 60);
                     break;
 
                 case "设置从节点监控最大超时时间":
-
+                    lbParam1.Text = "超时时间(0-255秒)";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "60";
+                    txtParam1.Location = new Point(118, 27);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 60);
                     break;
 
                 case "设置无线通信参数":
-
+                    string[] chanels;
+                    if (_currProtol.Contains("北网"))
+                    {
+                        chanels = new string[32];
+                        for(int i = 0; i < 32; i++)
+                        {
+                            chanels[i] = (i + 1).ToString();
+                        }
+                    }
+                    else // 尼泊尔
+                    {
+                        chanels = new string[11];
+                        for (int i = 0; i < 11; i++)
+                        {
+                            chanels[i] = (i + 1).ToString();
+                        }
+                    }
+                    lbParam1.Text = "信道组号";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.AddRange(chanels);
+                    cbxParam1.Location = new Point(78, 27);
+                    cbxParam1.Width = 111;
+                    lbParam2.Text = "发射功率";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    cbxParam2.Items.Clear();
+                    cbxParam2.Items.Add("0 最高");
+                    cbxParam2.Items.Add("1 次高");
+                    cbxParam2.Items.Add("2 次低");
+                    cbxParam2.Items.Add("3 最低");
+                    cbxParam2.Items.Add("4 全功率");
+                    cbxParam2.SelectedIndex = 0;
+                    cbxParam2.Location = new Point(78, 57);
+                    cbxParam2.Width = 111;
+                    cbxParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
                     break;
 
                 case "设置场强门限":
-
+                    lbParam1.Text = "场强门限(50-120)";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "96";
+                    txtParam1.Location = new Point(118, 27);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 60);
                     break;
 
                 case "查询从节点信息":
                 case "查询未抄读成功的从节点信息":
                 case "查询主动注册的从节点信息":
-
+                    lbParam1.Text = "起始序号(0-512)";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "0";
+                    txtParam1.Location = new Point(118, 27);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    lbParam2.Text = "节点数量(0-30)";
+                    lbParam2.Location = new Point(22, 30);
+                    lbParam2.Visible = true;
+                    txtParam2.Text = "20";
+                    txtParam2.Location = new Point(118, 57);
+                    txtParam2.Width = 71;
+                    txtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
                     break;
 
                 case "查询从节点的上一级路由信息":
                 case "查询无线从节点的中继路由信息":
-
+                    lbParam1.Text = "从节点地址";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "";
+                    txtParam1.Location = new Point(88, 27);
+                    txtParam1.Width = 101;
+                    txtParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 60);
                     break;
 
                 case "查询在网状态更新信息":
-
+                    lbParam1.Text = "起始序号(0-512)";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "0";
+                    txtParam1.Location = new Point(118, 27);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    lbParam2.Text = "节点数量(0-30)";
+                    lbParam2.Location = new Point(22, 30);
+                    lbParam2.Visible = true;
+                    txtParam2.Text = "20";
+                    txtParam2.Location = new Point(118, 57);
+                    txtParam2.Width = 71;
+                    txtParam2.Visible = true;
+                    lbParam3.Text = "节点类型";
+                    lbParam3.Location = new Point(22, 90);
+                    lbParam3.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 全网");
+                    cbxParam1.Items.Add("1 在网");
+                    cbxParam1.Items.Add("2 离网");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(78, 87);
+                    cbxParam1.Width = 111;
+                    cbxParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 120);
                     break;
 
                 case "添加从节点":
-
-                    break;
-
-                case "删除从节点":
-
+                    lbParam1.Text = "协议类型";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 透明传输");
+                    cbxParam1.Items.Add("1 DL/T645-97");
+                    cbxParam1.Items.Add("2 DL/T645-07");
+                    cbxParam1.Items.Add("3 单向水表");
+                    cbxParam1.Items.Add("7 DL/T698");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(78, 27);
+                    cbxParam1.Width = 111;
+                    cbxParam1.Visible = true;
+                    lbParam2.Text = "起始地址";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    txtParam2.Location = new Point(78, 57);
+                    txtParam2.Width = 111;
+                    txtParam2.Visible = true;
+                    lbParam3.Text = "添加数量";
+                    lbParam3.Location = new Point(22, 90);
+                    lbParam3.Visible = true;
+                    txtParam1.Location = new Point(78, 87);
+                    txtParam1.Width = 111;
+                    txtParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 120);
                     break;
 
                 case "设置从节点固定中继路径":
-
+                    lbParam1.Text = "从节点地址";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Location = new Point(88, 27);
+                    txtParam1.Width = 101;
+                    txtParam1.Visible = true;
+                    lbParam2.Text = "中继级别";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    txtParam2.Location = new Point(88, 57);
+                    txtParam2.Width = 101;
+                    txtParam2.Visible = true;
+                    lbParam3.Text = "1-N级中继地址(空格分隔)：";
+                    lbParam3.Location = new Point(22, 90);
+                    lbParam3.Visible = true;
+                    txtParam3.Location = new Point(24, 117);
+                    txtParam3.Visible = true;
+                    btParamConfirm.Location = new Point(24, 176);
                     break;
 
                 case "激活从节点主动注册":
-
+                    lbParam4.Text = "开始时间(分钟，发送时设置)";
+                    lbParam4.Location = new Point(22, 30);
+                    lbParam4.Visible = true;
+                    lbParam1.Text = "持续时间(分钟)";
+                    lbParam1.Location = new Point(22, 60);
+                    lbParam1.Visible = true;
+                    txtParam1.Location = new Point(118, 57);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    lbParam2.Text = "从节点重发次数";
+                    lbParam2.Location = new Point(22, 90);
+                    lbParam2.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("1");
+                    cbxParam1.Items.Add("2");
+                    cbxParam1.Items.Add("3");
+                    cbxParam1.Items.Add("4");
+                    cbxParam1.Items.Add("5");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(118, 87);
+                    cbxParam1.Width = 71;
+                    cbxParam1.Visible = true;
+                    lbParam3.Text = "等待时间片个数";
+                    lbParam3.Location = new Point(22, 120);
+                    lbParam3.Visible = true;
+                    txtParam2.Location = new Point(118, 117);
+                    txtParam2.Width = 71;
+                    txtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 176);
                     break;
 
                 case "设置网络规模":
-
+                    lbParam1.Text = "网络规模(2-512)";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "255";
+                    txtParam1.Location = new Point(118, 27);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 60);
                     break;
 
                 case "文件传输":
@@ -580,8 +844,15 @@ namespace ElectricPowerDebuger.Function
             rbtParam1.Visible = false;
             rbtParam2.Visible = false;
             cbxParam1.Visible = false;
+            cbxParam2.Visible = false;
             chkParam1.Visible = false;
             grpParamCmd.Visible = false;
+
+            txtParam1.Text = "";
+            txtParam2.Text = "";
+            txtParam3.Text = "";
+            cbxParam1.Text = "";
+            cbxParam2.Text = "";
         }
 
         private void UpdateRecentCmdName(string cmdText = "")

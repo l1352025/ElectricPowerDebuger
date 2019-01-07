@@ -64,10 +64,6 @@ namespace ElectricPowerDebuger
 
             this.tabPage1.Controls.Add(concSimulatorCurrent);
             
-            if (ProtocolVerChanged != null)
-            {
-                //ProtocolVerChanged(combProtoVer.Text);
-            }
         }
 
         private void chkAutoSave_CheckedChanged(object sender, EventArgs e)
