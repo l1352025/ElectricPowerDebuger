@@ -17,7 +17,6 @@ namespace ElectricPowerDebuger.Function
 {
     public partial class ConcSimulator_North : UserControl
     {
-        private Control usrCtrl;
         private string _configPath;
         private SerialCom _scom;
         private ConcurrentQueue<byte[]> _recvQueue;
@@ -47,19 +46,6 @@ namespace ElectricPowerDebuger.Function
             this.Dock = DockStyle.Fill;
 
             _configPath = FrmMain.SystemConfigPath;
-
-            DataRow row = dtbDoc.NewRow();
-            row[序号] = 100;
-            row[模块地址] = "112233445566";
-            row[表地址] = "112233445566";
-            row[协议类型] = "(2) 07电表";
-            row[版本] = "000032";
-            row[升级状态] = "未升级";
-            row[发送] = 12345;
-            row[接收] = 12345;
-            row[读数] = "123456.78 kWh";
-            dtbDoc.Rows.Add(row);
-
             _scom = new SerialCom();
             _scom.DataReceivedEvent += SerialPort_DataReceived;
             _scom.UnexpectedClosedEvent += SerialPort_UnexpectedClosed;
@@ -348,6 +334,7 @@ namespace ElectricPowerDebuger.Function
 
             HideParamCmdGrp();
 
+            #region 带参数的命令-界面设置
             switch (cmdText)
             {
                 case "数据转发":
@@ -367,9 +354,9 @@ namespace ElectricPowerDebuger.Function
                     lbParam2.Text = "目标地址";
                     lbParam2.Location = new Point(22, 60);
                     lbParam2.Visible = true;
-                    txtParam2.Location = new Point(78, 57);
-                    txtParam2.Width = 111;
-                    txtParam2.Visible = true;
+                    txtParam1.Location = new Point(78, 57);
+                    txtParam1.Width = 111;
+                    txtParam1.Visible = true;
                     lbParam3.Text = "报文内容：";
                     lbParam3.Location = new Point(22, 90);
                     lbParam3.Visible = true;
@@ -434,8 +421,8 @@ namespace ElectricPowerDebuger.Function
                     lbParam1.Location = new Point(22, 30);
                     lbParam1.Visible = true;
                     txtParam1.Text = "60";
-                    txtParam1.Location = new Point(118, 27);
-                    txtParam1.Width = 71;
+                    txtParam1.Location = new Point(128, 27);
+                    txtParam1.Width = 61;
                     txtParam1.Visible = true;
                     btParamConfirm.Location = new Point(24, 60);
                     break;
@@ -494,15 +481,16 @@ namespace ElectricPowerDebuger.Function
                     lbParam1.Location = new Point(22, 30);
                     lbParam1.Visible = true;
                     txtParam1.Text = "0";
-                    txtParam1.Location = new Point(118, 27);
-                    txtParam1.Width = 71;
+                    txtParam1.Location = new Point(128, 27);
+                    txtParam1.Width = 61;
+                    txtParam1.Visible = true;
                     lbParam2.Text = "测试码流";
                     lbParam2.Location = new Point(22, 60);
                     lbParam2.Visible = true;
                     cbxParam2.Items.Clear();
-                    cbxParam2.Items.Add("0 比特0无穷序列");
-                    cbxParam2.Items.Add("1 比特1无穷序列");
-                    cbxParam2.Items.Add("4 比特0/1交替序列");
+                    cbxParam2.Items.Add("0 bit0无穷序列");
+                    cbxParam2.Items.Add("1 bit1无穷序列");
+                    cbxParam2.Items.Add("4 bit0/1交替序列");
                     cbxParam2.SelectedIndex = 2;
                     cbxParam2.Location = new Point(78, 57);
                     cbxParam2.Width = 111;
@@ -511,8 +499,8 @@ namespace ElectricPowerDebuger.Function
                     lbParam3.Location = new Point(22, 90);
                     lbParam3.Visible = true;
                     txtParam2.Text = "16";
-                    txtParam2.Location = new Point(118, 87);
-                    txtParam2.Width = 71;
+                    txtParam2.Location = new Point(128, 87);
+                    txtParam2.Width = 61;
                     txtParam2.Visible = true;
                     btParamConfirm.Location = new Point(24, 120);
                     break;
@@ -543,13 +531,33 @@ namespace ElectricPowerDebuger.Function
                     btParamConfirm.Location = new Point(24, 60);
                     break;
 
+                case "启动广播":
+                    lbParam1.Text = "协议类型";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 透明传输");
+                    cbxParam1.Items.Add("1 DL/T645-97");
+                    cbxParam1.Items.Add("2 DL/T645-07");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(78, 27);
+                    cbxParam1.Width = 111;
+                    cbxParam1.Visible = true;
+                    lbParam3.Text = "报文内容：";
+                    lbParam3.Location = new Point(22, 60);
+                    lbParam3.Visible = true;
+                    txtParam3.Location = new Point(24, 87);
+                    txtParam3.Visible = true;
+                    btParamConfirm.Location = new Point(24, 150);
+                    break;
+
                 case "设置从节点监控最大超时时间":
                     lbParam1.Text = "超时时间(0-255秒)";
                     lbParam1.Location = new Point(22, 30);
                     lbParam1.Visible = true;
                     txtParam1.Text = "60";
-                    txtParam1.Location = new Point(118, 27);
-                    txtParam1.Width = 71;
+                    txtParam1.Location = new Point(128, 27);
+                    txtParam1.Width = 61;
                     txtParam1.Visible = true;
                     btParamConfirm.Location = new Point(24, 60);
                     break;
@@ -575,9 +583,12 @@ namespace ElectricPowerDebuger.Function
                     lbParam1.Text = "信道组号";
                     lbParam1.Location = new Point(22, 30);
                     lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
                     cbxParam1.Items.AddRange(chanels);
+                    cbxParam1.SelectedIndex = 0;
                     cbxParam1.Location = new Point(78, 27);
                     cbxParam1.Width = 111;
+                    cbxParam1.Visible = true;
                     lbParam2.Text = "发射功率";
                     lbParam2.Location = new Point(22, 60);
                     lbParam2.Visible = true;
@@ -599,8 +610,8 @@ namespace ElectricPowerDebuger.Function
                     lbParam1.Location = new Point(22, 30);
                     lbParam1.Visible = true;
                     txtParam1.Text = "96";
-                    txtParam1.Location = new Point(118, 27);
-                    txtParam1.Width = 71;
+                    txtParam1.Location = new Point(128, 27);
+                    txtParam1.Width = 61;
                     txtParam1.Visible = true;
                     btParamConfirm.Location = new Point(24, 60);
                     break;
@@ -612,15 +623,15 @@ namespace ElectricPowerDebuger.Function
                     lbParam1.Location = new Point(22, 30);
                     lbParam1.Visible = true;
                     txtParam1.Text = "0";
-                    txtParam1.Location = new Point(118, 27);
-                    txtParam1.Width = 71;
+                    txtParam1.Location = new Point(128, 27);
+                    txtParam1.Width = 61;
                     txtParam1.Visible = true;
                     lbParam2.Text = "节点数量(0-30)";
-                    lbParam2.Location = new Point(22, 30);
+                    lbParam2.Location = new Point(22, 60);
                     lbParam2.Visible = true;
                     txtParam2.Text = "20";
-                    txtParam2.Location = new Point(118, 57);
-                    txtParam2.Width = 71;
+                    txtParam2.Location = new Point(128, 57);
+                    txtParam2.Width = 61;
                     txtParam2.Visible = true;
                     btParamConfirm.Location = new Point(24, 90);
                     break;
@@ -642,15 +653,15 @@ namespace ElectricPowerDebuger.Function
                     lbParam1.Location = new Point(22, 30);
                     lbParam1.Visible = true;
                     txtParam1.Text = "0";
-                    txtParam1.Location = new Point(118, 27);
-                    txtParam1.Width = 71;
+                    txtParam1.Location = new Point(128, 27);
+                    txtParam1.Width = 61;
                     txtParam1.Visible = true;
                     lbParam2.Text = "节点数量(0-30)";
-                    lbParam2.Location = new Point(22, 30);
+                    lbParam2.Location = new Point(22, 60);
                     lbParam2.Visible = true;
                     txtParam2.Text = "20";
-                    txtParam2.Location = new Point(118, 57);
-                    txtParam2.Width = 71;
+                    txtParam2.Location = new Point(128, 57);
+                    txtParam2.Width = 61;
                     txtParam2.Visible = true;
                     lbParam3.Text = "节点类型";
                     lbParam3.Location = new Point(22, 90);
@@ -660,8 +671,8 @@ namespace ElectricPowerDebuger.Function
                     cbxParam1.Items.Add("1 在网");
                     cbxParam1.Items.Add("2 离网");
                     cbxParam1.SelectedIndex = 0;
-                    cbxParam1.Location = new Point(78, 87);
-                    cbxParam1.Width = 111;
+                    cbxParam1.Location = new Point(128, 87);
+                    cbxParam1.Width = 61;
                     cbxParam1.Visible = true;
                     btParamConfirm.Location = new Point(24, 120);
                     break;
@@ -702,18 +713,43 @@ namespace ElectricPowerDebuger.Function
                     txtParam1.Location = new Point(88, 27);
                     txtParam1.Width = 101;
                     txtParam1.Visible = true;
-                    lbParam2.Text = "中继级别";
+                    lbParam3.Text = "1-N级中继地址(空格分隔)：";
+                    lbParam3.Location = new Point(22, 60);
+                    lbParam3.Visible = true;
+                    txtParam3.Location = new Point(24, 87);
+                    txtParam3.Visible = true;
+                    btParamConfirm.Location = new Point(24, 150);
+                    break;
+
+                case "设置路由工作模式":
+                    lbParam1.Text = "路由工作模式";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 学习");
+                    cbxParam1.Items.Add("1 抄表");
+                    cbxParam1.SelectedIndex = 1;
+                    cbxParam1.Location = new Point(118, 27);
+                    cbxParam1.Width = 71;
+                    cbxParam1.Visible = true;
+                    lbParam2.Text = "注册允许状态";
                     lbParam2.Location = new Point(22, 60);
                     lbParam2.Visible = true;
-                    txtParam2.Location = new Point(88, 57);
-                    txtParam2.Width = 101;
-                    txtParam2.Visible = true;
-                    lbParam3.Text = "1-N级中继地址(空格分隔)：";
+                    cbxParam2.Items.Clear();
+                    cbxParam2.Items.Add("0 禁止");
+                    cbxParam2.Items.Add("1 允许");
+                    cbxParam2.SelectedIndex = 0;
+                    cbxParam2.Location = new Point(118, 57);
+                    cbxParam2.Width = 71;
+                    cbxParam2.Visible = true;
+                    lbParam3.Text = "通信速率(bit/s)";
                     lbParam3.Location = new Point(22, 90);
                     lbParam3.Visible = true;
-                    txtParam3.Location = new Point(24, 117);
-                    txtParam3.Visible = true;
-                    btParamConfirm.Location = new Point(24, 176);
+                    txtParam1.Text = "9600";
+                    txtParam1.Location = new Point(118, 87);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 120);
                     break;
 
                 case "激活从节点主动注册":
@@ -723,6 +759,7 @@ namespace ElectricPowerDebuger.Function
                     lbParam1.Text = "持续时间(分钟)";
                     lbParam1.Location = new Point(22, 60);
                     lbParam1.Visible = true;
+                    txtParam1.Text = "20";
                     txtParam1.Location = new Point(118, 57);
                     txtParam1.Width = 71;
                     txtParam1.Visible = true;
@@ -742,6 +779,7 @@ namespace ElectricPowerDebuger.Function
                     lbParam3.Text = "等待时间片个数";
                     lbParam3.Location = new Point(22, 120);
                     lbParam3.Visible = true;
+                    txtParam2.Text = "5";
                     txtParam2.Location = new Point(118, 117);
                     txtParam2.Width = 71;
                     txtParam2.Visible = true;
@@ -768,9 +806,32 @@ namespace ElectricPowerDebuger.Function
                     cbxParam1.Items.Add("3 主节点模块升级");
                     cbxParam1.Items.Add("7 主节点和子节点模块升级");
                     cbxParam1.Items.Add("8 子节点模块升级");
+                    cbxParam1.SelectedIndex = 1;
                     cbxParam1.Location = new Point(24, 57);
                     cbxParam1.Width = 165;
                     cbxParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
+                    break;
+
+                case "按类型读取日志":
+                    lbParam1.Text = "读取类型";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 时-日志");
+                    cbxParam1.Items.Add("1 日-日志");
+                    cbxParam1.Items.Add("2 月-日志");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(78, 27);
+                    cbxParam1.Width = 111;
+                    cbxParam1.Visible = true;
+                    lbParam2.Text = "读取时间(月/日 时)";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    txtParam2.Text = DateTime.Now.ToString("MM/dd HH");
+                    txtParam2.Location = new Point(133, 57);
+                    txtParam2.Width = 56;
+                    txtParam2.Visible = true;
                     btParamConfirm.Location = new Point(24, 90);
                     break;
 
@@ -804,6 +865,7 @@ namespace ElectricPowerDebuger.Function
                     cbxParam1.Items.Add("0 档案信息");
                     cbxParam1.Items.Add("1 邻居表");
                     cbxParam1.Items.Add("2 路径表");
+                    cbxParam1.SelectedIndex = 0;
                     cbxParam1.Location = new Point(78, 27);
                     cbxParam1.Width = 111;
                     cbxParam1.Visible = true;
@@ -821,8 +883,9 @@ namespace ElectricPowerDebuger.Function
                     isParamCmd = false;
                     break;
             }
+            #endregion
 
-            if(isParamCmd)
+            if (isParamCmd)
             {
                 grpParamCmd.Text = cmdText;
                 grpParamCmd.Visible = true;
@@ -883,6 +946,59 @@ namespace ElectricPowerDebuger.Function
 
         }
 
+        private void txtParam1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if ("0123456789\b\r\x03\x16\x18".IndexOf(e.KeyChar) < 0)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (e.KeyChar == '\r')
+            {
+                txtParam1.Text = txtParam1.Text.PadLeft(12, '0');
+                e.Handled = true;
+            }
+            if (txtParam1.Text.Length >= 12 && e.KeyChar != '\b')
+            {
+                if (txtParam1.SelectionLength == 0)
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void txtParam2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if ("0123456789\b\r\x03\x16\x18".IndexOf(e.KeyChar) < 0)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (e.KeyChar == '\r')
+            {
+                txtParam2.Text = txtParam2.Text.PadLeft(12, '0');
+                e.Handled = true;
+            }
+            if (txtParam2.Text.Length >= 12 && e.KeyChar != '\b')
+            {
+                if (txtParam2.SelectionLength == 0)
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void txtParam3_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if ("0123456789abcdef\b\r\x03\x16\x18".IndexOf(e.KeyChar) < 0)
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+
         private void btParamConfirm_Click(object sender, EventArgs e)
         {
             string cmdText = grpParamCmd.Text;
@@ -911,25 +1027,284 @@ namespace ElectricPowerDebuger.Function
             TempBuf[txLen++] = 0;
             TempBuf[txLen++] = _fsn++;  // info-6 
 
-            if(cmd.Name == "" || cmd.Name == "")
+            if(cmd.Name == "数据转发" || cmd.Name == "读取计量箱相关事件" || cmd.Name == "路由数据转发")
             {
-                Util.GetByteAddrFromString(_strCenterAddr, TempBuf, txLen, true);
+                if (string.IsNullOrWhiteSpace(cbxParam1.Text)
+                        || string.IsNullOrWhiteSpace(txtParam1.Text)
+                        || string.IsNullOrWhiteSpace(txtParam3.Text))
+                {
+                    ShowMsg("请输入所需的参数后，再按确认键\r\n", Color.Red);
+                    return;
+                }
+
+                txtParam1.Text = txtParam1.Text.PadLeft(12, '0');
+
+                Util.GetByteAddrFromString(_strCenterAddr, TempBuf, txLen, true); // 源地址
+                txLen += 6;
+                Util.GetByteAddrFromString(txtParam1.Text, TempBuf, txLen, true); // 目的地址
+                txLen += 6;
             }
 
+            #region 带参数的命令-界面设置
             switch (cmd.Name)
             {
-                case "":
-                    
+                case "数据转发":
+                case "路由数据转发":
+                case "读取计量箱相关事件":
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // 协议类型
+                    if (cmd.Name == "路由数据转发")
+                    {
+                        TempBuf[txLen++] = (byte)(chkParam1.Checked ? 1 : 0);           // 延时相关
+                    }
+                    TempBuf[txLen++] = (byte)(txtParam3.Text.Trim().Length / 2);        // 报文长度
+                    txLen += Util.GetByteAddrFromString(txtParam3.Text.Trim(), TempBuf, txLen);  // 报文内容
                     break;
 
-                case "1":
+                case "查询从节点侦听信息":
+                    TempBuf[txLen++] = Convert.ToByte(txtParam1.Text.Trim());       // "起始序号(0-255)";
+                    TempBuf[txLen++] = Convert.ToByte(txtParam2.Text.Trim());       // "节点数量(1-16)";
+                    break;
 
+                case "查询本地通信模块的AFN索引":
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // "AFN功能码：";
+                    break;
+
+                case "发送测试":
+                    TempBuf[txLen++] = Convert.ToByte(txtParam1.Text.Trim());       // "持续时间(0-255秒)";
+                    break;
+
+                case "本地通信模块报文通信测试":
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // "通信速率";
+                    txtParam1.Text = txtParam2.Text.PadLeft(12, '0');
+                    Util.GetByteAddrFromString(txtParam1.Text, TempBuf, txLen, true);   // 目的地址
+                    txLen += 6;
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam2.Text.Split(' ')[0]);    // "协议类型";
+                    TempBuf[txLen++] = (byte)(txtParam3.Text.Trim().Length / 2);        // 报文长度
+                    txLen += Util.GetByteAddrFromString(txtParam3.Text.Trim(), TempBuf, txLen);  // 报文内容
+                    break;
+
+                case "发射功率测试":
+                    TempBuf[txLen++] = Convert.ToByte(txtParam1.Text.Trim());           // "信道索引" 
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam2.Text.Split(' ')[0]);    // "测试码流";
+                    TempBuf[txLen++] = Convert.ToByte(txtParam2.Text.Trim());       // "持续时间(0-255秒)";
+                    break;
+
+                case "设置主节点地址":
+                    txtParam1.Text = txtParam1.Text.PadLeft(12, '0');
+                    Util.GetByteAddrFromString(txtParam1.Text, TempBuf, txLen, true);   // 节点地址
+                    txLen += 6;
+                    break;
+
+                case "允许/禁止从节点上报":
+                    TempBuf[txLen++] = Convert.ToByte(rbtParam1.Checked ? 1 : 0);       //"事件上报"-允许/禁止;
+                    break;
+
+                case "启动广播":
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // "协议类型";
+                    TempBuf[txLen++] = (byte)(txtParam3.Text.Trim().Length / 2);        // 报文长度
+                    txLen += Util.GetByteAddrFromString(txtParam3.Text.Trim(), TempBuf, txLen);  // 报文内容
+                    break;
+
+                case "设置从节点监控最大超时时间":
+                    TempBuf[txLen++] = Convert.ToByte(txtParam1.Text.Trim());           // "超时时间(0-255秒)";
+                    break;
+
+                case "设置无线通信参数":
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // "信道组号";
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam2.Text.Split(' ')[0]);    // "发射功率";
+                    break;
+
+                case "设置场强门限":
+                    TempBuf[txLen++] = Convert.ToByte(txtParam1.Text.Trim());           // "场强门限(50-120)";
+                    break;
+
+                case "查询从节点信息":
+                case "查询未抄读成功的从节点信息":
+                case "查询主动注册的从节点信息":
+                    TempBuf[txLen++] = Convert.ToByte(txtParam1.Text.Trim());           // "起始序号(0-512)";
+                    TempBuf[txLen++] = Convert.ToByte(txtParam2.Text.Trim());           // "节点数量(0-30)";
+                    break;
+
+                case "查询从节点的上一级路由信息":
+                case "查询无线从节点的中继路由信息":
+                    txtParam1.Text = txtParam1.Text.PadLeft(12, '0');
+                    Util.GetByteAddrFromString(txtParam1.Text, TempBuf, txLen, true);   // 从节点地址
+                    txLen += 6;
+                    break;
+
+                case "查询在网状态更新信息":
+                    TempBuf[txLen++] = Convert.ToByte(txtParam1.Text.Trim());           // "起始序号(0-512)";
+                    TempBuf[txLen++] = Convert.ToByte(txtParam2.Text.Trim());           // "节点数量(0-30)";
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // "节点类型";
+                    break;
+
+                case "添加从节点":
+                    byte proto = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);          // "协议类型";
+                    ulong addrBegin = Convert.ToUInt64(txtParam2.Text.Trim());          // "起始地址";
+                    ushort cnt = Convert.ToUInt16(txtParam1.Text.Trim());               // "添加数量";
+
+                    break;
+
+                case "设置从节点固定中继路径":
+                    if (string.IsNullOrWhiteSpace(txtParam1.Text)
+                        || string.IsNullOrWhiteSpace(txtParam3.Text))
+                    {
+                        ShowMsg("请输入所需的参数后，再按确认键\r\n", Color.Red);
+                        return;
+                    }
+                    txtParam1.Text = txtParam1.Text.PadLeft(12, '0');
+                    Util.GetByteAddrFromString(txtParam1.Text, TempBuf, txLen, true);   // 从节点地址
+                    txLen += 6;
+
+                    string[] strs = txtParam3.Text.Trim().Split(' ');                   // "1-N级中继地址(空格分隔)：";
+                    TempBuf[txLen++] = Convert.ToByte(strs.Length);                     // "中继级别";
+                    for (int i = 0; i < strs.Length; i++)
+                    {
+                        strs[i] = strs[i].PadLeft(12, '0');
+                        txLen += Util.GetByteAddrFromString(strs[i], TempBuf, txLen, true);   // 中继地址
+                    }
+                    break;
+
+                case "设置路由工作模式":
+                    byte bit0 = (byte)(cbxParam1.Text.Split(' ')[0] == "1" ? 0x01 : 0x00);  // "路由工作模式";
+                    byte bit1 = (byte)(cbxParam2.Text.Split(' ')[0] == "1" ? 0x02 : 0x00);  // "注册允许状态";
+                    TempBuf[txLen++] = (byte)(bit0 | bit1);
+                    ushort baud = Convert.ToUInt16(txtParam1.Text.Trim());                  // "通信速率(bit/s)";
+                    TempBuf[txLen++] = (byte)(baud & 0xFF);
+                    TempBuf[txLen++] = (byte)(baud >> 8);
+                    break;
+
+                case "激活从节点主动注册":
+                    lbParam4.Text = "开始时间(分钟，发送时设置)";
+                    lbParam4.Location = new Point(22, 30);
+                    lbParam4.Visible = true;
+                    lbParam1.Text = "持续时间(分钟)";
+                    lbParam1.Location = new Point(22, 60);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "20";
+                    txtParam1.Location = new Point(118, 57);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    lbParam2.Text = "从节点重发次数";
+                    lbParam2.Location = new Point(22, 90);
+                    lbParam2.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("1");
+                    cbxParam1.Items.Add("2");
+                    cbxParam1.Items.Add("3");
+                    cbxParam1.Items.Add("4");
+                    cbxParam1.Items.Add("5");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(118, 87);
+                    cbxParam1.Width = 71;
+                    cbxParam1.Visible = true;
+                    lbParam3.Text = "等待时间片个数";
+                    lbParam3.Location = new Point(22, 120);
+                    lbParam3.Visible = true;
+                    txtParam2.Text = "5";
+                    txtParam2.Location = new Point(118, 117);
+                    txtParam2.Width = 71;
+                    txtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 176);
+                    break;
+
+                case "设置网络规模":
+                    lbParam1.Text = "网络规模(2-512)";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    txtParam1.Text = "255";
+                    txtParam1.Location = new Point(118, 27);
+                    txtParam1.Width = 71;
+                    txtParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 60);
+                    break;
+
+                case "文件传输":
+                    lbParam1.Text = "文件标识：";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 清除下装文件");
+                    cbxParam1.Items.Add("3 主节点模块升级");
+                    cbxParam1.Items.Add("7 主节点和子节点模块升级");
+                    cbxParam1.Items.Add("8 子节点模块升级");
+                    cbxParam1.SelectedIndex = 1;
+                    cbxParam1.Location = new Point(24, 57);
+                    cbxParam1.Width = 165;
+                    cbxParam1.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
+                    break;
+
+                case "按类型读取日志":
+                    lbParam1.Text = "读取类型";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 时-日志");
+                    cbxParam1.Items.Add("1 日-日志");
+                    cbxParam1.Items.Add("2 月-日志");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(78, 27);
+                    cbxParam1.Width = 111;
+                    cbxParam1.Visible = true;
+                    lbParam2.Text = "读取时间(月/日 时)";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    txtParam2.Text = DateTime.Now.ToString("MM/dd HH");
+                    txtParam2.Location = new Point(133, 57);
+                    txtParam2.Width = 56;
+                    txtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
+                    break;
+
+                case "设置广播维护开关":
+                    lbParam1.Text = "维护开关";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    rbtParam1.Text = "开启";
+                    rbtParam1.Location = new Point(88, 27);
+                    rbtParam1.Width = 47;
+                    rbtParam1.Visible = true;
+                    rbtParam2.Text = "关闭";
+                    rbtParam2.Location = new Point(142, 27);
+                    rbtParam2.Width = 47;
+                    rbtParam2.Visible = true;
+                    lbParam2.Text = "维护时间(时:分)";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    txtParam2.Text = DateTime.Now.AddHours(1).ToString("HH:mm");
+                    txtParam2.Location = new Point(130, 57);
+                    txtParam2.Width = 59;
+                    txtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
+                    break;
+
+                case "读取子节点参数信息":
+                    lbParam1.Text = "读取类型";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 档案信息");
+                    cbxParam1.Items.Add("1 邻居表");
+                    cbxParam1.Items.Add("2 路径表");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(78, 27);
+                    cbxParam1.Width = 111;
+                    cbxParam1.Visible = true;
+                    lbParam2.Text = "节点地址";
+                    lbParam2.Location = new Point(22, 60);
+                    lbParam2.Visible = true;
+                    txtParam2.Location = new Point(78, 57);
+                    txtParam2.Width = 111;
+                    txtParam2.Visible = true;
+                    btParamConfirm.Location = new Point(24, 90);
                     break;
 
                 default:
                     cmd = null;
                     break;
             }
+            #endregion
 
             if (cmd == null) return;
 
@@ -951,10 +1326,7 @@ namespace ElectricPowerDebuger.Function
 
             if (cmd.TxBuf == null || cmd.TxBuf.Length == 0) return;
 
-            while (cmd.Params.Count < 3)    //Params0 - cmdName, Params1 - cmdParam, Params2 - cmdRecvMsg
-            {
-                cmd.Params.Add("");
-            }
+            
 
             byte[] buf = cmd.TxBuf;
 
@@ -975,7 +1347,7 @@ namespace ElectricPowerDebuger.Function
         private void RecvCmd(Command cmd)
         {
             string msg = "", cmdName = "", strVal = "", strTmp;
-            int index = 0, strLen = 0;
+            //int index = 0, strLen = 0;
 
             if (cmd.RxBuf == null || cmd.RxBuf.Length == 0) return;
 
@@ -1021,6 +1393,23 @@ namespace ElectricPowerDebuger.Function
                 + strVal;
             ShowMsg(msg, Color.DarkRed);
 
+        }
+        #endregion
+
+        #region 添加档案
+        private void AddDocToTbl()
+        {
+            DataRow row = tbDoc.NewRow();
+            row[序号] = 100;
+            row[模块地址] = "112233445566";
+            row[表地址] = "112233445566";
+            row[协议类型] = "(2) 07电表";
+            row[版本] = "000032";
+            row[升级状态] = "未升级";
+            row[发送] = 12345;
+            row[接收] = 12345;
+            row[读数] = "123456.78 kWh";
+            tbDoc.Rows.Add(row);
         }
         #endregion
 
@@ -1158,6 +1547,7 @@ namespace ElectricPowerDebuger.Function
                 _scom.Close();
             }
         }
+
         #endregion
 
     }

@@ -18,7 +18,6 @@ namespace ElectricPowerDebuger.Function
 {
     public partial class ConcSimulator : UserControl
     {
-        Control usrCtrl;
         private string strConcAddr = "";
         protected bool bPortOpened = false;
         private int PortBufRdPos = 0;
@@ -103,34 +102,6 @@ namespace ElectricPowerDebuger.Function
                 tsmiAutoScrollCommMsg.Checked = true;
             }
 
-            FrmMain.ProtocolVerChanged += OnProtoVerChanged;
-        }
-
-        private void OnProtoVerChanged(string msg)
-        {
-            
-
-            switch(msg)
-            {
-                case "国网-版本":
-                    usrCtrl = new ConcSimulator_North();
-                    break;
-
-                case "南网-版本":
-                    usrCtrl = new ConcSimulator();
-                    break;
-
-                default:
-                    usrCtrl = new ConcSimulator();
-                    break;
-            }
-
-            Control tabPage = this.Parent;
-
-            tabPage.Controls.Remove(this);
-            tabPage.Controls.Add(usrCtrl);
-
-            FrmMain.ProtocolVerChanged -= OnProtoVerChanged;
         }
 
         #region 串口通信控制

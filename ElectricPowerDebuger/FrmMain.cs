@@ -20,7 +20,7 @@ namespace ElectricPowerDebuger
         private static Control logManager = new LogManager();
 
         public delegate void FormEventNotify(string msg);
-        public static event FormEventNotify ProtocolVerChanged;
+        //public static event FormEventNotify ProtocolVerChanged;
         public static event FormEventNotify LogAutoSaveStateChanged;
 
         public FrmMain()

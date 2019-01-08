@@ -62,8 +62,8 @@
             this.日志类型 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.日志数据 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.rtbLogText = new System.Windows.Forms.RichTextBox();
-            this.treeProtocol = new System.Windows.Forms.TreeView();
             this.label3 = new System.Windows.Forms.Label();
+            this.treeProtocol = new System.Windows.Forms.TreeView();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -107,19 +107,22 @@
             this.grpNetCnt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.grpNetCnt.Controls.Add(this.treeNetCnt);
-            this.grpNetCnt.Location = new System.Drawing.Point(3, 277);
+            this.grpNetCnt.Location = new System.Drawing.Point(-1, 277);
             this.grpNetCnt.Name = "grpNetCnt";
-            this.grpNetCnt.Size = new System.Drawing.Size(300, 281);
+            this.grpNetCnt.Size = new System.Drawing.Size(307, 281);
             this.grpNetCnt.TabIndex = 0;
             this.grpNetCnt.TabStop = false;
             this.grpNetCnt.Text = "组网统计";
             // 
             // treeNetCnt
             // 
-            this.treeNetCnt.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeNetCnt.Location = new System.Drawing.Point(3, 17);
+            this.treeNetCnt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeNetCnt.Location = new System.Drawing.Point(1, 17);
+            this.treeNetCnt.Margin = new System.Windows.Forms.Padding(0);
             this.treeNetCnt.Name = "treeNetCnt";
-            this.treeNetCnt.Size = new System.Drawing.Size(294, 261);
+            this.treeNetCnt.Size = new System.Drawing.Size(306, 267);
             this.treeNetCnt.TabIndex = 0;
             // 
             // grpLogMgr
@@ -324,6 +327,7 @@
             // 
             // splitContainer2
             // 
+            this.splitContainer2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
@@ -334,14 +338,15 @@
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.treeProtocol);
             this.splitContainer2.Panel2.Controls.Add(this.label3);
-            this.splitContainer2.Size = new System.Drawing.Size(791, 561);
-            this.splitContainer2.SplitterDistance = 568;
+            this.splitContainer2.Panel2.Controls.Add(this.treeProtocol);
+            this.splitContainer2.Size = new System.Drawing.Size(793, 563);
+            this.splitContainer2.SplitterDistance = 569;
             this.splitContainer2.TabIndex = 0;
             // 
             // splitContainer3
             // 
+            this.splitContainer3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer3.Location = new System.Drawing.Point(0, 0);
             this.splitContainer3.Name = "splitContainer3";
@@ -354,22 +359,26 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.rtbLogText);
-            this.splitContainer3.Size = new System.Drawing.Size(568, 561);
-            this.splitContainer3.SplitterDistance = 443;
+            this.splitContainer3.Size = new System.Drawing.Size(569, 563);
+            this.splitContainer3.SplitterDistance = 444;
             this.splitContainer3.TabIndex = 0;
             // 
             // listView1
             // 
+            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listView1.BackColor = System.Drawing.SystemColors.Control;
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.序号,
             this.日期,
             this.时间,
             this.日志类型,
             this.日志数据});
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listView1.GridLines = true;
             this.listView1.Location = new System.Drawing.Point(0, 0);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(568, 443);
+            this.listView1.Size = new System.Drawing.Size(567, 442);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -396,22 +405,14 @@
             // 
             // rtbLogText
             // 
-            this.rtbLogText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbLogText.Location = new System.Drawing.Point(0, 0);
-            this.rtbLogText.Name = "rtbLogText";
-            this.rtbLogText.Size = new System.Drawing.Size(568, 114);
-            this.rtbLogText.TabIndex = 0;
-            this.rtbLogText.Text = "";
-            // 
-            // treeProtocol
-            // 
-            this.treeProtocol.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.rtbLogText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeProtocol.Location = new System.Drawing.Point(3, 25);
-            this.treeProtocol.Name = "treeProtocol";
-            this.treeProtocol.Size = new System.Drawing.Size(214, 534);
-            this.treeProtocol.TabIndex = 1;
+            this.rtbLogText.Location = new System.Drawing.Point(-3, 0);
+            this.rtbLogText.Name = "rtbLogText";
+            this.rtbLogText.Size = new System.Drawing.Size(571, 111);
+            this.rtbLogText.TabIndex = 0;
+            this.rtbLogText.Text = "";
             // 
             // label3
             // 
@@ -421,6 +422,16 @@
             this.label3.Size = new System.Drawing.Size(53, 12);
             this.label3.TabIndex = 0;
             this.label3.Text = "协议解析";
+            // 
+            // treeProtocol
+            // 
+            this.treeProtocol.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeProtocol.Location = new System.Drawing.Point(0, 25);
+            this.treeProtocol.Name = "treeProtocol";
+            this.treeProtocol.Size = new System.Drawing.Size(218, 537);
+            this.treeProtocol.TabIndex = 1;
             // 
             // LogManager
             // 
@@ -485,7 +496,5 @@
         private System.Windows.Forms.RichTextBox rtbLogText;
         private System.Windows.Forms.TreeView treeProtocol;
         private System.Windows.Forms.Label label3;
-
-
     }
 }

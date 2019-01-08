@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label12 = new System.Windows.Forms.Label();
             this.btPortCtrl = new System.Windows.Forms.Button();
@@ -66,6 +66,7 @@
             this.btReadAllDoc = new System.Windows.Forms.Button();
             this.grpCmdMenu = new System.Windows.Forms.GroupBox();
             this.grpParamCmd = new System.Windows.Forms.GroupBox();
+            this.cbxParam2 = new System.Windows.Forms.ComboBox();
             this.chkParam1 = new System.Windows.Forms.CheckBox();
             this.cbxParam1 = new System.Windows.Forms.ComboBox();
             this.txtParam3 = new System.Windows.Forms.TextBox();
@@ -100,13 +101,13 @@
             this.h链路测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.发送测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.从节点点名ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.报文通信测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.本地通信模块报文通信测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.发射功率测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.h控制命令ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.设置主节点地址ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.允许禁止从节点上报ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.启动广播ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.设置从节点最大超时时间ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.设置从节点监控最大超时时间ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.设置无线通信参数ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.启动全网感知ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.设置场强门限ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -118,7 +119,7 @@
             this.查询路由运行状态ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询未抄读成功的从节点信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询主动注册的从节点信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.查询无线从节点中继路由信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.查询无线从节点的中继路由信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询全网感知状态ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询在网状态更新信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询网络规模ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -126,7 +127,7 @@
             this.h路由设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.添加从节点ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.删除从节点ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.设置从节点固定中继路由ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.设置从节点固定中继路径ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.设置路由工作模式ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.激活从节点主动注册ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.禁止从节点主动注册ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -149,6 +150,7 @@
             this.读取子节点概要信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.读取中心节点邻居表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.lbCmdStatus = new System.Windows.Forms.Label();
             this.lbCenterAddr = new System.Windows.Forms.Label();
             this.lbDocCnt = new System.Windows.Forms.Label();
             this.dgvDoc = new System.Windows.Forms.DataGridView();
@@ -161,27 +163,6 @@
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dsDoc = new System.Data.DataSet();
-            this.dtbDoc = new System.Data.DataTable();
-            this.序号 = new System.Data.DataColumn();
-            this.模块地址 = new System.Data.DataColumn();
-            this.表地址 = new System.Data.DataColumn();
-            this.协议类型 = new System.Data.DataColumn();
-            this.版本 = new System.Data.DataColumn();
-            this.升级状态 = new System.Data.DataColumn();
-            this.发送 = new System.Data.DataColumn();
-            this.接收 = new System.Data.DataColumn();
-            this.读数 = new System.Data.DataColumn();
-            this.lbCmdStatus = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.rtbMsg = new System.Windows.Forms.RichTextBox();
             this.序号DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.模块地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.表地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -191,7 +172,26 @@
             this.发送DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.接收DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.读数DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cbxParam2 = new System.Windows.Forms.ComboBox();
+            this.dsDoc = new System.Data.DataSet();
+            this.tbDoc = new System.Data.DataTable();
+            this.序号 = new System.Data.DataColumn();
+            this.模块地址 = new System.Data.DataColumn();
+            this.表地址 = new System.Data.DataColumn();
+            this.协议类型 = new System.Data.DataColumn();
+            this.版本 = new System.Data.DataColumn();
+            this.升级状态 = new System.Data.DataColumn();
+            this.发送 = new System.Data.DataColumn();
+            this.接收 = new System.Data.DataColumn();
+            this.读数 = new System.Data.DataColumn();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.rtbMsg = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -207,7 +207,7 @@
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDoc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dsDoc)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dtbDoc)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDoc)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -215,6 +215,7 @@
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -295,8 +296,9 @@
             this.grpLoopReadAmeter.Controls.Add(this.label3);
             this.grpLoopReadAmeter.Controls.Add(this.label2);
             this.grpLoopReadAmeter.Location = new System.Drawing.Point(3, 490);
+            this.grpLoopReadAmeter.MinimumSize = new System.Drawing.Size(363, 126);
             this.grpLoopReadAmeter.Name = "grpLoopReadAmeter";
-            this.grpLoopReadAmeter.Size = new System.Drawing.Size(363, 143);
+            this.grpLoopReadAmeter.Size = new System.Drawing.Size(363, 126);
             this.grpLoopReadAmeter.TabIndex = 2;
             this.grpLoopReadAmeter.TabStop = false;
             this.grpLoopReadAmeter.Text = "循环抄表";
@@ -617,6 +619,14 @@
             this.grpParamCmd.Text = "当前命令名";
             this.grpParamCmd.Visible = false;
             // 
+            // cbxParam2
+            // 
+            this.cbxParam2.FormattingEnabled = true;
+            this.cbxParam2.Location = new System.Drawing.Point(77, 112);
+            this.cbxParam2.Name = "cbxParam2";
+            this.cbxParam2.Size = new System.Drawing.Size(112, 20);
+            this.cbxParam2.TabIndex = 7;
+            // 
             // chkParam1
             // 
             this.chkParam1.AutoSize = true;
@@ -642,6 +652,7 @@
             this.txtParam3.Name = "txtParam3";
             this.txtParam3.Size = new System.Drawing.Size(165, 56);
             this.txtParam3.TabIndex = 4;
+            this.txtParam3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtParam3_KeyPress);
             // 
             // rbtParam2
             // 
@@ -657,7 +668,7 @@
             // 
             this.rbtParam1.AutoSize = true;
             this.rbtParam1.Checked = true;
-            this.rbtParam1.Location = new System.Drawing.Point(88, 136);
+            this.rbtParam1.Location = new System.Drawing.Point(78, 136);
             this.rbtParam1.Name = "rbtParam1";
             this.rbtParam1.Size = new System.Drawing.Size(47, 16);
             this.rbtParam1.TabIndex = 3;
@@ -671,6 +682,7 @@
             this.txtParam2.Name = "txtParam2";
             this.txtParam2.Size = new System.Drawing.Size(111, 21);
             this.txtParam2.TabIndex = 2;
+            this.txtParam2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtParam2_KeyPress);
             // 
             // txtParam1
             // 
@@ -678,6 +690,7 @@
             this.txtParam1.Name = "txtParam1";
             this.txtParam1.Size = new System.Drawing.Size(111, 21);
             this.txtParam1.TabIndex = 2;
+            this.txtParam1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtParam1_KeyPress);
             // 
             // btParamConfirm
             // 
@@ -886,7 +899,7 @@
             this.h链路测试ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.发送测试ToolStripMenuItem,
             this.从节点点名ToolStripMenuItem,
-            this.报文通信测试ToolStripMenuItem,
+            this.本地通信模块报文通信测试ToolStripMenuItem,
             this.发射功率测试ToolStripMenuItem});
             this.h链路测试ToolStripMenuItem.Name = "h链路测试ToolStripMenuItem";
             this.h链路测试ToolStripMenuItem.Size = new System.Drawing.Size(118, 21);
@@ -897,25 +910,25 @@
             // 发送测试ToolStripMenuItem
             // 
             this.发送测试ToolStripMenuItem.Name = "发送测试ToolStripMenuItem";
-            this.发送测试ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.发送测试ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.发送测试ToolStripMenuItem.Text = "发送测试";
             // 
             // 从节点点名ToolStripMenuItem
             // 
             this.从节点点名ToolStripMenuItem.Name = "从节点点名ToolStripMenuItem";
-            this.从节点点名ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.从节点点名ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.从节点点名ToolStripMenuItem.Text = "从节点点名";
             // 
-            // 报文通信测试ToolStripMenuItem
+            // 本地通信模块报文通信测试ToolStripMenuItem
             // 
-            this.报文通信测试ToolStripMenuItem.Name = "报文通信测试ToolStripMenuItem";
-            this.报文通信测试ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.报文通信测试ToolStripMenuItem.Text = "报文通信测试";
+            this.本地通信模块报文通信测试ToolStripMenuItem.Name = "本地通信模块报文通信测试ToolStripMenuItem";
+            this.本地通信模块报文通信测试ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.本地通信模块报文通信测试ToolStripMenuItem.Text = "本地通信模块报文通信测试";
             // 
             // 发射功率测试ToolStripMenuItem
             // 
             this.发射功率测试ToolStripMenuItem.Name = "发射功率测试ToolStripMenuItem";
-            this.发射功率测试ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.发射功率测试ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.发射功率测试ToolStripMenuItem.Text = "发射功率测试";
             // 
             // h控制命令ToolStripMenuItem
@@ -924,7 +937,7 @@
             this.设置主节点地址ToolStripMenuItem,
             this.允许禁止从节点上报ToolStripMenuItem,
             this.启动广播ToolStripMenuItem,
-            this.设置从节点最大超时时间ToolStripMenuItem,
+            this.设置从节点监控最大超时时间ToolStripMenuItem,
             this.设置无线通信参数ToolStripMenuItem,
             this.启动全网感知ToolStripMenuItem,
             this.设置场强门限ToolStripMenuItem,
@@ -938,56 +951,56 @@
             // 设置主节点地址ToolStripMenuItem
             // 
             this.设置主节点地址ToolStripMenuItem.Name = "设置主节点地址ToolStripMenuItem";
-            this.设置主节点地址ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.设置主节点地址ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.设置主节点地址ToolStripMenuItem.Text = "设置主节点地址";
             this.设置主节点地址ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 允许禁止从节点上报ToolStripMenuItem
             // 
             this.允许禁止从节点上报ToolStripMenuItem.Name = "允许禁止从节点上报ToolStripMenuItem";
-            this.允许禁止从节点上报ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.允许禁止从节点上报ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.允许禁止从节点上报ToolStripMenuItem.Text = "允许/禁止从节点上报";
             this.允许禁止从节点上报ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 启动广播ToolStripMenuItem
             // 
             this.启动广播ToolStripMenuItem.Name = "启动广播ToolStripMenuItem";
-            this.启动广播ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.启动广播ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.启动广播ToolStripMenuItem.Text = "启动广播";
             this.启动广播ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // 设置从节点最大超时时间ToolStripMenuItem
+            // 设置从节点监控最大超时时间ToolStripMenuItem
             // 
-            this.设置从节点最大超时时间ToolStripMenuItem.Name = "设置从节点最大超时时间ToolStripMenuItem";
-            this.设置从节点最大超时时间ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.设置从节点最大超时时间ToolStripMenuItem.Text = "设置从节点最大超时时间";
-            this.设置从节点最大超时时间ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.设置从节点监控最大超时时间ToolStripMenuItem.Name = "设置从节点监控最大超时时间ToolStripMenuItem";
+            this.设置从节点监控最大超时时间ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.设置从节点监控最大超时时间ToolStripMenuItem.Text = "设置从节点监控最大超时时间";
+            this.设置从节点监控最大超时时间ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 设置无线通信参数ToolStripMenuItem
             // 
             this.设置无线通信参数ToolStripMenuItem.Name = "设置无线通信参数ToolStripMenuItem";
-            this.设置无线通信参数ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.设置无线通信参数ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.设置无线通信参数ToolStripMenuItem.Text = "设置无线通信参数";
             this.设置无线通信参数ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 启动全网感知ToolStripMenuItem
             // 
             this.启动全网感知ToolStripMenuItem.Name = "启动全网感知ToolStripMenuItem";
-            this.启动全网感知ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.启动全网感知ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.启动全网感知ToolStripMenuItem.Text = "启动全网感知";
             this.启动全网感知ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 设置场强门限ToolStripMenuItem
             // 
             this.设置场强门限ToolStripMenuItem.Name = "设置场强门限ToolStripMenuItem";
-            this.设置场强门限ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.设置场强门限ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.设置场强门限ToolStripMenuItem.Text = "设置场强门限";
             this.设置场强门限ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 设置中心节点时间ToolStripMenuItem
             // 
             this.设置中心节点时间ToolStripMenuItem.Name = "设置中心节点时间ToolStripMenuItem";
-            this.设置中心节点时间ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.设置中心节点时间ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.设置中心节点时间ToolStripMenuItem.Text = "设置中心节点时间";
             this.设置中心节点时间ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -1000,7 +1013,7 @@
             this.查询路由运行状态ToolStripMenuItem,
             this.查询未抄读成功的从节点信息ToolStripMenuItem,
             this.查询主动注册的从节点信息ToolStripMenuItem,
-            this.查询无线从节点中继路由信息ToolStripMenuItem,
+            this.查询无线从节点的中继路由信息ToolStripMenuItem,
             this.查询全网感知状态ToolStripMenuItem,
             this.查询在网状态更新信息ToolStripMenuItem,
             this.查询网络规模ToolStripMenuItem,
@@ -1014,77 +1027,77 @@
             // 查询从节点数量ToolStripMenuItem
             // 
             this.查询从节点数量ToolStripMenuItem.Name = "查询从节点数量ToolStripMenuItem";
-            this.查询从节点数量ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询从节点数量ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询从节点数量ToolStripMenuItem.Text = "查询从节点数量";
             this.查询从节点数量ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 查询从节点信息ToolStripMenuItem
             // 
             this.查询从节点信息ToolStripMenuItem.Name = "查询从节点信息ToolStripMenuItem";
-            this.查询从节点信息ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询从节点信息ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询从节点信息ToolStripMenuItem.Text = "查询从节点信息";
             this.查询从节点信息ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 查询指定从节点的ToolStripMenuItem
             // 
             this.查询指定从节点的ToolStripMenuItem.Name = "查询指定从节点的ToolStripMenuItem";
-            this.查询指定从节点的ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询指定从节点的ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询指定从节点的ToolStripMenuItem.Text = "查询从节点的上一级路由信息";
             this.查询指定从节点的ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 查询路由运行状态ToolStripMenuItem
             // 
             this.查询路由运行状态ToolStripMenuItem.Name = "查询路由运行状态ToolStripMenuItem";
-            this.查询路由运行状态ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询路由运行状态ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询路由运行状态ToolStripMenuItem.Text = "查询路由运行状态";
             this.查询路由运行状态ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 查询未抄读成功的从节点信息ToolStripMenuItem
             // 
             this.查询未抄读成功的从节点信息ToolStripMenuItem.Name = "查询未抄读成功的从节点信息ToolStripMenuItem";
-            this.查询未抄读成功的从节点信息ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询未抄读成功的从节点信息ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询未抄读成功的从节点信息ToolStripMenuItem.Text = "查询未抄读成功的从节点信息";
             this.查询未抄读成功的从节点信息ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 查询主动注册的从节点信息ToolStripMenuItem
             // 
             this.查询主动注册的从节点信息ToolStripMenuItem.Name = "查询主动注册的从节点信息ToolStripMenuItem";
-            this.查询主动注册的从节点信息ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询主动注册的从节点信息ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询主动注册的从节点信息ToolStripMenuItem.Text = "查询主动注册的从节点信息";
             this.查询主动注册的从节点信息ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // 查询无线从节点中继路由信息ToolStripMenuItem
+            // 查询无线从节点的中继路由信息ToolStripMenuItem
             // 
-            this.查询无线从节点中继路由信息ToolStripMenuItem.Name = "查询无线从节点中继路由信息ToolStripMenuItem";
-            this.查询无线从节点中继路由信息ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.查询无线从节点中继路由信息ToolStripMenuItem.Text = "查询无线从节点中继路由信息";
-            this.查询无线从节点中继路由信息ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.查询无线从节点的中继路由信息ToolStripMenuItem.Name = "查询无线从节点的中继路由信息ToolStripMenuItem";
+            this.查询无线从节点的中继路由信息ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.查询无线从节点的中继路由信息ToolStripMenuItem.Text = "查询无线从节点的中继路由信息";
+            this.查询无线从节点的中继路由信息ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 查询全网感知状态ToolStripMenuItem
             // 
             this.查询全网感知状态ToolStripMenuItem.Name = "查询全网感知状态ToolStripMenuItem";
-            this.查询全网感知状态ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询全网感知状态ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询全网感知状态ToolStripMenuItem.Text = "查询全网感知状态";
             this.查询全网感知状态ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 查询在网状态更新信息ToolStripMenuItem
             // 
             this.查询在网状态更新信息ToolStripMenuItem.Name = "查询在网状态更新信息ToolStripMenuItem";
-            this.查询在网状态更新信息ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询在网状态更新信息ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询在网状态更新信息ToolStripMenuItem.Text = "查询在网状态更新信息";
             this.查询在网状态更新信息ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 查询网络规模ToolStripMenuItem
             // 
             this.查询网络规模ToolStripMenuItem.Name = "查询网络规模ToolStripMenuItem";
-            this.查询网络规模ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询网络规模ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询网络规模ToolStripMenuItem.Text = "查询网络规模";
             this.查询网络规模ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 查询微功率无线从节点信息ToolStripMenuItem
             // 
             this.查询微功率无线从节点信息ToolStripMenuItem.Name = "查询微功率无线从节点信息ToolStripMenuItem";
-            this.查询微功率无线从节点信息ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询微功率无线从节点信息ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询微功率无线从节点信息ToolStripMenuItem.Text = "查询微功率无线从节点信息";
             this.查询微功率无线从节点信息ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -1093,7 +1106,7 @@
             this.h路由设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.添加从节点ToolStripMenuItem,
             this.删除从节点ToolStripMenuItem,
-            this.设置从节点固定中继路由ToolStripMenuItem,
+            this.设置从节点固定中继路径ToolStripMenuItem,
             this.设置路由工作模式ToolStripMenuItem,
             this.激活从节点主动注册ToolStripMenuItem,
             this.禁止从节点主动注册ToolStripMenuItem,
@@ -1120,12 +1133,12 @@
             this.删除从节点ToolStripMenuItem.Text = "删除从节点";
             this.删除从节点ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // 设置从节点固定中继路由ToolStripMenuItem
+            // 设置从节点固定中继路径ToolStripMenuItem
             // 
-            this.设置从节点固定中继路由ToolStripMenuItem.Name = "设置从节点固定中继路由ToolStripMenuItem";
-            this.设置从节点固定中继路由ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.设置从节点固定中继路由ToolStripMenuItem.Text = "设置从节点固定中继路由";
-            this.设置从节点固定中继路由ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.设置从节点固定中继路径ToolStripMenuItem.Name = "设置从节点固定中继路径ToolStripMenuItem";
+            this.设置从节点固定中继路径ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.设置从节点固定中继路径ToolStripMenuItem.Text = "设置从节点固定中继路径";
+            this.设置从节点固定中继路径ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 设置路由工作模式ToolStripMenuItem
             // 
@@ -1303,13 +1316,13 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.lbCmdStatus);
             this.splitContainer2.Panel1.Controls.Add(this.lbCenterAddr);
             this.splitContainer2.Panel1.Controls.Add(this.lbDocCnt);
             this.splitContainer2.Panel1.Controls.Add(this.dgvDoc);
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.lbCmdStatus);
             this.splitContainer2.Panel2.Controls.Add(this.label14);
             this.splitContainer2.Panel2.Controls.Add(this.label15);
             this.splitContainer2.Panel2.Controls.Add(this.label16);
@@ -1322,6 +1335,19 @@
             this.splitContainer2.Size = new System.Drawing.Size(969, 682);
             this.splitContainer2.SplitterDistance = 354;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // lbCmdStatus
+            // 
+            this.lbCmdStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbCmdStatus.BackColor = System.Drawing.Color.GreenYellow;
+            this.lbCmdStatus.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lbCmdStatus.Location = new System.Drawing.Point(1, 659);
+            this.lbCmdStatus.Name = "lbCmdStatus";
+            this.lbCmdStatus.Size = new System.Drawing.Size(354, 21);
+            this.lbCmdStatus.TabIndex = 17;
+            this.lbCmdStatus.Text = "命令执行中...";
+            this.lbCmdStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbCmdStatus.Visible = false;
             // 
             // lbCenterAddr
             // 
@@ -1352,14 +1378,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvDoc.AutoGenerateColumns = false;
             this.dgvDoc.BackgroundColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.ScrollBar;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvDoc.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.ScrollBar;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvDoc.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvDoc.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgvDoc.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn1,
@@ -1382,14 +1408,14 @@
             this.读数DataGridViewTextBoxColumn});
             this.dgvDoc.DataMember = "Table1";
             this.dgvDoc.DataSource = this.dsDoc;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvDoc.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvDoc.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvDoc.Location = new System.Drawing.Point(-1, 28);
             this.dgvDoc.Name = "dgvDoc";
             this.dgvDoc.RowHeadersVisible = false;
@@ -1460,15 +1486,69 @@
             this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
             this.dataGridViewTextBoxColumn9.Width = 90;
             // 
+            // 序号DataGridViewTextBoxColumn
+            // 
+            this.序号DataGridViewTextBoxColumn.DataPropertyName = "序号";
+            this.序号DataGridViewTextBoxColumn.HeaderText = "序号";
+            this.序号DataGridViewTextBoxColumn.Name = "序号DataGridViewTextBoxColumn";
+            // 
+            // 模块地址DataGridViewTextBoxColumn
+            // 
+            this.模块地址DataGridViewTextBoxColumn.DataPropertyName = "模块地址";
+            this.模块地址DataGridViewTextBoxColumn.HeaderText = "模块地址";
+            this.模块地址DataGridViewTextBoxColumn.Name = "模块地址DataGridViewTextBoxColumn";
+            // 
+            // 表地址DataGridViewTextBoxColumn
+            // 
+            this.表地址DataGridViewTextBoxColumn.DataPropertyName = "表地址";
+            this.表地址DataGridViewTextBoxColumn.HeaderText = "表地址";
+            this.表地址DataGridViewTextBoxColumn.Name = "表地址DataGridViewTextBoxColumn";
+            // 
+            // 协议类型DataGridViewTextBoxColumn
+            // 
+            this.协议类型DataGridViewTextBoxColumn.DataPropertyName = "协议类型";
+            this.协议类型DataGridViewTextBoxColumn.HeaderText = "协议类型";
+            this.协议类型DataGridViewTextBoxColumn.Name = "协议类型DataGridViewTextBoxColumn";
+            // 
+            // 版本DataGridViewTextBoxColumn
+            // 
+            this.版本DataGridViewTextBoxColumn.DataPropertyName = "版本";
+            this.版本DataGridViewTextBoxColumn.HeaderText = "版本";
+            this.版本DataGridViewTextBoxColumn.Name = "版本DataGridViewTextBoxColumn";
+            // 
+            // 升级状态DataGridViewTextBoxColumn
+            // 
+            this.升级状态DataGridViewTextBoxColumn.DataPropertyName = "升级状态";
+            this.升级状态DataGridViewTextBoxColumn.HeaderText = "升级状态";
+            this.升级状态DataGridViewTextBoxColumn.Name = "升级状态DataGridViewTextBoxColumn";
+            // 
+            // 发送DataGridViewTextBoxColumn
+            // 
+            this.发送DataGridViewTextBoxColumn.DataPropertyName = "发送";
+            this.发送DataGridViewTextBoxColumn.HeaderText = "发送";
+            this.发送DataGridViewTextBoxColumn.Name = "发送DataGridViewTextBoxColumn";
+            // 
+            // 接收DataGridViewTextBoxColumn
+            // 
+            this.接收DataGridViewTextBoxColumn.DataPropertyName = "接收";
+            this.接收DataGridViewTextBoxColumn.HeaderText = "接收";
+            this.接收DataGridViewTextBoxColumn.Name = "接收DataGridViewTextBoxColumn";
+            // 
+            // 读数DataGridViewTextBoxColumn
+            // 
+            this.读数DataGridViewTextBoxColumn.DataPropertyName = "读数";
+            this.读数DataGridViewTextBoxColumn.HeaderText = "读数";
+            this.读数DataGridViewTextBoxColumn.Name = "读数DataGridViewTextBoxColumn";
+            // 
             // dsDoc
             // 
             this.dsDoc.DataSetName = "NewDataSet";
             this.dsDoc.Tables.AddRange(new System.Data.DataTable[] {
-            this.dtbDoc});
+            this.tbDoc});
             // 
-            // dtbDoc
+            // tbDoc
             // 
-            this.dtbDoc.Columns.AddRange(new System.Data.DataColumn[] {
+            this.tbDoc.Columns.AddRange(new System.Data.DataColumn[] {
             this.序号,
             this.模块地址,
             this.表地址,
@@ -1478,7 +1558,7 @@
             this.发送,
             this.接收,
             this.读数});
-            this.dtbDoc.TableName = "Table1";
+            this.tbDoc.TableName = "Table1";
             // 
             // 序号
             // 
@@ -1520,19 +1600,6 @@
             // 读数
             // 
             this.读数.ColumnName = "读数";
-            // 
-            // lbCmdStatus
-            // 
-            this.lbCmdStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lbCmdStatus.BackColor = System.Drawing.Color.GreenYellow;
-            this.lbCmdStatus.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lbCmdStatus.Location = new System.Drawing.Point(1, 659);
-            this.lbCmdStatus.Name = "lbCmdStatus";
-            this.lbCmdStatus.Size = new System.Drawing.Size(609, 21);
-            this.lbCmdStatus.TabIndex = 17;
-            this.lbCmdStatus.Text = "命令执行中...";
-            this.lbCmdStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lbCmdStatus.Visible = false;
             // 
             // label14
             // 
@@ -1624,68 +1691,6 @@
             this.rtbMsg.TabIndex = 0;
             this.rtbMsg.Text = "";
             // 
-            // 序号DataGridViewTextBoxColumn
-            // 
-            this.序号DataGridViewTextBoxColumn.DataPropertyName = "序号";
-            this.序号DataGridViewTextBoxColumn.HeaderText = "序号";
-            this.序号DataGridViewTextBoxColumn.Name = "序号DataGridViewTextBoxColumn";
-            // 
-            // 模块地址DataGridViewTextBoxColumn
-            // 
-            this.模块地址DataGridViewTextBoxColumn.DataPropertyName = "模块地址";
-            this.模块地址DataGridViewTextBoxColumn.HeaderText = "模块地址";
-            this.模块地址DataGridViewTextBoxColumn.Name = "模块地址DataGridViewTextBoxColumn";
-            // 
-            // 表地址DataGridViewTextBoxColumn
-            // 
-            this.表地址DataGridViewTextBoxColumn.DataPropertyName = "表地址";
-            this.表地址DataGridViewTextBoxColumn.HeaderText = "表地址";
-            this.表地址DataGridViewTextBoxColumn.Name = "表地址DataGridViewTextBoxColumn";
-            // 
-            // 协议类型DataGridViewTextBoxColumn
-            // 
-            this.协议类型DataGridViewTextBoxColumn.DataPropertyName = "协议类型";
-            this.协议类型DataGridViewTextBoxColumn.HeaderText = "协议类型";
-            this.协议类型DataGridViewTextBoxColumn.Name = "协议类型DataGridViewTextBoxColumn";
-            // 
-            // 版本DataGridViewTextBoxColumn
-            // 
-            this.版本DataGridViewTextBoxColumn.DataPropertyName = "版本";
-            this.版本DataGridViewTextBoxColumn.HeaderText = "版本";
-            this.版本DataGridViewTextBoxColumn.Name = "版本DataGridViewTextBoxColumn";
-            // 
-            // 升级状态DataGridViewTextBoxColumn
-            // 
-            this.升级状态DataGridViewTextBoxColumn.DataPropertyName = "升级状态";
-            this.升级状态DataGridViewTextBoxColumn.HeaderText = "升级状态";
-            this.升级状态DataGridViewTextBoxColumn.Name = "升级状态DataGridViewTextBoxColumn";
-            // 
-            // 发送DataGridViewTextBoxColumn
-            // 
-            this.发送DataGridViewTextBoxColumn.DataPropertyName = "发送";
-            this.发送DataGridViewTextBoxColumn.HeaderText = "发送";
-            this.发送DataGridViewTextBoxColumn.Name = "发送DataGridViewTextBoxColumn";
-            // 
-            // 接收DataGridViewTextBoxColumn
-            // 
-            this.接收DataGridViewTextBoxColumn.DataPropertyName = "接收";
-            this.接收DataGridViewTextBoxColumn.HeaderText = "接收";
-            this.接收DataGridViewTextBoxColumn.Name = "接收DataGridViewTextBoxColumn";
-            // 
-            // 读数DataGridViewTextBoxColumn
-            // 
-            this.读数DataGridViewTextBoxColumn.DataPropertyName = "读数";
-            this.读数DataGridViewTextBoxColumn.HeaderText = "读数";
-            this.读数DataGridViewTextBoxColumn.Name = "读数DataGridViewTextBoxColumn";
-            // 
-            // cbxParam2
-            // 
-            this.cbxParam2.FormattingEnabled = true;
-            this.cbxParam2.Location = new System.Drawing.Point(77, 112);
-            this.cbxParam2.Name = "cbxParam2";
-            this.cbxParam2.Size = new System.Drawing.Size(112, 20);
-            this.cbxParam2.TabIndex = 7;
-            // 
             // ConcSimulator_North
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1716,7 +1721,7 @@
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvDoc)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dsDoc)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dtbDoc)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDoc)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1747,12 +1752,12 @@
         private System.Windows.Forms.ToolStripMenuItem h链路测试ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 发送测试ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 从节点点名ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 报文通信测试ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 本地通信模块报文通信测试ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem h控制命令ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 设置主节点地址ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 允许禁止从节点上报ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 启动广播ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 设置从节点最大超时时间ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 设置从节点监控最大超时时间ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 设置无线通信参数ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 设置场强门限ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 设置中心节点时间ToolStripMenuItem;
@@ -1768,7 +1773,7 @@
         private System.Windows.Forms.ToolStripMenuItem h路由设置ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 添加从节点ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 删除从节点ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 设置从节点固定中继路由ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 设置从节点固定中继路径ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 设置路由工作模式ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 激活从节点主动注册ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 禁止从节点主动注册ToolStripMenuItem;
@@ -1789,7 +1794,7 @@
         private System.Windows.Forms.ToolStripMenuItem 查询主节点干扰状态ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 发射功率测试ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 启动全网感知ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 查询无线从节点中继路由信息ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 查询无线从节点的中继路由信息ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询全网感知状态ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询在网状态更新信息ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem h内部调试ToolStripMenuItem;
@@ -1842,7 +1847,7 @@
         private System.Windows.Forms.DataGridView dgvDoc;
         private System.Windows.Forms.RichTextBox rtbMsg;
         private System.Data.DataSet dsDoc;
-        private System.Data.DataTable dtbDoc;
+        private System.Data.DataTable tbDoc;
         private System.Data.DataColumn 序号;
         private System.Data.DataColumn 模块地址;
         private System.Data.DataColumn 表地址;
@@ -1866,6 +1871,7 @@
         private System.Windows.Forms.CheckBox chkParam1;
         private System.Windows.Forms.Label lbParam4;
         private System.Windows.Forms.Label lbParam3;
+        private System.Windows.Forms.ComboBox cbxParam2;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
@@ -1875,7 +1881,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
-        private System.Windows.Forms.ComboBox cbxParam2;
         private System.Windows.Forms.DataGridViewTextBoxColumn 序号DataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn 模块地址DataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn 表地址DataGridViewTextBoxColumn;
