@@ -388,7 +388,7 @@ namespace ElectricPowerDebuger.Protocol
             }
 
             // parentNode--通信地址
-            strTmp = "通信地址：" + Util.GetStringHexFromByte(frame.DevAddr, 0, LongAddrSize, "", true);
+            strTmp = "通信地址：" + Util.GetStringHexFromBytes(frame.DevAddr, 0, LongAddrSize, "", true);
             parentNode.Nodes.Add(strTmp);
 
             // parentNode--控制域
@@ -1041,21 +1041,21 @@ namespace ElectricPowerDebuger.Protocol
             else if (strDataType.Contains("通信地址"))
             {
                 if (buf.Length < index + 6) return payloadNode;
-                strTmp = "通信地址：" + Util.GetStringHexFromByte(buf, index, 6, "", true);
+                strTmp = "通信地址：" + Util.GetStringHexFromBytes(buf, index, 6, "", true);
                 payloadNode.Nodes.Add(strTmp);
                 index += 6;
             }
             else if (strDataType.Contains("表号"))
             {
                 if (buf.Length < index + 6) return payloadNode;
-                strTmp = "表号    ：" + Util.GetStringHexFromByte(buf, index, 6, "", true);
+                strTmp = "表号    ：" + Util.GetStringHexFromBytes(buf, index, 6, "", true);
                 payloadNode.Nodes.Add(strTmp);
                 index += 6;
             }
             else if (strDataType.Contains("资产管理编号"))
             {
                 if (buf.Length < index + 32) return payloadNode;
-                strTmp = "资产管理编号：" + Util.GetStringHexFromByte(buf, index, 32, "");
+                strTmp = "资产管理编号：" + Util.GetStringHexFromBytes(buf, index, 32, "");
                 payloadNode.Nodes.Add(strTmp);
                 index += 32;
             }
@@ -1244,7 +1244,7 @@ namespace ElectricPowerDebuger.Protocol
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
 
-                strTmp = "回抄的数据(" + (buf.Length - 16) + " byte)：" + Util.GetStringHexFromByte(buf, index , buf.Length - 16);
+                strTmp = "回抄的数据(" + (buf.Length - 16) + " byte)：" + Util.GetStringHexFromBytes(buf, index , buf.Length - 16);
                 payloadNode.Nodes.Add(strTmp);
                 index += (buf.Length - 16);
 
@@ -1326,7 +1326,7 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     if (buf.Length < index + 8) return payloadNode;
 
-                    strTmp = "密文    ：" + Util.GetStringHexFromByte(buf, index, 8);
+                    strTmp = "密文    ：" + Util.GetStringHexFromBytes(buf, index, 8);
                     payloadNode.Nodes.Add(strTmp);
                     index += 8;
                 }
@@ -1334,7 +1334,7 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     if (buf.Length < index + 8) return payloadNode;
 
-                    strTmp = "随机数1 ：" + Util.GetStringHexFromByte(buf, index, 8);
+                    strTmp = "随机数1 ：" + Util.GetStringHexFromBytes(buf, index, 8);
                     payloadNode.Nodes.Add(strTmp);
                     index += 8;
                 }
@@ -1342,7 +1342,7 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     if (buf.Length < index + 8) return payloadNode;
 
-                    strTmp = "分散因子：" + Util.GetStringHexFromByte(buf, index, 8);
+                    strTmp = "分散因子：" + Util.GetStringHexFromBytes(buf, index, 8);
                     payloadNode.Nodes.Add(strTmp);
                     index += 8;
                 }
@@ -1350,13 +1350,13 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     if (buf.Length < index + 24) return payloadNode;
 
-                    strTmp = "密文    ：" + Util.GetStringHexFromByte(buf, index, 8);
+                    strTmp = "密文    ：" + Util.GetStringHexFromBytes(buf, index, 8);
                     payloadNode.Nodes.Add(strTmp);
                     index += 8;
-                    strTmp = "随机数1 ：" + Util.GetStringHexFromByte(buf, index, 8);
+                    strTmp = "随机数1 ：" + Util.GetStringHexFromBytes(buf, index, 8);
                     payloadNode.Nodes.Add(strTmp);
                     index += 8;
-                    strTmp = "分散因子：" + Util.GetStringHexFromByte(buf, index, 8);
+                    strTmp = "分散因子：" + Util.GetStringHexFromBytes(buf, index, 8);
                     payloadNode.Nodes.Add(strTmp);
                     index += 8;
                 }
@@ -1369,13 +1369,13 @@ namespace ElectricPowerDebuger.Protocol
                 strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
                 payloadNode.Nodes.Add(strTmp);
                 index += 4;
-                strTmp = "随机数2 ：" + Util.GetStringHexFromByte(buf, index, 4);
+                strTmp = "随机数2 ：" + Util.GetStringHexFromBytes(buf, index, 4);
                 payloadNode.Nodes.Add(strTmp);
                 index += 4;
 
                 if (buf.Length < index + 8) return payloadNode;
 
-                strTmp = "ESAM序列号：" + Util.GetStringHexFromByte(buf, index, 8);
+                strTmp = "ESAM序列号：" + Util.GetStringHexFromBytes(buf, index, 8);
                 payloadNode.Nodes.Add(strTmp);
                 index += 8;
             }
@@ -1590,7 +1590,7 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     if (buf.Length < index + 8) return payloadNode;
 
-                    strTmp = "密钥信息+MAC：" + Util.GetStringHexFromByte(buf, index, 8, " ");
+                    strTmp = "密钥信息+MAC：" + Util.GetStringHexFromBytes(buf, index, 8, " ");
                     payloadNode.Nodes.Add(strTmp);
                     index += 8;
                 }
@@ -1598,7 +1598,7 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     if (buf.Length < index + 32) return payloadNode;
 
-                    strTmp = "密钥：" + Util.GetStringHexFromByte(buf, index, 32, " ");
+                    strTmp = "密钥：" + Util.GetStringHexFromBytes(buf, index, 32, " ");
                     payloadNode.Nodes.Add(strTmp);
                     index += 32;
                 }
@@ -1606,10 +1606,10 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     if (buf.Length < index + 40) return payloadNode;
 
-                    strTmp = "密钥信息+MAC：" + Util.GetStringHexFromByte(buf, index, 8, " ");
+                    strTmp = "密钥信息+MAC：" + Util.GetStringHexFromBytes(buf, index, 8, " ");
                     payloadNode.Nodes.Add(strTmp);
                     index += 8;
-                    strTmp = "密钥：" + Util.GetStringHexFromByte(buf, index, 32, " ");
+                    strTmp = "密钥：" + Util.GetStringHexFromBytes(buf, index, 32, " ");
                     payloadNode.Nodes.Add(strTmp);
                     index += 32;
                 }

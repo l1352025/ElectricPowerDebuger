@@ -34,7 +34,7 @@ namespace ElectricPowerDebuger.Function
         private string _strMsgMain = "";
         private string _strMsgSub = "";
 
-        private static byte[] TempBuf = new byte[512];
+        private static byte[] TempBuf = new byte[4096];
         private static string _strDocCnt = "0";
         private static string _strCenterAddr = "201900008888";
         private static byte _fsn = 0;
@@ -179,7 +179,7 @@ namespace ElectricPowerDebuger.Function
         }
         #endregion
 
-        #region 命令处理--发送、接收
+        #region 命令处理--发送、接收线程
 
         // 发送、接收处理
         private void TransceiverHandle()
@@ -300,7 +300,7 @@ namespace ElectricPowerDebuger.Function
         }
         #endregion
 
-        #region 命令发送（所有的）
+        #region 命令按钮/菜单点击处理
 
         private void AllCmdButton_Click(object sender, EventArgs e)
         {
@@ -895,6 +895,36 @@ namespace ElectricPowerDebuger.Function
 
         }
 
+        private void UpdateRecentCmdName(string cmdText = "")
+        {
+            string recentFixedCmds = "读出全部档案;重下全部档案;启动组网;查询路由运行状态";
+
+            string recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North/RecentCmds");
+            if (recentCmds == "")
+            {
+                recentCmds = "添加主节点;查询主节点地址;查询厂商代码和版本;查询无线通信参数";
+            }
+
+            if ((!recentCmds.Split(';').Contains(cmdText) && !recentFixedCmds.Split(';').Contains(cmdText))
+                || (cmdText == ""))
+            {
+                if (cmdText != "")
+                {
+                    recentCmds = recentCmds.Substring(recentCmds.IndexOf(";") + 1) + ";" + cmdText;
+                }
+
+                string[] strs = recentCmds.Split(';');
+                btRecentUse1.Text = strs[0];
+                btRecentUse2.Text = strs[1];
+                btRecentUse3.Text = strs[2];
+                btRecentUse4.Text = strs[3];
+                XmlHelper.SetNodeValue(_configPath, "/Config/ConcSimulator_North", "RecentCmds", recentCmds);
+            }
+
+        }
+        #endregion
+
+        #region 带参数命令控件处理
         private void HideParamCmdGrp()
         {
             lbParam1.Visible = false;
@@ -917,35 +947,7 @@ namespace ElectricPowerDebuger.Function
             cbxParam1.Text = "";
             cbxParam2.Text = "";
         }
-
-        private void UpdateRecentCmdName(string cmdText = "")
-        {
-            string recentFixedCmds = "读出全部档案;重下全部档案;启动组网;查询路由运行状态";
-
-            string recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North/RecentCmds");
-            if(recentCmds == "")
-            {
-                recentCmds = "添加主节点;查询主节点地址;查询厂商代码和版本;查询无线通信参数";
-            }
-
-            if( (!recentCmds.Split(';').Contains(cmdText) && !recentFixedCmds.Split(';').Contains(cmdText))
-                || (cmdText == ""))
-            {
-                if (cmdText != "")
-                {
-                    recentCmds = recentCmds.Substring(recentCmds.IndexOf(";") + 1) + ";" + cmdText;
-                }
-
-                string[] strs = recentCmds.Split(';');
-                btRecentUse1.Text = strs[0];
-                btRecentUse2.Text = strs[1];
-                btRecentUse3.Text = strs[2];
-                btRecentUse4.Text = strs[3];
-                XmlHelper.SetNodeValue(_configPath, "/Config/ConcSimulator_North", "RecentCmds", recentCmds);
-            }
-
-        }
-
+        
         private void txtParam1_KeyPress(object sender, KeyPressEventArgs e)
         {
             if ("0123456789\b\r\x03\x16\x18".IndexOf(e.KeyChar) < 0)
@@ -1005,7 +1007,9 @@ namespace ElectricPowerDebuger.Function
 
             SendToCmdQueue(cmdText);
         }
+        #endregion
 
+        #region 命令发送
         private void SendToCmdQueue(string cmdName)
         {
             int txLen = 0;
@@ -1039,13 +1043,13 @@ namespace ElectricPowerDebuger.Function
 
                 txtParam1.Text = txtParam1.Text.PadLeft(12, '0');
 
-                Util.GetByteAddrFromString(_strCenterAddr, TempBuf, txLen, true); // 源地址
+                Util.GetBytesFromStringHex(_strCenterAddr, TempBuf, txLen, true); // 源地址
                 txLen += 6;
-                Util.GetByteAddrFromString(txtParam1.Text, TempBuf, txLen, true); // 目的地址
+                Util.GetBytesFromStringHex(txtParam1.Text, TempBuf, txLen, true); // 目的地址
                 txLen += 6;
             }
 
-            #region 带参数的命令-界面设置
+            #region 带参数的命令
             switch (cmd.Name)
             {
                 case "数据转发":
@@ -1057,7 +1061,7 @@ namespace ElectricPowerDebuger.Function
                         TempBuf[txLen++] = (byte)(chkParam1.Checked ? 1 : 0);           // 延时相关
                     }
                     TempBuf[txLen++] = (byte)(txtParam3.Text.Trim().Length / 2);        // 报文长度
-                    txLen += Util.GetByteAddrFromString(txtParam3.Text.Trim(), TempBuf, txLen);  // 报文内容
+                    txLen += Util.GetBytesFromStringHex(txtParam3.Text.Trim(), TempBuf, txLen);  // 报文内容
                     break;
 
                 case "查询从节点侦听信息":
@@ -1076,11 +1080,11 @@ namespace ElectricPowerDebuger.Function
                 case "本地通信模块报文通信测试":
                     TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // "通信速率";
                     txtParam1.Text = txtParam2.Text.PadLeft(12, '0');
-                    Util.GetByteAddrFromString(txtParam1.Text, TempBuf, txLen, true);   // 目的地址
+                    Util.GetBytesFromStringHex(txtParam1.Text, TempBuf, txLen, true);   // 目的地址
                     txLen += 6;
                     TempBuf[txLen++] = Convert.ToByte(cbxParam2.Text.Split(' ')[0]);    // "协议类型";
                     TempBuf[txLen++] = (byte)(txtParam3.Text.Trim().Length / 2);        // 报文长度
-                    txLen += Util.GetByteAddrFromString(txtParam3.Text.Trim(), TempBuf, txLen);  // 报文内容
+                    txLen += Util.GetBytesFromStringHex(txtParam3.Text.Trim(), TempBuf, txLen);  // 报文内容
                     break;
 
                 case "发射功率测试":
@@ -1091,7 +1095,7 @@ namespace ElectricPowerDebuger.Function
 
                 case "设置主节点地址":
                     txtParam1.Text = txtParam1.Text.PadLeft(12, '0');
-                    Util.GetByteAddrFromString(txtParam1.Text, TempBuf, txLen, true);   // 节点地址
+                    Util.GetBytesFromStringHex(txtParam1.Text, TempBuf, txLen, true);   // 节点地址
                     txLen += 6;
                     break;
 
@@ -1102,7 +1106,7 @@ namespace ElectricPowerDebuger.Function
                 case "启动广播":
                     TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // "协议类型";
                     TempBuf[txLen++] = (byte)(txtParam3.Text.Trim().Length / 2);        // 报文长度
-                    txLen += Util.GetByteAddrFromString(txtParam3.Text.Trim(), TempBuf, txLen);  // 报文内容
+                    txLen += Util.GetBytesFromStringHex(txtParam3.Text.Trim(), TempBuf, txLen);  // 报文内容
                     break;
 
                 case "设置从节点监控最大超时时间":
@@ -1128,7 +1132,7 @@ namespace ElectricPowerDebuger.Function
                 case "查询从节点的上一级路由信息":
                 case "查询无线从节点的中继路由信息":
                     txtParam1.Text = txtParam1.Text.PadLeft(12, '0');
-                    Util.GetByteAddrFromString(txtParam1.Text, TempBuf, txLen, true);   // 从节点地址
+                    Util.GetBytesFromStringHex(txtParam1.Text, TempBuf, txLen, true);   // 从节点地址
                     txLen += 6;
                     break;
 
@@ -1153,7 +1157,7 @@ namespace ElectricPowerDebuger.Function
                         return;
                     }
                     txtParam1.Text = txtParam1.Text.PadLeft(12, '0');
-                    Util.GetByteAddrFromString(txtParam1.Text, TempBuf, txLen, true);   // 从节点地址
+                    Util.GetBytesFromStringHex(txtParam1.Text, TempBuf, txLen, true);   // 从节点地址
                     txLen += 6;
 
                     string[] strs = txtParam3.Text.Trim().Split(' ');                   // "1-N级中继地址(空格分隔)：";
@@ -1161,7 +1165,7 @@ namespace ElectricPowerDebuger.Function
                     for (int i = 0; i < strs.Length; i++)
                     {
                         strs[i] = strs[i].PadLeft(12, '0');
-                        txLen += Util.GetByteAddrFromString(strs[i], TempBuf, txLen, true);   // 中继地址
+                        txLen += Util.GetBytesFromStringHex(strs[i], TempBuf, txLen, true);   // 中继地址
                     }
                     break;
 
@@ -1175,64 +1179,65 @@ namespace ElectricPowerDebuger.Function
                     break;
 
                 case "激活从节点主动注册":
-                    lbParam4.Text = "开始时间(分钟，发送时设置)";
-                    lbParam4.Location = new Point(22, 30);
-                    lbParam4.Visible = true;
-                    lbParam1.Text = "持续时间(分钟)";
-                    lbParam1.Location = new Point(22, 60);
-                    lbParam1.Visible = true;
-                    txtParam1.Text = "20";
-                    txtParam1.Location = new Point(118, 57);
-                    txtParam1.Width = 71;
-                    txtParam1.Visible = true;
-                    lbParam2.Text = "从节点重发次数";
-                    lbParam2.Location = new Point(22, 90);
-                    lbParam2.Visible = true;
-                    cbxParam1.Items.Clear();
-                    cbxParam1.Items.Add("1");
-                    cbxParam1.Items.Add("2");
-                    cbxParam1.Items.Add("3");
-                    cbxParam1.Items.Add("4");
-                    cbxParam1.Items.Add("5");
-                    cbxParam1.SelectedIndex = 0;
-                    cbxParam1.Location = new Point(118, 87);
-                    cbxParam1.Width = 71;
-                    cbxParam1.Visible = true;
-                    lbParam3.Text = "等待时间片个数";
-                    lbParam3.Location = new Point(22, 120);
-                    lbParam3.Visible = true;
-                    txtParam2.Text = "5";
-                    txtParam2.Location = new Point(118, 117);
-                    txtParam2.Width = 71;
-                    txtParam2.Visible = true;
-                    btParamConfirm.Location = new Point(24, 176);
+                    TempBuf[txLen++] = Util.DecToBcd((byte)DateTime.Now.Second);            // "开始时间(分钟，发送时设置)";
+                    TempBuf[txLen++] = Util.DecToBcd((byte)DateTime.Now.Minute);
+                    TempBuf[txLen++] = Util.DecToBcd((byte)DateTime.Now.Hour);
+                    TempBuf[txLen++] = Util.DecToBcd((byte)DateTime.Now.Day);
+                    TempBuf[txLen++] = Util.DecToBcd((byte)DateTime.Now.Month);
+                    TempBuf[txLen++] = Util.DecToBcd((byte)(DateTime.Now.Year % 100));
+                    TempBuf[txLen++] = Convert.ToByte(txtParam1.Text.Trim());               // "持续时间(分钟)";
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);        // "从节点重发次数";
+                    TempBuf[txLen++] = Convert.ToByte(txtParam2.Text.Trim());               // "等待时间片个数";
                     break;
 
                 case "设置网络规模":
-                    lbParam1.Text = "网络规模(2-512)";
-                    lbParam1.Location = new Point(22, 30);
-                    lbParam1.Visible = true;
-                    txtParam1.Text = "255";
-                    txtParam1.Location = new Point(118, 27);
-                    txtParam1.Width = 71;
-                    txtParam1.Visible = true;
-                    btParamConfirm.Location = new Point(24, 60);
+                    TempBuf[txLen++] = Convert.ToByte(txtParam1.Text.Trim());               // "网络规模(2-512)";
                     break;
 
                 case "文件传输":
-                    lbParam1.Text = "文件标识：";
-                    lbParam1.Location = new Point(22, 30);
-                    lbParam1.Visible = true;
-                    cbxParam1.Items.Clear();
-                    cbxParam1.Items.Add("0 清除下装文件");
-                    cbxParam1.Items.Add("3 主节点模块升级");
-                    cbxParam1.Items.Add("7 主节点和子节点模块升级");
-                    cbxParam1.Items.Add("8 子节点模块升级");
-                    cbxParam1.SelectedIndex = 1;
-                    cbxParam1.Location = new Point(24, 57);
-                    cbxParam1.Width = 165;
-                    cbxParam1.Visible = true;
-                    btParamConfirm.Location = new Point(24, 90);
+                    byte fileFlg = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);            // "文件标识：";
+
+                    switch (fileFlg)
+                    {
+                        case 0:     // ("0 清除下装文件");
+                            TempBuf[txLen++] = fileFlg;
+                            break;
+
+                        case 3:     // ("3 主节点模块升级");
+                        case 7:     // ("7 主节点和子节点模块升级");
+                        case 8:     // ("8 子节点模块升级");
+                            string info = "";
+                            openFileDlg.Filter = "Bin文件|*.bin";
+                            openFileDlg.DefaultExt = ".bin";
+                            if(openFileDlg.ShowDialog() != DialogResult.OK)
+                            {
+                                return;
+                            }
+
+                            if (fileFlg == 3)
+                            {
+                                info = ReadVersionInfoFromUpgradeFile(openFileDlg.FileName, 3);
+                            }
+                            else if (fileFlg == 8)
+                            {
+                                info = ReadVersionInfoFromUpgradeFile(openFileDlg.FileName, 8);
+                            }
+                            else
+                            {
+                                info = ReadVersionInfoFromUpgradeFile(openFileDlg.FileName, 7);
+                            }
+
+                            if (info != "")
+                            {
+                                ShowMsg("文件版本信息：" + info + "\r\n", Color.Green);
+                            }
+
+                            break;
+
+                        default:
+
+                            break;
+                    }
                     break;
 
                 case "按类型读取日志":
@@ -1317,6 +1322,85 @@ namespace ElectricPowerDebuger.Function
 
         #endregion
 
+        #region 读取升级文件的版本信息
+        /// <summary>
+        /// 读取升级文件的版本信息
+        /// </summary>
+        /// <param name="filename">升级文件名</param>
+        /// <param name="fileFlg">文件标识：3 - 主模块升级文件， 8 - 子模块升级文件， 7 - 主模块或子模块升级文件</param>
+        /// <returns>string 文件版本信息</returns>
+
+        private string ReadVersionInfoFromUpgradeFile(string filename, byte fileFlg = 7)
+        {
+            byte[] first1k = new byte[1024];
+            byte[] last3k = new byte[3072];
+            byte[] infoHeader = new byte[] { 0x53, 0x52, 0x57, 0x46, 0x2d }; // "SRWF-"
+            string info = "";
+            int indexStart = -1, indexEnd = -1;
+
+
+            if (fileFlg == 3)   // 主模块bin文件 尾部3k查找版本信息
+            {
+                FileStream fs = File.OpenRead(openFileDlg.FileName);
+                fs.Seek(-last3k.Length, SeekOrigin.End);
+                fs.Read(last3k, 0, last3k.Length);
+                fs.Close();
+
+                indexStart = Util.IndexOf(last3k, infoHeader);
+
+                if(indexStart >= 0)
+                    indexEnd = Util.IndexOf(last3k, 0x00, indexStart);
+
+                if(indexEnd >= 0)
+                    info = Encoding.ASCII.GetString(last3k, indexStart, (indexEnd - indexStart));
+            }
+            else if (fileFlg == 8) // 子模块bin文件 头部1k查找版本信息
+            {
+                FileStream fs = File.OpenRead(openFileDlg.FileName);
+                fs.Read(first1k, 0, first1k.Length);
+                fs.Close();
+
+                indexStart = Util.IndexOf(first1k, infoHeader);
+
+                if (indexStart >= 0)
+                    indexEnd = Util.IndexOf(first1k, 0x00, indexStart);
+
+                if (indexEnd >= 0)
+                    info = Encoding.ASCII.GetString(first1k, indexStart, (indexEnd - indexStart));
+            }
+            else if (fileFlg == 7) // 主模块 或 子模块bin文件
+            {
+                FileStream fs = File.OpenRead(openFileDlg.FileName);
+                fs.Read(first1k, 0, first1k.Length);
+                fs.Seek(-last3k.Length, SeekOrigin.End);
+                fs.Read(last3k, 0, last3k.Length);
+                fs.Close();
+
+                indexStart = Util.IndexOf(first1k, infoHeader);
+
+                if (indexStart >= 0)
+                    indexEnd = Util.IndexOf(first1k, 0x00, indexStart);
+
+                if (indexEnd >= 0)
+                    info = Encoding.ASCII.GetString(first1k, indexStart, (indexEnd - indexStart));
+
+                if (info == "")
+                {
+                    indexStart = Util.IndexOf(last3k, infoHeader);
+
+                    if (indexStart >= 0)
+                        indexEnd = Util.IndexOf(last3k, 0x00, indexStart);
+
+                    if (indexEnd >= 0)
+                        info = Encoding.ASCII.GetString(last3k, indexStart, (indexEnd - indexStart));
+                }
+            }
+
+            return info;
+        }
+
+        #endregion
+
 
         #region 报文生成、解析
         // 发送报文
@@ -1338,7 +1422,7 @@ namespace ElectricPowerDebuger.Function
             }
 
             msg = "  " + cmd.Name + "\r\n"
-                + "    Tx：" + Util.GetStringHexFromByte(buf, 0, buf.Length, " ") + "\r\n";
+                + "    Tx：" + Util.GetStringHexFromBytes(buf, 0, buf.Length, " ") + "\r\n";
             ShowMsg(msg, Color.Blue);
 
         }
@@ -1389,7 +1473,7 @@ namespace ElectricPowerDebuger.Function
             }
 
             msg = "  " + cmdName + "\r\n"
-                + "    Rx：" + Util.GetStringHexFromByte(buf, 0, buf.Length, " ") + "\r\n"
+                + "    Rx：" + Util.GetStringHexFromBytes(buf, 0, buf.Length, " ") + "\r\n"
                 + strVal;
             ShowMsg(msg, Color.DarkRed);
 

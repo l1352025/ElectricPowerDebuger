@@ -569,7 +569,7 @@ namespace ElectricPowerDebuger.Function
                         rtbCommMsgAdd("  优先级：" + (RxData.DataBuf[2] & 0x0F).ToString("D") + "级", Color.Green);
                         rtbCommMsgAdd("\n超时时间：" + (RxData.DataBuf[3] + RxData.DataBuf[4] * 256).ToString("D") + "秒", Color.Green);
                         rtbCommMsgAdd("\n报文长度：" + RxData.DataBuf[5].ToString("D"), Color.Green);
-                        rtbCommMsgAdd("  报文内容：" + Util.GetStringHexFromByte(RxData.DataBuf, 6, RxData.DataBuf[5], " ", false) + "\n", Color.Green);
+                        rtbCommMsgAdd("  报文内容：" + Util.GetStringHexFromBytes(RxData.DataBuf, 6, RxData.DataBuf[5], " ", false) + "\n", Color.Green);
                     }
                     break;
                 case 0x02:      // 删除任务
@@ -602,7 +602,7 @@ namespace ElectricPowerDebuger.Function
                         for (int i = 0; i < count; i++)
                         {
                             rtbCommMsgAdd(((i % 10) == 0 ? "\n" : "\t"), Color.Green);
-                            rtbCommMsgAdd(Util.GetStringHexFromByte(RxData.DataBuf, len, 2, "", true), Color.Green);
+                            rtbCommMsgAdd(Util.GetStringHexFromBytes(RxData.DataBuf, len, 2, "", true), Color.Green);
                             len += 2;
                         }
                         rtbCommMsgAdd("\n", Color.Green);
@@ -628,7 +628,7 @@ namespace ElectricPowerDebuger.Function
                             {
                                 rtbCommMsgAdd((iLoop % 5 == 0 ? "\n" : "\t"), Color.Green);
                             }
-                            rtbCommMsgAdd(Util.GetStringHexFromByte(RxData.DataBuf, len, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
+                            rtbCommMsgAdd(Util.GetStringHexFromBytes(RxData.DataBuf, len, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
                             len += ProtoLocal_South.LongAddrSize;
                         }
                         if (count > 0)
@@ -637,7 +637,7 @@ namespace ElectricPowerDebuger.Function
                         }
                         int length = RxData.DataBuf[len++];
                         rtbCommMsgAdd("报文长度:" + length.ToString("D") + "\n", Color.Green);
-                        rtbCommMsgAdd("报文内容:" + Util.GetStringHexFromByte(RxData.DataBuf, len, length, " "), Color.Green);
+                        rtbCommMsgAdd("报文内容:" + Util.GetStringHexFromBytes(RxData.DataBuf, len, length, " "), Color.Green);
                         rtbCommMsgAdd("\n", Color.Green);
                     }
                     break;
@@ -674,14 +674,14 @@ namespace ElectricPowerDebuger.Function
                                 {
                                     rtbCommMsgAdd((iLoop % 5 == 0 ? "\n" : "\t"), Color.Green);
                                 }
-                                rtbCommMsgAdd(Util.GetStringHexFromByte(RxData.DataBuf, index, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
+                                rtbCommMsgAdd(Util.GetStringHexFromBytes(RxData.DataBuf, index, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
                                 index += ProtoLocal_South.LongAddrSize;
                             }
                         }
                         rtbCommMsgAdd("\n超时时间：" + (RxData.DataBuf[index] + RxData.DataBuf[index + 1] * 256).ToString("D") + "秒", Color.Green);
                         index += 2;
                         rtbCommMsgAdd("\n报文长度：" + RxData.DataBuf[index].ToString("D"), Color.Green);
-                        rtbCommMsgAdd("  报文内容：" + Util.GetStringHexFromByte(RxData.DataBuf, index + 1, RxData.DataBuf[index], " ", false) + "\n", Color.Green);
+                        rtbCommMsgAdd("  报文内容：" + Util.GetStringHexFromBytes(RxData.DataBuf, index + 1, RxData.DataBuf[index], " ", false) + "\n", Color.Green);
                     }
                     break;
                 case 0x08:      // 启动任务
@@ -737,8 +737,8 @@ namespace ElectricPowerDebuger.Function
                         rtbCommMsgAdd("\t\t\t最大支持的协议报文长度:" + (RxData.DataBuf[1] + RxData.DataBuf[2] * 256).ToString("D"), Color.Green);
                         rtbCommMsgAdd("\n文件传输支持的最大单包长度:" + (RxData.DataBuf[3] + RxData.DataBuf[4] * 256).ToString("D"), Color.Green);
                         rtbCommMsgAdd("\t\t升级操作等待时间:" + RxData.DataBuf[5].ToString("D") + "分钟", Color.Green);
-                        rtbCommMsgAdd("\n主节点地址:" + Util.GetStringHexFromByte(RxData.DataBuf, 6, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
-                        lbConcAddr.Text = "主节点地址:" + Util.GetStringHexFromByte(RxData.DataBuf, 6, ProtoLocal_South.LongAddrSize, "", true);
+                        rtbCommMsgAdd("\n主节点地址:" + Util.GetStringHexFromBytes(RxData.DataBuf, 6, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
+                        lbConcAddr.Text = "主节点地址:" + Util.GetStringHexFromBytes(RxData.DataBuf, 6, ProtoLocal_South.LongAddrSize, "", true);
                         rtbCommMsgAdd("\t\t\t支持的最大从节点数量:" + (RxData.DataBuf[12] + RxData.DataBuf[13] * 256).ToString("D"), Color.Green);
                         rtbCommMsgAdd("\n当前从节点数量:" + (RxData.DataBuf[14] + RxData.DataBuf[15] * 256).ToString("D"), Color.Green);
                         NodeCountOnePacket = (byte)(RxData.DataBuf[16] + RxData.DataBuf[17] * 256);
@@ -761,18 +761,18 @@ namespace ElectricPowerDebuger.Function
                     }
                     else                                    // 上行报文
                     {
-                        rtbCommMsgAdd("\n主节点地址:" + Util.GetStringHexFromByte(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true) + "\n", Color.Green);
+                        rtbCommMsgAdd("\n主节点地址:" + Util.GetStringHexFromBytes(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true) + "\n", Color.Green);
                     }
                     break;
                 case 0x04:                  // 查询通信延时时长
                     if ((RxData.CtrlWord & 0x80) == 0x00)   // 下行报文
                     {
-                        rtbCommMsgAdd("\n通信目的地址：" + Util.GetStringHexFromByte(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
+                        rtbCommMsgAdd("\n通信目的地址：" + Util.GetStringHexFromBytes(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
                         rtbCommMsgAdd("\n报文长度：" + RxData.DataBuf[6] + "\n", Color.Green);
                     }
                     else                                    // 上行报文
                     {
-                        rtbCommMsgAdd("\n通信目的地址：" + Util.GetStringHexFromByte(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
+                        rtbCommMsgAdd("\n通信目的地址：" + Util.GetStringHexFromBytes(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
                         rtbCommMsgAdd("\n通信延时时长：" + (RxData.DataBuf[6] + RxData.DataBuf[7]*256) + "s", Color.Green);
                         rtbCommMsgAdd("\n报文长度：" + RxData.DataBuf[8] + "\n", Color.Green);
                     }
@@ -804,7 +804,7 @@ namespace ElectricPowerDebuger.Function
                             {
                                 rtbCommMsgAdd((iLoop % 5 == 0 ? "\n" : "\t"), Color.Green);
                             }
-                            rtbCommMsgAdd(Util.GetStringHexFromByte(RxData.DataBuf, len, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
+                            rtbCommMsgAdd(Util.GetStringHexFromBytes(RxData.DataBuf, len, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
                             len += ProtoLocal_South.LongAddrSize;
                         }
                         if (RxData.DataBuf[2] > 0)
@@ -827,12 +827,12 @@ namespace ElectricPowerDebuger.Function
                 case 0x08:                  // 查询从节点的父节点
                     if ((RxData.CtrlWord & 0x80) == 0x00)   // 下行报文
                     {
-                        rtbCommMsgAdd("\n从节点地址：" + Util.GetStringHexFromByte(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true) + "\n", Color.Green);
+                        rtbCommMsgAdd("\n从节点地址：" + Util.GetStringHexFromBytes(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true) + "\n", Color.Green);
                     }
                     else                                    // 上行报文
                     {
-                        rtbCommMsgAdd("\n从节点地址：" + Util.GetStringHexFromByte(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true) , Color.Green);
-                        rtbCommMsgAdd("  父节点地址：" + Util.GetStringHexFromByte(RxData.DataBuf, 6, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
+                        rtbCommMsgAdd("\n从节点地址：" + Util.GetStringHexFromBytes(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true) , Color.Green);
+                        rtbCommMsgAdd("  父节点地址：" + Util.GetStringHexFromBytes(RxData.DataBuf, 6, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
                         rtbCommMsgAdd("  链路质量：" + RxData.DataBuf[12]+ "\n", Color.Green);
                     }
                     break;
@@ -849,7 +849,7 @@ namespace ElectricPowerDebuger.Function
                 case 0x01:                  // 设置主节点地址
                     if ((RxData.CtrlWord & 0x80) == 0x00)   // 下行报文
                     {
-                        rtbCommMsgAdd("\n新主节点地址：" + Util.GetStringHexFromByte(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true) + "\n", Color.Green);
+                        rtbCommMsgAdd("\n新主节点地址：" + Util.GetStringHexFromBytes(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true) + "\n", Color.Green);
                     }
                     break;
                 case 0x02:                  // 添加从节点
@@ -863,7 +863,7 @@ namespace ElectricPowerDebuger.Function
                             {
                                 rtbCommMsgAdd((iLoop % 5 == 0 ? "\n" : "\t"), Color.Green);
                             }
-                            rtbCommMsgAdd(Util.GetStringHexFromByte(RxData.DataBuf, index, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
+                            rtbCommMsgAdd(Util.GetStringHexFromBytes(RxData.DataBuf, index, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
                             index += ProtoLocal_South.LongAddrSize;
                         }
                         rtbCommMsgAdd("\n", Color.Green);
@@ -880,7 +880,7 @@ namespace ElectricPowerDebuger.Function
                             {
                                 rtbCommMsgAdd((iLoop % 5 == 0 ? "\n" : "\t"), Color.Green);
                             }
-                            rtbCommMsgAdd(Util.GetStringHexFromByte(RxData.DataBuf, index, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
+                            rtbCommMsgAdd(Util.GetStringHexFromBytes(RxData.DataBuf, index, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
                             index += ProtoLocal_South.LongAddrSize;
                         }
                         rtbCommMsgAdd("\n", Color.Green);
@@ -903,7 +903,7 @@ namespace ElectricPowerDebuger.Function
                     {
                         rtbCommMsgAdd("\n任务ID：" + RxData.DataBuf[1].ToString("X2") + RxData.DataBuf[0].ToString("X2") + "\n", Color.Green);
                         rtbCommMsgAdd("报文长度：" + RxData.DataBuf[2] + "\n", Color.Green);
-                        rtbCommMsgAdd("报文内容：" + Util.GetStringHexFromByte(RxData.DataBuf, 3, RxData.DataBuf[2], " ") + "\n", Color.Green);
+                        rtbCommMsgAdd("报文内容：" + Util.GetStringHexFromBytes(RxData.DataBuf, 3, RxData.DataBuf[2], " ") + "\n", Color.Green);
                     }
                     break;
 
@@ -911,7 +911,7 @@ namespace ElectricPowerDebuger.Function
                     if ((RxData.CtrlWord & 0x80) == 0x80)   // 上行报文
                     {
                         rtbCommMsgAdd("\n报文长度：" + RxData.DataBuf[0] + "\n", Color.Green);
-                        rtbCommMsgAdd("报文内容：" + Util.GetStringHexFromByte(RxData.DataBuf, 1, RxData.DataBuf[0], " ") + "\n", Color.Green);
+                        rtbCommMsgAdd("报文内容：" + Util.GetStringHexFromBytes(RxData.DataBuf, 1, RxData.DataBuf[0], " ") + "\n", Color.Green);
                     }
                     break;
 
@@ -926,7 +926,7 @@ namespace ElectricPowerDebuger.Function
                             {
                                 rtbCommMsgAdd((iLoop % 5 == 0 ? "\n" : "\t"), Color.Green);
                             }
-                            rtbCommMsgAdd(Util.GetStringHexFromByte(RxData.DataBuf, index, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
+                            rtbCommMsgAdd(Util.GetStringHexFromBytes(RxData.DataBuf, index, ProtoLocal_South.LongAddrSize, "", true), Color.Green);
                             index += ProtoLocal_South.LongAddrSize;
                         }
                         rtbCommMsgAdd("\n", Color.Green);
@@ -945,7 +945,7 @@ namespace ElectricPowerDebuger.Function
                     {
                         string strTskStatus = "";
                         rtbCommMsgAdd("\n任务ID：" + RxData.DataBuf[1].ToString("X2") + RxData.DataBuf[0].ToString("X2") + "\n", Color.Green);
-                        rtbCommMsgAdd("从节点地址：" + Util.GetStringHexFromByte(RxData.DataBuf, 2, ProtoLocal_South.LongAddrSize, "", true) + "\n", Color.Green);
+                        rtbCommMsgAdd("从节点地址：" + Util.GetStringHexFromBytes(RxData.DataBuf, 2, ProtoLocal_South.LongAddrSize, "", true) + "\n", Color.Green);
                         rtbCommMsgAdd("任务状态：", Color.Green);
                         switch (RxData.DataBuf[8])
                         {
@@ -1008,7 +1008,7 @@ namespace ElectricPowerDebuger.Function
             strInfo += DateTime.Now.ToString("【yy/MM/dd HH:mm:ss.fff】");
             strInfo += "   " + GetStringExplain(rxData) + "\n";
             rtbCommMsgAdd(strInfo, (true == Dir) ? Color.Red : Color.Blue);
-            rtbCommMsgAdd(Util.GetStringHexFromByte(Buf, 0, Buf.Length, " "), (true == Dir) ? Color.Red : Color.Blue);
+            rtbCommMsgAdd(Util.GetStringHexFromBytes(Buf, 0, Buf.Length, " "), (true == Dir) ? Color.Red : Color.Blue);
             rtbCommMsg.AppendText("\n");
             // AFN
             rtbCommMsgAdd("AFN:" + ((byte)(rxData.Afn)).ToString("X2"), Color.Indigo);
@@ -1023,9 +1023,9 @@ namespace ElectricPowerDebuger.Function
             if ((rxData.CtrlWord & 0x20) == 0x20)
             {
                 rtbCommMsgAdd("  源地址:", Color.Indigo);
-                rtbCommMsgAdd(Util.GetStringHexFromByte(rxData.SrcAddr, 0, ProtoLocal_South.LongAddrSize, "", true), Color.Indigo);
+                rtbCommMsgAdd(Util.GetStringHexFromBytes(rxData.SrcAddr, 0, ProtoLocal_South.LongAddrSize, "", true), Color.Indigo);
                 rtbCommMsgAdd("  目的地址:", Color.Indigo);
-                rtbCommMsgAdd(Util.GetStringHexFromByte(rxData.DstAddr, 0, ProtoLocal_South.LongAddrSize, "", true), Color.Indigo);
+                rtbCommMsgAdd(Util.GetStringHexFromBytes(rxData.DstAddr, 0, ProtoLocal_South.LongAddrSize, "", true), Color.Indigo);
             }
             else
             {
@@ -1581,7 +1581,7 @@ namespace ElectricPowerDebuger.Function
             CmdSn = SequenceNo++;
             bTransceiveEnable = true;
             btReadUndoTaskInfo.Enabled = false;
-            Util.GetByteAddrFromString(strTaskId, CurrentReadTaskId, 0, true);
+            Util.GetBytesFromStringHex(strTaskId, CurrentReadTaskId, 0, true);
         }
         private void TransmitReadUndoTaskInfo()
         {
@@ -1614,7 +1614,7 @@ namespace ElectricPowerDebuger.Function
                 int nodeCount = RxData.DataBuf[3] + RxData.DataBuf[4] * 256;
                 for (int iLoop = 0; iLoop < nodeCount; iLoop++)
                 {
-                    string strSubNodeAddr = Util.GetStringHexFromByte(RxData.DataBuf, 5 + iLoop * ProtoLocal_South.LongAddrSize, ProtoLocal_South.LongAddrSize, "", true);
+                    string strSubNodeAddr = Util.GetStringHexFromBytes(RxData.DataBuf, 5 + iLoop * ProtoLocal_South.LongAddrSize, ProtoLocal_South.LongAddrSize, "", true);
                     for (int iRow = 0; iRow < tbDocument.Rows.Count; iRow++)
                     {
                         if (tbDocument.Rows[iRow]["表具地址"].ToString() == strSubNodeAddr)
@@ -1865,7 +1865,7 @@ namespace ElectricPowerDebuger.Function
                 bTransceiveEnable = false;
                 Cmd = Command.任务空闲;
                 btReadAddress.Enabled = true;
-                lbConcAddr.Text = "主节点地址:" + Util.GetStringHexFromByte(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true);
+                lbConcAddr.Text = "主节点地址:" + Util.GetStringHexFromBytes(RxData.DataBuf, 0, ProtoLocal_South.LongAddrSize, "", true);
                 return;
             }
         }
@@ -1892,7 +1892,7 @@ namespace ElectricPowerDebuger.Function
         private void SetComAddrAndLength(String strAddr, String strLength)
         {
             CmdParams = new byte[ProtoLocal_South.LongAddrSize + 1];
-            Util.GetByteAddrFromString(strAddr, CmdParams, 0, true);
+            Util.GetBytesFromStringHex(strAddr, CmdParams, 0, true);
             try
             {
                 CmdParams[6] = Convert.ToByte(strLength);
@@ -2170,7 +2170,7 @@ namespace ElectricPowerDebuger.Function
             txData.SerialNo = CmdSn;
             txData.DataId = new byte[] { 0x08, 0x03, 0x03, 0xE8 };
             txData.DataBuf = new byte[ProtoLocal_South.LongAddrSize];
-            Util.GetByteAddrFromString(dgvDocument.SelectedRows[dgvDocument.SelectedRows.Count - CurrentProcIndex - 1].Cells[1].Value.ToString(), txData.DataBuf, 0, true);
+            Util.GetBytesFromStringHex(dgvDocument.SelectedRows[dgvDocument.SelectedRows.Count - CurrentProcIndex - 1].Cells[1].Value.ToString(), txData.DataBuf, 0, true);
             DataTransmit(txData);
             CmdWaitTime = 150;
             CmdRetryTimes--;
@@ -2246,7 +2246,7 @@ namespace ElectricPowerDebuger.Function
             txData.SerialNo = CmdSn;
             txData.DataId = new byte[] { 0x01, 0x04, 0x02, 0xE8 };
             txData.DataBuf = new byte[ProtoLocal_South.LongAddrSize];
-            Util.GetByteAddrFromString(strNewConcAddr, txData.DataBuf, 0, true);
+            Util.GetBytesFromStringHex(strNewConcAddr, txData.DataBuf, 0, true);
             DataTransmit(txData);
             CmdWaitTime = 200;
             CmdRetryTimes--;
@@ -2452,7 +2452,7 @@ namespace ElectricPowerDebuger.Function
 
                 for (int iRow = 0; iRow < tbDocument.Rows.Count; iRow++)
                 {
-                    if (tbDocument.Rows[iRow]["表具地址"].ToString() == Util.GetStringHexFromByte( RxData.SrcAddr, 0, 6, "", true))
+                    if (tbDocument.Rows[iRow]["表具地址"].ToString() == Util.GetStringHexFromBytes( RxData.SrcAddr, 0, 6, "", true))
                     {
                         tbDocument.Rows[iRow]["状态"] = "Success";
                         tbDocument.Rows[iRow]["结果"] = strResult;
@@ -2527,7 +2527,7 @@ namespace ElectricPowerDebuger.Function
         {
             for (int iRow = 0; iRow < tbDocument.Rows.Count; iRow++)
             {
-                if (tbDocument.Rows[iRow]["表具地址"].ToString() == Util.GetStringHexFromByte(RxData.DataBuf, 2, 6, "", true))
+                if (tbDocument.Rows[iRow]["表具地址"].ToString() == Util.GetStringHexFromBytes(RxData.DataBuf, 2, 6, "", true))
                 {
                     string strStatus = "Failed";
                     string strResult = "";
@@ -2707,9 +2707,9 @@ namespace ElectricPowerDebuger.Function
             txData.Afn = ProtoLocal_South.Afn.Afn2_TaskManage;
             txData.CtrlWord = 0x60;
             txData.SrcAddr = new byte[ProtoLocal_South.LongAddrSize];
-            Util.GetByteAddrFromString(strConcAddr, txData.SrcAddr, 0, true);
+            Util.GetBytesFromStringHex(strConcAddr, txData.SrcAddr, 0, true);
             txData.DstAddr = new byte[ProtoLocal_South.LongAddrSize];
-            Util.GetByteAddrFromString(dgvDocument.SelectedRows[dgvDocument.SelectedRows.Count - CurrentAddTaskNodeNo - 1].Cells[1].Value.ToString(), txData.DstAddr, 0, true);
+            Util.GetBytesFromStringHex(dgvDocument.SelectedRows[dgvDocument.SelectedRows.Count - CurrentAddTaskNodeNo - 1].Cells[1].Value.ToString(), txData.DstAddr, 0, true);
             txData.SerialNo = CmdSn;
             txData.DataId = new byte[] { 0x01, 0x02, 0x02, 0xE8 };
             txData.DataBuf = new byte[TaskContent.Length];
@@ -2818,7 +2818,7 @@ namespace ElectricPowerDebuger.Function
                 txData.DataBuf[index++] = (byte)(dgvDocument.SelectedRows.Count >> 8);
                 foreach (DataGridViewRow row in dgvDocument.SelectedRows)
                 {
-                    Util.GetByteAddrFromString(row.Cells[1].Value.ToString(), txData.DataBuf, index, true);
+                    Util.GetBytesFromStringHex(row.Cells[1].Value.ToString(), txData.DataBuf, index, true);
                     index += ProtoLocal_South.LongAddrSize;
                 }
             }
@@ -2904,7 +2904,7 @@ namespace ElectricPowerDebuger.Function
             txData.DataBuf = new byte[2];
             try
             {
-                Util.GetByteAddrFromString(strTaskId, txData.DataBuf, 0, true);
+                Util.GetBytesFromStringHex(strTaskId, txData.DataBuf, 0, true);
                 DataTransmit(txData);
                 CmdWaitTime = 150;
                 CmdRetryTimes--;
@@ -3052,7 +3052,7 @@ namespace ElectricPowerDebuger.Function
                     {
                         DataRow newRow = tbDocument.NewRow();
                         newRow["SN"] = tbDocument.Rows.Count.ToString("D3");
-                        newRow["表具地址"] = Util.GetStringHexFromByte(RxData.DataBuf, iLoop * ProtoLocal_South.LongAddrSize + 3, ProtoLocal_South.LongAddrSize, "", true);
+                        newRow["表具地址"] = Util.GetStringHexFromBytes(RxData.DataBuf, iLoop * ProtoLocal_South.LongAddrSize + 3, ProtoLocal_South.LongAddrSize, "", true);
                         newRow["任务ID"] = "无";
                         newRow["优先级"] = "无";
                         newRow["状态"] = "未知";
@@ -3129,7 +3129,7 @@ namespace ElectricPowerDebuger.Function
                 byte[] buf = new byte[300];
                 for (currentSubNodeExportToDevice = 0; currentSubNodeExportToDevice + totalSubNodesExportToDevice < tbDocument.Rows.Count && currentSubNodeExportToDevice < 30; currentSubNodeExportToDevice++)
                 {
-                    Util.GetByteAddrFromString(tbDocument.Rows[currentSubNodeExportToDevice + totalSubNodesExportToDevice]["表具地址"].ToString(), buf, currentSubNodeExportToDevice * 6, true);
+                    Util.GetBytesFromStringHex(tbDocument.Rows[currentSubNodeExportToDevice + totalSubNodesExportToDevice]["表具地址"].ToString(), buf, currentSubNodeExportToDevice * 6, true);
                 }
                 txData.DataBuf = new byte[currentSubNodeExportToDevice * ProtoLocal_South.LongAddrSize + 1];
                 txData.DataBuf[0] = currentSubNodeExportToDevice;
@@ -3358,7 +3358,7 @@ namespace ElectricPowerDebuger.Function
             txData.DataId = new byte[] { 0x02, 0x04, 0x02, 0xE8 };
             txData.DataBuf = new byte[7];
             txData.DataBuf[0] = 1;
-            Util.GetByteAddrFromString(strNewSubNodeAddr, txData.DataBuf, 1, true);
+            Util.GetBytesFromStringHex(strNewSubNodeAddr, txData.DataBuf, 1, true);
             DataTransmit(txData);
             CmdWaitTime = 300;
             CmdRetryTimes--;
@@ -3440,7 +3440,7 @@ namespace ElectricPowerDebuger.Function
             delSubNodeArray[0] = (byte)dgvDocument.SelectedRows.Count;
             for (int iLoop = 0; iLoop < delSubNodeArray[0]; iLoop++ )
             {
-                Util.GetByteAddrFromString(dgvDocument.SelectedRows[iLoop].Cells[1].Value.ToString(), delSubNodeArray, iLoop * ProtoLocal_South.LongAddrSize + 1, true);
+                Util.GetBytesFromStringHex(dgvDocument.SelectedRows[iLoop].Cells[1].Value.ToString(), delSubNodeArray, iLoop * ProtoLocal_South.LongAddrSize + 1, true);
             }
             txData.DataBuf = new byte[delSubNodeArray[0] * ProtoLocal_South.LongAddrSize + 1];
             Array.Copy(delSubNodeArray, txData.DataBuf, txData.DataBuf.Length);
@@ -3454,7 +3454,7 @@ namespace ElectricPowerDebuger.Function
             {
                 for (int iLoop = 0; iLoop < delSubNodeArray[0]; iLoop++ )
                 {
-                    string strAddr = Util.GetStringHexFromByte(delSubNodeArray, iLoop * ProtoLocal_South.LongAddrSize + 1, ProtoLocal_South.LongAddrSize, "", true);
+                    string strAddr = Util.GetStringHexFromBytes(delSubNodeArray, iLoop * ProtoLocal_South.LongAddrSize + 1, ProtoLocal_South.LongAddrSize, "", true);
                     for (int iRow = 0; iRow < tbDocument.Rows.Count; iRow++)
                     {
                         if (tbDocument.Rows[iRow]["表具地址"].ToString() == strAddr)

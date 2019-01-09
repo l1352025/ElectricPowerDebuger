@@ -192,6 +192,7 @@
             this.label20 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.rtbMsg = new System.Windows.Forms.RichTextBox();
+            this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1890,5 +1891,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn 发送DataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn 接收DataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn 读数DataGridViewTextBoxColumn;
+        private System.Windows.Forms.OpenFileDialog openFileDlg;
     }
 }

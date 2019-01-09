@@ -916,10 +916,10 @@ namespace ElectricPowerDebuger.Protocol
                 strTmp = "PanID   ：" + rxFrame.Mac.PanID.ToString("X4");
                 macNode.Nodes.Add(strTmp);
 
-                strTmp = "目的地址：" + Util.GetStringHexFromByte(rxFrame.Mac.DstAddr, 0, dstAddrLen, "", true);
+                strTmp = "目的地址：" + Util.GetStringHexFromBytes(rxFrame.Mac.DstAddr, 0, dstAddrLen, "", true);
                 macNode.Nodes.Add(strTmp);
 
-                strTmp = "源地址  ：" + Util.GetStringHexFromByte(rxFrame.Mac.SrcAddr, 0, srcAddrLen, "", true);
+                strTmp = "源地址  ：" + Util.GetStringHexFromBytes(rxFrame.Mac.SrcAddr, 0, srcAddrLen, "", true);
                 macNode.Nodes.Add(strTmp);
 
                 if (true == rxFrame.Mac.CtrlWord.ExtendFlag)
@@ -962,9 +962,9 @@ namespace ElectricPowerDebuger.Protocol
                 macNode.Nodes.Add(strTmp);
                 strTmp = "PanID   ：" + rxFrame.Mac.PanID.ToString("X4");
                 macNode.Nodes.Add(strTmp);
-                strTmp = "目的地址：" + Util.GetStringHexFromByte(rxFrame.Mac.DstAddr, 0, LongAddrSize, "", true);
+                strTmp = "目的地址：" + Util.GetStringHexFromBytes(rxFrame.Mac.DstAddr, 0, LongAddrSize, "", true);
                 macNode.Nodes.Add(strTmp);
-                strTmp = "源地址  ：" + Util.GetStringHexFromByte(rxFrame.Mac.SrcAddr, 0, LongAddrSize, "", true);
+                strTmp = "源地址  ：" + Util.GetStringHexFromBytes(rxFrame.Mac.SrcAddr, 0, LongAddrSize, "", true);
                 macNode.Nodes.Add(strTmp);
 
                 payloadNode = ExplainUpgradeCmdFrame(rxFrame.Mac.Payload[0], rxFrame.Mac.Payload);
@@ -1012,7 +1012,7 @@ namespace ElectricPowerDebuger.Protocol
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
 
-                strTmp = "中心节点地址 ：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                strTmp = "中心节点地址 ：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                 payloadNode.Nodes.Add(strTmp);
 
                 return payloadNode;
@@ -1220,7 +1220,7 @@ namespace ElectricPowerDebuger.Protocol
                         strTmp = "仪表类型：" + "0x" + buf[index].ToString("X2");
                         node.Nodes.Add(strTmp);
                         index += 1;
-                        strTmp = "仪表地址：" + Util.GetStringHexFromByte(buf, index, 7, "", true);
+                        strTmp = "仪表地址：" + Util.GetStringHexFromBytes(buf, index, 7, "", true);
                         node.Nodes.Add(strTmp);
                         index += 7;
                         strTmp = "控制字  ：" + "0x" + buf[index].ToString("X2");
@@ -1275,7 +1275,7 @@ namespace ElectricPowerDebuger.Protocol
                         strTmp = "仪表类型：" + "0x" + buf[index].ToString("X2");
                         node.Nodes.Add(strTmp);
                         index += 1;
-                        strTmp = "仪表地址：" + Util.GetStringHexFromByte(buf, index, 7, "", true);
+                        strTmp = "仪表地址：" + Util.GetStringHexFromBytes(buf, index, 7, "", true);
                         node.Nodes.Add(strTmp);
                         index += 7;
                         strTmp = "控制字  ：" + "0x" + buf[index].ToString("X2");
@@ -1404,7 +1404,7 @@ namespace ElectricPowerDebuger.Protocol
                 strTmp = "工作信道组：" + buf[index];
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
-                strTmp = "归属电表地址：" + Util.GetStringHexFromByte(buf, index, 6, "", true);
+                strTmp = "归属电表地址：" + Util.GetStringHexFromBytes(buf, index, 6, "", true);
                 payloadNode.Nodes.Add(strTmp);
                 index += 6;
                 strTmp = "网络号：" + (buf[index] + buf[index + 1] * 256).ToString("X4");
@@ -1502,7 +1502,7 @@ namespace ElectricPowerDebuger.Protocol
                         strTmp = "仪表类型：" + "0x" + buf[index].ToString("X2");
                         node.Nodes.Add(strTmp);
                         index += 1;
-                        strTmp = "仪表地址：" + Util.GetStringHexFromByte(buf, index, 7, "", true);
+                        strTmp = "仪表地址：" + Util.GetStringHexFromBytes(buf, index, 7, "", true);
                         node.Nodes.Add(strTmp);
                         index += 7;
                         strTmp = "控制字  ：" + "0x" + buf[index].ToString("X2");
@@ -1555,7 +1555,7 @@ namespace ElectricPowerDebuger.Protocol
                         strTmp = "仪表类型：" + "0x" + buf[index].ToString("X2");
                         node.Nodes.Add(strTmp);
                         index += 1;
-                        strTmp = "仪表地址：" + Util.GetStringHexFromByte(buf, index, 7, "", true);
+                        strTmp = "仪表地址：" + Util.GetStringHexFromBytes(buf, index, 7, "", true);
                         node.Nodes.Add(strTmp);
                         index += 7;
                         strTmp = "控制字  ：" + "0x" + buf[index].ToString("X2");
@@ -1753,7 +1753,7 @@ namespace ElectricPowerDebuger.Protocol
                     // 路径节点列表  
                     for (int i = 0; i < relayCount; i++)
                     {
-                        strTmp = "节点" + (i + 1) + "：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                        strTmp = "节点" + (i + 1) + "：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                         node.Nodes.Add(strTmp);
                         index += LongAddrSize;
                     }
@@ -1808,7 +1808,7 @@ namespace ElectricPowerDebuger.Protocol
                     // 路径节点列表  
                     for (int i = 0; i < relayCount; i++)
                     {
-                        strTmp = "节点" + (i + 1) + "：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                        strTmp = "节点" + (i + 1) + "：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                         node.Nodes.Add(strTmp);
                         index += LongAddrSize;
                     }
@@ -1936,7 +1936,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 index += 2;     // 跳过 0x68 + 0x10
 
-                strTmp = "水表地址：" + Util.GetStringHexFromByte(buf, index, 7, "", true);
+                strTmp = "水表地址：" + Util.GetStringHexFromBytes(buf, index, 7, "", true);
                 payloadNode.Nodes.Add(strTmp);
                 index += 7;
 
@@ -2319,9 +2319,9 @@ namespace ElectricPowerDebuger.Protocol
                 }
                 nwkNode.Nodes.Add(node);
 
-                strTmp = "目的地址：" + Util.GetStringHexFromByte(rxFrame.Nwk.DstAddr, 0, dstAddrLen, "", true);
+                strTmp = "目的地址：" + Util.GetStringHexFromBytes(rxFrame.Nwk.DstAddr, 0, dstAddrLen, "", true);
                 nwkNode.Nodes.Add(strTmp);
-                strTmp = "源地址  ：" + Util.GetStringHexFromByte(rxFrame.Nwk.SrcAddr, 0, srcAddrLen, "", true);
+                strTmp = "源地址  ：" + Util.GetStringHexFromBytes(rxFrame.Nwk.SrcAddr, 0, srcAddrLen, "", true);
                 nwkNode.Nodes.Add(strTmp);
                 strTmp = "网络半径：" + rxFrame.Nwk.Radius.ToString("X");
                 nwkNode.Nodes.Add(strTmp);
@@ -2343,7 +2343,7 @@ namespace ElectricPowerDebuger.Protocol
                     {
                         dstAddrLen = (rxFrame.Nwk.Route.AddrMode >> i * 2 & 0x03) == 0x02 ? 2 : 6;
                         strTmp = "中继" + (i + 1).ToString() + "：";
-                        strTmp += Util.GetStringHexFromByte(rxFrame.Nwk.Route.RelayList, index, dstAddrLen, "", true);
+                        strTmp += Util.GetStringHexFromBytes(rxFrame.Nwk.Route.RelayList, index, dstAddrLen, "", true);
                         node.Nodes.Add(strTmp);
                         index += dstAddrLen;
                     }
@@ -2396,7 +2396,7 @@ namespace ElectricPowerDebuger.Protocol
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
 
-                strTmp = "中心节点地址：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                strTmp = "中心节点地址：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                 payloadNode.Nodes.Add(strTmp);
                 index += LongAddrSize;
 
@@ -2420,7 +2420,7 @@ namespace ElectricPowerDebuger.Protocol
 
                     for (int i = 0; i < relayCount; i++)
                     {
-                        strTmp = "中继" + (i + 1) + "：" + Util.GetStringHexFromByte(buf, index, 2, "", true);
+                        strTmp = "中继" + (i + 1) + "：" + Util.GetStringHexFromBytes(buf, index, 2, "", true);
                         node.Nodes.Add(strTmp);
                         index += 2;
                     }
@@ -2468,7 +2468,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 if (buf.Length < 2 + addrLen) return payloadNode;
 
-                strTmp = "失败帧目标地址：" + Util.GetStringHexFromByte(buf, 2, addrLen, "", true);
+                strTmp = "失败帧目标地址：" + Util.GetStringHexFromBytes(buf, 2, addrLen, "", true);
                 payloadNode.Nodes.Add(strTmp);
 
                 return payloadNode;
@@ -2521,7 +2521,7 @@ namespace ElectricPowerDebuger.Protocol
 
                     for (int i = 0; i < neighborCnt; i++)
                     {
-                        strTmp = "邻居" + (i + 1) + "：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                        strTmp = "邻居" + (i + 1) + "：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                         index += LongAddrSize;
                         strTmp += " (" + buf[index++].ToString() + ")";
                         node.Nodes.Add(strTmp);
@@ -2617,7 +2617,7 @@ namespace ElectricPowerDebuger.Protocol
                         for (int j = 0; j < relayCount; j++)
                         {
                             strTmp = "中继" + (j + 1) + "：";
-                            strTmp += Util.GetStringHexFromByte(buf, index, 2, "", true);
+                            strTmp += Util.GetStringHexFromBytes(buf, index, 2, "", true);
                             node.Nodes.Add(strTmp);
                             index += 2;
                         }
@@ -2702,7 +2702,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 for (int i = 0; i < nodeCnt; i++)
                 {
-                    strTmp = "水表" + (i + 1) + "：" + Util.GetStringHexFromByte(buf, index + 1, 7, "", true)
+                    strTmp = "水表" + (i + 1) + "：" + Util.GetStringHexFromBytes(buf, index + 1, 7, "", true)
                             + " (" + buf[index] + ")";
                     node = new TreeNode(strTmp);
                     payloadNode.Nodes.Add(node);
@@ -2794,7 +2794,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 for (int i = 0; i < nodeCnt; i++)
                 {
-                    strTmp = "节点" + (i + 1) + "：" + Util.GetStringHexFromByte(buf, index, 7, "", true)
+                    strTmp = "节点" + (i + 1) + "：" + Util.GetStringHexFromBytes(buf, index, 7, "", true)
                             + " (" + buf[index + 7] + ")";
                     payloadNode.Nodes.Add(strTmp);
                     index += 8;
@@ -2855,7 +2855,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 for (int i = 0; i < nodeCnt; i++)
                 {
-                    strTmp = "水表" + (i + 1) + "：" + Util.GetStringHexFromByte(buf, index + 1, 7, "", true)
+                    strTmp = "水表" + (i + 1) + "：" + Util.GetStringHexFromBytes(buf, index + 1, 7, "", true)
                             + " (" + buf[index] + ")";
                     node = new TreeNode(strTmp);
                     payloadNode.Nodes.Add(node);
@@ -3347,7 +3347,7 @@ namespace ElectricPowerDebuger.Protocol
                 strTmp = "命令标识：" + GetCmdName(buf) + "(0x" + buf[index].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
-                strTmp = "设备出厂地址：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                strTmp = "设备出厂地址：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                 payloadNode.Nodes.Add(strTmp);
                 index += 6;
                 strTmp = "节点类型：" + (buf[index] < DeviceTypeTbl.Length ? DeviceTypeTbl[buf[index]] : "未知");
@@ -3406,7 +3406,7 @@ namespace ElectricPowerDebuger.Protocol
 
                     for (int j = 0; j < relayCount; j++)
                     {
-                        strTmp = "中继" + (j + 1) + "：" + Util.GetStringHexFromByte(buf, index, 2, "", true);
+                        strTmp = "中继" + (j + 1) + "：" + Util.GetStringHexFromBytes(buf, index, 2, "", true);
                         node.Nodes.Add(strTmp);
                         index += 2;
                     }
@@ -3644,7 +3644,7 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     if (buf.Length < index + LongAddrSize + 1) break;
 
-                    strTmp = "地址" + (i + 1) + "：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                    strTmp = "地址" + (i + 1) + "：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                     index += LongAddrSize;
 
                     if ((buf[index] & 0x10) > 0)
@@ -3709,7 +3709,7 @@ namespace ElectricPowerDebuger.Protocol
                     strTmp = "命令标识：" + GetCmdName(buf) + "(0x" + buf[index++].ToString("X2") + ")";
                     payloadNode.Nodes.Add(strTmp);
 
-                    strTmp = "从节点地址：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                    strTmp = "从节点地址：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                     payloadNode.Nodes.Add(strTmp);
                     index += LongAddrSize;
 
@@ -3732,7 +3732,7 @@ namespace ElectricPowerDebuger.Protocol
                     // 中继列表
                     for (int i = 0; i < relayCnt; i++)
                     {
-                        strTmp = "中继" + (i + 1) + "" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                        strTmp = "中继" + (i + 1) + "" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                         index += LongAddrSize;
                         node.Nodes.Add(strTmp);
                     }
@@ -3892,7 +3892,7 @@ namespace ElectricPowerDebuger.Protocol
                 strTmp = "命令标识：" + GetCmdName(buf) + "(0x" + buf[index++].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
 
-                strTmp = "二采地址：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                strTmp = "二采地址：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                 payloadNode.Nodes.Add(strTmp);
 
                 return payloadNode;
@@ -4058,7 +4058,7 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     if (buf.Length < index + LongAddrSize + 2) break;
 
-                    strTmp = "邻居" + (i + 1) + "：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                    strTmp = "邻居" + (i + 1) + "：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                     index += LongAddrSize;
                     strTmp += " (" + buf[index] + "|" + buf[index + 1] + "h)";
                     index += 2;
@@ -4098,7 +4098,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 strTmp = "命令标识：" + GetCmdName(buf) + "(0x" + buf[index++].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
-                strTmp = "节点地址：" + Util.GetStringHexFromByte(buf, index, LongAddrSize, "", true);
+                strTmp = "节点地址：" + Util.GetStringHexFromBytes(buf, index, LongAddrSize, "", true);
                 payloadNode.Nodes.Add(strTmp);
                 index += 6;
 

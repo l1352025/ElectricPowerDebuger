@@ -642,7 +642,7 @@ namespace ElectricPowerDebuger.Function
             catch(Exception ex)
             {
                 StatusUpdate("更新报文异常:" + ex.Message + "\n" + ex.StackTrace, Color.Red, 
-                    "\n" + Util.GetStringHexFromByte(data, 0, data.Length, " "));
+                    "\n" + Util.GetStringHexFromBytes(data, 0, data.Length, " "));
             }
         }
         #endregion
@@ -689,9 +689,9 @@ namespace ElectricPowerDebuger.Function
                 else
                 {
                     strSrcAddr = RxFrame.Mac.SrcAddr == null ?
-                                        "" : Util.GetStringHexFromByte(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
+                                        "" : Util.GetStringHexFromBytes(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
                     strDstAddr = RxFrame.Mac.DstAddr == null ?
-                                "" : Util.GetStringHexFromByte(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
+                                "" : Util.GetStringHexFromBytes(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
                     strPanId = (RxFrame.Mac.PanID >> 8).ToString("X2") + (RxFrame.Mac.PanID & 0x00FF).ToString("X2");
                     strFsn = RxFrame.Mac.FrameSn.ToString("X2");
                 }
@@ -727,9 +727,9 @@ namespace ElectricPowerDebuger.Function
                 else
                 {
                     strSrcAddr = RxFrame.Mac.SrcAddr == null ?
-                                        "" : Util.GetStringHexFromByte(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
+                                        "" : Util.GetStringHexFromBytes(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
                     strDstAddr = RxFrame.Mac.DstAddr == null ?
-                                "" : Util.GetStringHexFromByte(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
+                                "" : Util.GetStringHexFromBytes(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
                     strPanId = (RxFrame.Mac.PanID >> 8).ToString("X2") + (RxFrame.Mac.PanID & 0x00FF).ToString("X2");
                     strFsn = RxFrame.Mac.FrameSn.ToString("X2");
                 }
@@ -766,9 +766,9 @@ namespace ElectricPowerDebuger.Function
                 else
                 {
                     strSrcAddr = RxFrame.Mac.SrcAddr == null ?
-                                        "" : Util.GetStringHexFromByte(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
+                                        "" : Util.GetStringHexFromBytes(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
                     strDstAddr = RxFrame.Mac.DstAddr == null ?
-                                "" : Util.GetStringHexFromByte(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
+                                "" : Util.GetStringHexFromBytes(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
                     strPanId = (RxFrame.Mac.PanID >> 8).ToString("X2") + (RxFrame.Mac.PanID & 0x00FF).ToString("X2");
                     strFsn = RxFrame.Mac.FrameSn.ToString("X2");
                 }
@@ -804,9 +804,9 @@ namespace ElectricPowerDebuger.Function
                 else
                 {
                     strSrcAddr = RxFrame.Mac.SrcAddr == null ?
-                                        "" : Util.GetStringHexFromByte(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
+                                        "" : Util.GetStringHexFromBytes(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
                     strDstAddr = RxFrame.Mac.DstAddr == null ?
-                                "" : Util.GetStringHexFromByte(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
+                                "" : Util.GetStringHexFromBytes(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
                     strPanId = (RxFrame.Mac.PanID >> 8).ToString("X2") + (RxFrame.Mac.PanID & 0x00FF).ToString("X2");
                     strFsn = RxFrame.Mac.FrameSn.ToString("X2");
                 }
@@ -959,25 +959,25 @@ namespace ElectricPowerDebuger.Function
 
             if ((byte)RxFrame.Mac.CtrlWord.FrameType == 0xFF)  //无效帧
             {
-                strData = Util.GetStringHexFromByte(databuf, index, databuf.Length, " ");
+                strData = Util.GetStringHexFromBytes(databuf, index, databuf.Length, " ");
                 rtbRxdataAdd(strData, Color.Black);
                 return;
             }
 
             // 包头 55AA + Rssi
             len = 3;
-            strData = Util.GetStringHexFromByte(databuf, index, len, " ");
+            strData = Util.GetStringHexFromBytes(databuf, index, len, " ");
             rtbRxdataAdd(strData, Color.LimeGreen);
             index += len;
             // Phy层帧头
             len = 3;
-            strData = Util.GetStringHexFromByte(databuf, index, len, " ");
+            strData = Util.GetStringHexFromBytes(databuf, index, len, " ");
             rtbRxdataAdd(strData, Color.Purple);
             index += len;
             // Mac层帧头
             frameType = (databuf[index] & 0x07);
             len = (databuf[index + 1] >> 2 & 0x03) == 0x02 ? 9 : 17;
-            strData = Util.GetStringHexFromByte(databuf, index, len, " ");
+            strData = Util.GetStringHexFromBytes(databuf, index, len, " ");
             rtbRxdataAdd(strData, Color.Red);
             index += len;
             if (frameType == (int)ProtoWireless_South.MacFrameType.Data)
@@ -994,7 +994,7 @@ namespace ElectricPowerDebuger.Function
                 {
                     len += databuf[index + len] + 1;
                 }
-                strData = Util.GetStringHexFromByte(databuf, index, len, " ");
+                strData = Util.GetStringHexFromBytes(databuf, index, len, " ");
                 rtbRxdataAdd(strData, Color.Orange);
                 index += len;
 
@@ -1006,20 +1006,20 @@ namespace ElectricPowerDebuger.Function
                     {
                         len += databuf[index + len] + 1;
                     }
-                    strData = Util.GetStringHexFromByte(databuf, index, len, " ");
+                    strData = Util.GetStringHexFromBytes(databuf, index, len, " ");
                     rtbRxdataAdd(strData, Color.Green);
                     index += len;
                 }
             }
             // 载荷
             len = databuf.Length - index - 2;
-            strData = Util.GetStringHexFromByte(databuf, index, len, " ");
+            strData = Util.GetStringHexFromBytes(databuf, index, len, " ");
             rtbRxdataAdd(strData, Color.Blue);
             index += len;
 
             // 帧尾FCS
             len = 2;
-            strData = Util.GetStringHexFromByte(databuf, index, len, " ");
+            strData = Util.GetStringHexFromBytes(databuf, index, len, " ");
             rtbRxdataAdd(strData, Color.Purple);
         }
 

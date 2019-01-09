@@ -22,7 +22,7 @@ namespace ElectricPowerDebuger.Dialog
             cmbTaskIdList.AutoCompleteCustomSource.Clear();
             for (int iLoop = 0; iLoop < TaskIdCount / 2; iLoop++)
             {
-                string strItem = Util.GetStringHexFromByte(TaskIdArray, iLoop * 2, 2, "", true);
+                string strItem = Util.GetStringHexFromBytes(TaskIdArray, iLoop * 2, 2, "", true);
                 cmbTaskIdList.Items.Add(strItem);
                 cmbTaskIdList.AutoCompleteCustomSource.Add(strItem);
             }
