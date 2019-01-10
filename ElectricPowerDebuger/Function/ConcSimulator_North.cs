@@ -1031,6 +1031,7 @@ namespace ElectricPowerDebuger.Function
             TempBuf[txLen++] = 0;
             TempBuf[txLen++] = _fsn++;  // info-6 
 
+            // addr
             if(cmd.Name == "数据转发" || cmd.Name == "读取计量箱相关事件" || cmd.Name == "路由数据转发")
             {
                 if (string.IsNullOrWhiteSpace(cbxParam1.Text)
@@ -1048,6 +1049,14 @@ namespace ElectricPowerDebuger.Function
                 Util.GetBytesFromStringHex(txtParam1.Text, TempBuf, txLen, true); // 目的地址
                 txLen += 6;
             }
+
+            // AFN - Fn
+            byte afn;
+            UInt16 fnId;
+            ProtoLocal_North.GetAfnFnByName(cmd.Name, out afn, out fnId);
+            TempBuf[txLen++] = afn;                         // AFN
+            TempBuf[txLen++] = (byte)(fnId & 0xFF);         // Fn
+            TempBuf[txLen++] = (byte)(fnId >> 8);
 
             #region 带参数的命令
             switch (cmd.Name)
@@ -1241,68 +1250,51 @@ namespace ElectricPowerDebuger.Function
                     break;
 
                 case "按类型读取日志":
-                    lbParam1.Text = "读取类型";
-                    lbParam1.Location = new Point(22, 30);
-                    lbParam1.Visible = true;
-                    cbxParam1.Items.Clear();
-                    cbxParam1.Items.Add("0 时-日志");
-                    cbxParam1.Items.Add("1 日-日志");
-                    cbxParam1.Items.Add("2 月-日志");
-                    cbxParam1.SelectedIndex = 0;
-                    cbxParam1.Location = new Point(78, 27);
-                    cbxParam1.Width = 111;
-                    cbxParam1.Visible = true;
-                    lbParam2.Text = "读取时间(月/日 时)";
-                    lbParam2.Location = new Point(22, 60);
-                    lbParam2.Visible = true;
-                    txtParam2.Text = DateTime.Now.ToString("MM/dd HH");
-                    txtParam2.Location = new Point(133, 57);
-                    txtParam2.Width = 56;
-                    txtParam2.Visible = true;
-                    btParamConfirm.Location = new Point(24, 90);
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // "读取类型";
+                    string strTime = txtParam2.Text.Trim();                             // "读取时间(月/日 时)";
+                    DateTime time;
+                    try
+                    {
+                        time = DateTime.ParseExact(strTime, "MM/dd HH", Thread.CurrentThread.CurrentCulture);
+                    }
+                    catch(Exception)
+                    {
+                        ShowMsg("输入的时间格式错误！如5月20日21时，则输入 05/20 21 \r\n", Color.Red);
+                        return;
+                    }
+                    TempBuf[txLen++] = Convert.ToByte(time.Month);
+                    TempBuf[txLen++] = Convert.ToByte(time.Day);
+                    TempBuf[txLen++] = Convert.ToByte(time.Hour);
                     break;
 
                 case "设置广播维护开关":
-                    lbParam1.Text = "维护开关";
-                    lbParam1.Location = new Point(22, 30);
-                    lbParam1.Visible = true;
-                    rbtParam1.Text = "开启";
-                    rbtParam1.Location = new Point(88, 27);
-                    rbtParam1.Width = 47;
-                    rbtParam1.Visible = true;
-                    rbtParam2.Text = "关闭";
-                    rbtParam2.Location = new Point(142, 27);
-                    rbtParam2.Width = 47;
-                    rbtParam2.Visible = true;
-                    lbParam2.Text = "维护时间(时:分)";
-                    lbParam2.Location = new Point(22, 60);
-                    lbParam2.Visible = true;
-                    txtParam2.Text = DateTime.Now.AddHours(1).ToString("HH:mm");
-                    txtParam2.Location = new Point(130, 57);
-                    txtParam2.Width = 59;
-                    txtParam2.Visible = true;
-                    btParamConfirm.Location = new Point(24, 90);
+                    TempBuf[txLen++] = (byte)(rbtParam1.Checked ? 1 : 0);               // "维护开关";
+                    TempBuf[txLen++] = Util.DecToBcd((byte)DateTime.Now.Second);        // "开始时间(分钟，发送时设置)";
+                    TempBuf[txLen++] = Util.DecToBcd((byte)DateTime.Now.Minute);
+                    TempBuf[txLen++] = Util.DecToBcd((byte)DateTime.Now.Hour);
+                    TempBuf[txLen++] = Util.DecToBcd((byte)DateTime.Now.Day);
+                    TempBuf[txLen++] = Util.DecToBcd((byte)DateTime.Now.Month);
+                    TempBuf[txLen++] = Util.DecToBcd((byte)(DateTime.Now.Year % 100));
+                    string strTime2 = txtParam2.Text.Trim();                            // "维护时间(时:分)";
+                    DateTime time2;
+                    try
+                    {
+                        time2 = DateTime.ParseExact(strTime2, "HH:mm", Thread.CurrentThread.CurrentCulture);
+                    }
+                    catch (Exception)
+                    {
+                        ShowMsg("输入的时间格式错误！如22时30分，则输入 22;30 \r\n", Color.Red);
+                        return;
+                    }
+                    TempBuf[txLen++] = Convert.ToByte(time2.Hour);
+                    TempBuf[txLen++] = Convert.ToByte(time2.Minute);
                     break;
 
                 case "读取子节点参数信息":
-                    lbParam1.Text = "读取类型";
-                    lbParam1.Location = new Point(22, 30);
-                    lbParam1.Visible = true;
-                    cbxParam1.Items.Clear();
-                    cbxParam1.Items.Add("0 档案信息");
-                    cbxParam1.Items.Add("1 邻居表");
-                    cbxParam1.Items.Add("2 路径表");
-                    cbxParam1.SelectedIndex = 0;
-                    cbxParam1.Location = new Point(78, 27);
-                    cbxParam1.Width = 111;
-                    cbxParam1.Visible = true;
-                    lbParam2.Text = "节点地址";
-                    lbParam2.Location = new Point(22, 60);
-                    lbParam2.Visible = true;
-                    txtParam2.Location = new Point(78, 57);
-                    txtParam2.Width = 111;
-                    txtParam2.Visible = true;
-                    btParamConfirm.Location = new Point(24, 90);
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // "读取类型";
+                    txtParam1.Text = txtParam1.Text.PadLeft(12, '0');
+                    Util.GetBytesFromStringHex(txtParam1.Text, TempBuf, txLen, true);   // 节点地址
+                    txLen += 6;
                     break;
 
                 default:

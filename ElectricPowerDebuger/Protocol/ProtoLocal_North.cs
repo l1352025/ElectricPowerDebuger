@@ -390,6 +390,22 @@ namespace ElectricPowerDebuger.Protocol
             return strFn;
         }
 
+        // 根据Fn名称获取AFN、Fn
+        public static void GetAfnFnByName(string fnName, out byte afn, out ushort fnDataId)
+        {
+            afn = 0xFF;
+            fnDataId = 0xFFFF;
+
+            foreach (CmdExplain cmd in FrameExplainTbl)
+            {
+                if (cmd.FnName == fnName)
+                {
+                    afn = cmd.Afn;
+                    fnDataId = FnToDataId(cmd.Fn);
+                }
+            }
+        }
+
         // 解析 帧类型、颜色
         public static void GetFrameTypeAndColor(FrameFormat frame, out string frameType, out Color frameColor)
         {
