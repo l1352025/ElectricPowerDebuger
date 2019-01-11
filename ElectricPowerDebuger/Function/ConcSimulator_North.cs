@@ -222,7 +222,7 @@ namespace ElectricPowerDebuger.Function
 
                         if (cmd.GrpName != "")
                         {
-                            msg = cmd.GrpName + "失败";
+                            msg = cmd.GrpName + "失败，应答超时";
                             ShowMsg(msg + "\r\n\r\n", Color.Red);
                         }
                         else
@@ -368,7 +368,7 @@ namespace ElectricPowerDebuger.Function
                     }
                     txtParam3.Location = new Point(24, 113);
                     txtParam3.Visible = true;
-                    btParamConfirm.Location = new Point(24, 176);
+                    btParamConfirm.Location = new Point(24, 160);
                     break;
 
                 case "查询从节点侦听信息":
@@ -387,6 +387,26 @@ namespace ElectricPowerDebuger.Function
                     txtParam2.Width = 71;
                     txtParam2.Visible = true;
                     btParamConfirm.Location = new Point(24, 90);
+                    break;
+
+                case "查询通信延时相关的广播时长":
+                    lbParam1.Text = "协议类型";
+                    lbParam1.Location = new Point(22, 30);
+                    lbParam1.Visible = true;
+                    cbxParam1.Items.Clear();
+                    cbxParam1.Items.Add("0 透明传输");
+                    cbxParam1.Items.Add("1 DL/T645-97");
+                    cbxParam1.Items.Add("2 DL/T645-07");
+                    cbxParam1.SelectedIndex = 0;
+                    cbxParam1.Location = new Point(78, 27);
+                    cbxParam1.Width = 111;
+                    cbxParam1.Visible = true;
+                    lbParam3.Text = "报文内容：";
+                    lbParam3.Location = new Point(22, 60);
+                    lbParam3.Visible = true;
+                    txtParam3.Location = new Point(24, 57);
+                    txtParam3.Visible = true;
+                    btParamConfirm.Location = new Point(24, 110);
                     break;
 
                 case "查询本地通信模块的AFN索引":
@@ -897,15 +917,14 @@ namespace ElectricPowerDebuger.Function
 
         private void UpdateRecentCmdName(string cmdText = "")
         {
-            string recentFixedCmds = "读出全部档案;重下全部档案;启动组网;查询路由运行状态";
-
             string recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North/RecentCmds");
             if (recentCmds == "")
             {
-                recentCmds = "添加主节点;查询主节点地址;查询厂商代码和版本;查询无线通信参数";
+                recentCmds = "添加主节点;查询主节点地址;查询厂商代码和版本;查询无线通信参数;"
+                            + "设置主节点地址;查询场强门限;设置场强门限";
             }
 
-            if ((!recentCmds.Split(';').Contains(cmdText) && !recentFixedCmds.Split(';').Contains(cmdText))
+            if ((!recentCmds.Split(';').Contains(cmdText))
                 || (cmdText == ""))
             {
                 if (cmdText != "")
@@ -918,9 +937,11 @@ namespace ElectricPowerDebuger.Function
                 btRecentUse2.Text = strs[1];
                 btRecentUse3.Text = strs[2];
                 btRecentUse4.Text = strs[3];
+                btRecentUse5.Text = strs[4];
+                btRecentUse6.Text = strs[5];
+                btRecentUse7.Text = strs[6];
                 XmlHelper.SetNodeValue(_configPath, "/Config/ConcSimulator_North", "RecentCmds", recentCmds);
             }
-
         }
         #endregion
 
@@ -1020,8 +1041,8 @@ namespace ElectricPowerDebuger.Function
             cmd.TimeWaitMS = 1000;
             cmd.RetryTimes = 1;
 
-            TempBuf[txLen++] = 0x68;
-            TempBuf[txLen++] = 0;       // length
+            TempBuf[txLen++] = 0x68;    // start
+            TempBuf[txLen++] = 0;       // length skip
             TempBuf[txLen++] = 0;
             TempBuf[txLen++] = 0x4A;    // ctrl
             TempBuf[txLen++] = 0;       // info-1~5
@@ -1079,7 +1100,7 @@ namespace ElectricPowerDebuger.Function
                     break;
 
                 case "查询本地通信模块的AFN索引":
-                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Split(' ')[0]);    // "AFN功能码：";
+                    TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Substring(0,2), 16);   // "AFN功能码：";
                     break;
 
                 case "发送测试":
@@ -1297,13 +1318,25 @@ namespace ElectricPowerDebuger.Function
                     txLen += 6;
                     break;
 
-                default:
-                    cmd = null;
+                default:// 无法识别的命令
+                    //cmd = null;
                     break;
             }
             #endregion
 
             if (cmd == null) return;
+
+            byte sum = 0;
+            for (int i = 3; i < txLen; i++ )
+            {
+                sum += TempBuf[i];
+            }
+
+            TempBuf[txLen++] = sum;                 // checksum
+            TempBuf[txLen++] = 0x16;                // end
+
+            TempBuf[1] = (byte)(txLen & 0xFF);      // length set
+            TempBuf[2] = (byte)(txLen >> 8);   
 
             cmd.TxBuf = new byte[txLen];
             Array.Copy(TempBuf, 0, cmd.TxBuf, 0, txLen);
@@ -1329,7 +1362,6 @@ namespace ElectricPowerDebuger.Function
             byte[] infoHeader = new byte[] { 0x53, 0x52, 0x57, 0x46, 0x2d }; // "SRWF-"
             string info = "";
             int indexStart = -1, indexEnd = -1;
-
 
             if (fileFlg == 3)   // 主模块bin文件 尾部3k查找版本信息
             {
@@ -1413,7 +1445,7 @@ namespace ElectricPowerDebuger.Function
                 return;
             }
 
-            msg = "  " + cmd.Name + "\r\n"
+            msg = " " + cmd.Name + " （下行）\r\n"
                 + "    Tx：" + Util.GetStringHexFromBytes(buf, 0, buf.Length, " ") + "\r\n";
             ShowMsg(msg, Color.Blue);
 
@@ -1422,7 +1454,7 @@ namespace ElectricPowerDebuger.Function
         // 接收报文
         private void RecvCmd(Command cmd)
         {
-            string msg = "", cmdName = "", strVal = "", strTmp;
+            string cmdName = "", strVal = "", strTmp;
             //int index = 0, strLen = 0;
 
             if (cmd.RxBuf == null || cmd.RxBuf.Length == 0) return;
@@ -1442,6 +1474,8 @@ namespace ElectricPowerDebuger.Function
                     if(tree.Nodes[i].Text.Contains("具体项Fn  ："))
                     {
                         cmdName = tree.Nodes[i].Text.Trim().Split(' ').Last();
+                        strVal += "\r\n";
+                        break;
                     }
                 }
 
@@ -1449,25 +1483,33 @@ namespace ElectricPowerDebuger.Function
                 {
                     foreach(TreeNode nodeL1 in tree.Nodes[tree.Nodes.Count - 1].Nodes)
                     {
-                        strVal += "\t" + nodeL1.Text + "\r\n";
+                        strVal += "" + nodeL1.Text + "\r\n";
 
                         foreach (TreeNode nodeL2 in nodeL1.Nodes)
                         {
-                            strVal += "\t\t" + nodeL2.Text + "\r\n";
+                            strVal += "  " + nodeL2.Text + "\r\n";
 
                             foreach (TreeNode nodeL3 in nodeL2.Nodes)
                             {
-                                strVal += "\t\t" + nodeL3.Text + "\r\n";
+                                strVal += "    " + nodeL3.Text + "\r\n";
                             }
                         }
                     }
                 }
             }
 
-            msg = "  " + cmdName + "\r\n"
-                + "    Rx：" + Util.GetStringHexFromBytes(buf, 0, buf.Length, " ") + "\r\n"
-                + strVal;
-            ShowMsg(msg, Color.DarkRed);
+            strTmp = " " + cmdName + " （上行）\r\n"
+                    + "    Rx：" + Util.GetStringHexFromBytes(buf, 0, buf.Length, " ") + "\r\n";
+            ShowMsg(strTmp, Color.DarkRed);
+
+            if (cmdName != "")
+            {
+                cmd.IsEnable = false;
+                cmd.RetryTimes = 0;
+
+                strTmp = strVal + "\r\n";
+                ShowMsg(strTmp, Color.Green, false);
+            }
 
         }
         #endregion
@@ -1490,11 +1532,11 @@ namespace ElectricPowerDebuger.Function
         #endregion
 
         #region 通信记录-显示/清空/保存
-        private void ShowMsg(string msg, Color fgColor)
+        private void ShowMsg(string msg, Color fgColor, bool showTime = true)
         {
             if (msg == "") return;
 
-            msg = "[" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff") + "] " + msg;
+            msg = (showTime ? "[" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff") + "] " : "") + msg;
 
             RichTextBoxAppand(rtbMsg, msg, fgColor);
         }

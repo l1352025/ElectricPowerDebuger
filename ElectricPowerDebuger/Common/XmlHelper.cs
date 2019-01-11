@@ -38,6 +38,7 @@ namespace ElectricPowerDebuger.Common
                 return;
             }
             XmlDocument doc = new XmlDocument();
+            XmlElement element;
 
             XmlNode xmlDeclare = doc.CreateXmlDeclaration("1.0", "utf-8", null);
             doc.AppendChild(xmlDeclare);
@@ -45,20 +46,20 @@ namespace ElectricPowerDebuger.Common
             XmlElement ConfigNode = (XmlElement)doc.CreateElement("Config");
             doc.AppendChild(ConfigNode);
 
-            XmlElement GlobalNode = (XmlElement)doc.CreateElement("Global");
-            ConfigNode.AppendChild(GlobalNode);
+            element = (XmlElement)doc.CreateElement("Global");
+            ConfigNode.AppendChild(element);
 
-            XmlElement ConcSimulatorNode = (XmlElement)doc.CreateElement("ConcSimulator");
-            ConfigNode.AppendChild(ConcSimulatorNode);
+            element = (XmlElement)doc.CreateElement("ConcSimulator");
+            ConfigNode.AppendChild(element);
 
-            XmlElement ConcSimulatorNode_North = (XmlElement)doc.CreateElement("ConcSimulator_North");
-            ConfigNode.AppendChild(ConcSimulatorNode_North);
+            element = (XmlElement)doc.CreateElement("ConcSimulator_North");
+            ConfigNode.AppendChild(element);
 
-            XmlElement DataMonitorNode = (XmlElement)doc.CreateElement("DataMonitor");
-            ConfigNode.AppendChild(DataMonitorNode);
+            element = (XmlElement)doc.CreateElement("DataMonitor");
+            ConfigNode.AppendChild(element);
 
-            XmlElement LogManagerNode = (XmlElement)doc.CreateElement("LogManager");
-            ConfigNode.AppendChild(LogManagerNode);
+            element = (XmlElement)doc.CreateElement("LogManager");
+            ConfigNode.AppendChild(element);
 
             doc.Save(configFile);
         }

@@ -128,7 +128,7 @@ namespace ElectricPowerDebuger.Protocol
             new CmdExplain(0x03, "查询数据",    6, "查询主节点干扰状态",          Color.Magenta, ExplainDataQuery_MainNodeDisturbedState),
             new CmdExplain(0x03, "查询数据",    7, "查询从节点监控最大超时时间",  Color.Magenta, ExplainDataQuery_SubNodeListenMaxTimeoutTime),
             new CmdExplain(0x03, "查询数据",    8, "查询无线通信参数",            Color.Magenta, ExplainDataQuery_WirelessCommParam),
-            new CmdExplain(0x03, "查询数据",    9, "查询广播通信延时",            Color.Magenta, ExplainDataQuery_BroadcastDelayTime),
+            new CmdExplain(0x03, "查询数据",    9, "查询通信延时相关的广播时长",  Color.Magenta, ExplainDataQuery_BroadcastDelayTime),
             new CmdExplain(0x03, "查询数据",    10, "查询本地通信模块的运行模式",   Color.Magenta, ExplainDataQuery_LocalCommModuleRunningMode),
             new CmdExplain(0x03, "查询数据",    11, "查询本地通信模块的AFN索引",    Color.Magenta, ExplainDataQuery_LocalCommModuleAfnIndex),
             new CmdExplain(0x03, "查询数据",    100, "查询场强门限",              Color.Magenta, ExplainDataQuery_RssiThreshold),
@@ -345,7 +345,7 @@ namespace ElectricPowerDebuger.Protocol
         // Fn --> DataId
         public static UInt16 FnToDataId(byte Fn)
         {
-            return (UInt16)( ((Fn - 1) / 8) << 8  +   (1 << ((Fn - 1) % 8)) );
+            return (UInt16)( (((Fn - 1) / 8) << 8)  +  (1 << ((Fn - 1) % 8)) );
         }
         // 解析 AFN
         public static string ExplainAFN(byte AFN)
@@ -941,10 +941,25 @@ namespace ElectricPowerDebuger.Protocol
                 strTmp = "信道数量      ：" + (buf[index + 1] & 0x1F);
                 payloadNode.Nodes.Add(strTmp);
 
-                strTmp = "周期抄表模式  ：" + (buf[index] >> 6 & 0x03);
+                strTmp = "周期抄表模式  ：";
+                switch((buf[index] >> 6 & 0x03))
+                {
+                    case 0: strTmp += "由集中器和路由主导的"; break;
+                    case 1: strTmp += "由集中器主导的"; break;
+                    case 2: strTmp += "由路由主导的"; break;
+                    default: strTmp += "未知"; break;
+                }
                 payloadNode.Nodes.Add(strTmp);
 
-                strTmp = "主节点信道特征：" + (buf[index] >> 4 & 0x03);
+                strTmp = "主节点信道特征：";
+                switch ((buf[index] >> 4 & 0x03))
+                {
+                    case 0: strTmp += "微功率无线传输"; break;
+                    case 1: strTmp += "单相供电单相传输"; break;
+                    case 2: strTmp += "单相供电三相传输"; break;
+                    case 3: strTmp += "三相供电三相传输"; break;
+                    default: strTmp += "未知"; break;
+                }
                 payloadNode.Nodes.Add(strTmp);
 
                 int rateCnt = (buf[index] & 0x0F);
@@ -955,10 +970,13 @@ namespace ElectricPowerDebuger.Protocol
 
                 if (buf.Length < index + rateCnt * 2) return payloadNode;
 
+                UInt16 u16Temp, baud;
                 for (int i = 0; i < rateCnt; i++)
                 {
-                    UInt16 u16Temp = (UInt16)(buf[index] + buf[index + 1] * 256);
-                    strTmp = "通信速率" + (i + 1) + "：" + (u16Temp & 0x7FFF) + ((u16Temp >> 15) > 0 ? " Kbps" : " bps");
+                    u16Temp = (UInt16)(buf[index] + buf[index + 1] * 256);
+                    baud = (UInt16)(u16Temp & 0x7FFF);
+                    strTmp = ("通信速率" + (i + 1)).PadLeft(7) + "：" 
+                            + (baud == 0 ? "9600 bps" : baud.ToString() + ((u16Temp >> 15) > 0 ? " Kbps" : " bps"));
                     payloadNode.Nodes.Add(strTmp);
                     index += 2;
                 }
@@ -1133,7 +1151,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 if (buf.Length < 39) return payloadNode;
 
-                strTmp = "通信方式      ：" + buf[index];
+                strTmp = "通信方式        ：";
                 switch(buf[index] & 0x0F)
                 {
                     case 1: strTmp += "窄带电力线载波"; break;
@@ -1142,29 +1160,29 @@ namespace ElectricPowerDebuger.Protocol
                     default: strTmp += "无法识别"; break;
                 }
                 payloadNode.Nodes.Add(strTmp);
-                strTmp = "路由管理方式  ：" + ((buf[index] & 0x10) > 0 ? "支持" : "不支持") + "路由";
+                strTmp = "路由管理方式    ：" + ((buf[index] & 0x10) > 0 ? "支持" : "不支持") + "路由";
                 payloadNode.Nodes.Add(strTmp);
-                strTmp = "从节点信息模式：" + ((buf[index] & 0x20) > 0 ? "下发" : "不下发") + "从节点信息";
+                strTmp = "从节点信息模式  ：" + ((buf[index] & 0x20) > 0 ? "下发" : "不下发") + "从节点信息";
                 payloadNode.Nodes.Add(strTmp);
-                strTmp = "周期抄表模式  ：" + buf[index];
+                strTmp = "周期抄表模式    ：";
                 switch (buf[index] >> 6)
                 {
-                    case 1: strTmp += "由集中器主导"; break;
-                    case 2: strTmp += "由路由主动"; break;
-                    case 3: strTmp += "由集中器或路由主导"; break;
+                    case 1: strTmp += "由集中器主导的"; break;
+                    case 2: strTmp += "由路由主动的"; break;
+                    case 3: strTmp += "由集中器和路由主导的"; break;
                     default: strTmp += "无法识别"; break;
                 }
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
 
                 strTmp = "传输延时参数支持："
-                        + ((buf[index] & 0x01) > 0 ? "路由主动抄表" : " ")
-                        + ((buf[index] & 0x02) > 0 ? "|从节点监控" : " ")
-                        + ((buf[index] & 0x04) > 0 ? "|广播" : " ");
+                        + "路由主动抄表-" + ((buf[index] & 0x01) > 0 ? "支持" : "不支持")
+                        + " | 从节点监控-" + ((buf[index] & 0x02) > 0 ? "支持" : "不支持")
+                        + " | 广播-" + ((buf[index] & 0x04) > 0 ? "支持" : "不支持");
                 payloadNode.Nodes.Add(strTmp);
                 strTmp = "失败节点切换方式："
-                        + ((buf[index] & 0x08) > 0 ? "通信模块主动切换" : " ")
-                        + ((buf[index] & 0x10) > 0 ? "|集中器通知通信模块切换" : " ");
+                        + ((buf[index] & 0x08) > 0 ? "支持" : "不支持") + "-通信模块主动切换"
+                        + ((buf[index] & 0x10) > 0 ? "支持" : "不支持") + "-集中器通知通信模块切换";
                 payloadNode.Nodes.Add(strTmp);
                 strTmp = "广播命令确认方式：" + ((buf[index] & 0x20) > 0 ? "广播执行前" : "广播执行后") + "返回确认报文";
                 payloadNode.Nodes.Add(strTmp);
@@ -1175,9 +1193,9 @@ namespace ElectricPowerDebuger.Protocol
                 strTmp = "支持的信道数量  ：" + (buf[index] & 0x1F);
                 payloadNode.Nodes.Add(strTmp);
                 strTmp = "低压电网掉电信息："
-                        + "A相" + ((buf[index] & 0x20) > 0 ? "掉电" : "未掉电") + "|"
-                        + "B相" + ((buf[index] & 0x40) > 0 ? "掉电" : "未掉电") + "|"
-                        + "C相" + ((buf[index] & 0x80) > 0 ? "掉电" : "未掉电");
+                        + "A相-" + ((buf[index] & 0x20) > 0 ? "掉电" : "未掉电") + " | "
+                        + "B相-" + ((buf[index] & 0x40) > 0 ? "掉电" : "未掉电") + " | "
+                        + "C相-" + ((buf[index] & 0x80) > 0 ? "掉电" : "未掉电");
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
 
@@ -1218,36 +1236,48 @@ namespace ElectricPowerDebuger.Protocol
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
 
-                strTmp = "通信协议发布日期    ：" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + buf[index + 2].ToString("X2");
+                strTmp = "通信协议发布日期    ：" 
+                        + "20" + buf[index + 2].ToString("X2") + "/"
+                        + buf[index + 1].ToString("X2") + "/"
+                        + buf[index + 0].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
                 index += 3;
 
-                strTmp = "通信协议最后备案日期：" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + buf[index + 2].ToString("X2");
+                strTmp = "通信协议最后备案日期："
+                        + "20" + buf[index + 2].ToString("X2") + "/"
+                        + buf[index + 1].ToString("X2") + "/"
+                        + buf[index + 0].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
                 index += 3;
 
-                strTmp = "厂商代码：" + Convert.ToChar(buf[index]) + Convert.ToChar(buf[index + 1]);
+                strTmp = "厂商代码  ：" + Convert.ToChar(buf[index]) + Convert.ToChar(buf[index + 1]);
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
 
-                strTmp = "芯片代码：" + Convert.ToChar(buf[index]) + Convert.ToChar(buf[index + 1]);
+                strTmp = "芯片代码  ：" + Convert.ToChar(buf[index]) + Convert.ToChar(buf[index + 1]);
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
 
-                strTmp = "版本日期：" + buf[index + 2].ToString("X2") + buf[index + 1].ToString("X2") + buf[index].ToString("X2");
+                strTmp = "版本日期  ："
+                        + "20" + buf[index + 2].ToString("X2") + "/"
+                        + buf[index + 1].ToString("X2") + "/"
+                        + buf[index + 0].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
                 index += 3;
 
-                strTmp = "版本号  ：" + "v" + buf[index + 1].ToString("X") + "." + buf[index].ToString("X2");
+                strTmp = "版本号    ：" + "v" + buf[index + 1].ToString("X") + "." + buf[index].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
 
                 if (buf.Length < index + rateCnt * 2) return payloadNode;
 
+                UInt16 u16Temp, baud;
                 for (int i = 0; i < rateCnt; i++)
                 {
-                    UInt16 u16Temp = (UInt16)(buf[index] + buf[index + 1] * 256);
-                    strTmp = "通信速率" + (i + 1) + "：" + (u16Temp & 0x7FFF) + ((u16Temp >> 15) > 0 ? " Kbps" : " bps");
+                    u16Temp = (UInt16)(buf[index] + buf[index + 1] * 256);
+                    baud = (UInt16)(u16Temp & 0x7FFF);
+                    strTmp = ("通信速率" + (i + 1)).PadLeft(5) + "："
+                            + (baud == 0 ? "9600 bps" : baud.ToString() + ((u16Temp >> 15) > 0 ? " Kbps" : " bps"));
                     payloadNode.Nodes.Add(strTmp);
                     index += 2;
                 }
@@ -1292,7 +1322,7 @@ namespace ElectricPowerDebuger.Protocol
                 payloadNode.Nodes.Add(node);
                 for(int i = 0; i < 32; i++)
                 {
-                    u8Temp = buf[index];
+                    u8Temp = buf[index++];
                     for(int j = 0; j < 8; j++)
                     {
                         u8Fn++;
