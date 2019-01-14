@@ -31,6 +31,27 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.grpRecentUse = new System.Windows.Forms.GroupBox();
+            this.btRecentUse3 = new System.Windows.Forms.Button();
+            this.btRecentUse1 = new System.Windows.Forms.Button();
+            this.btRecentUse2 = new System.Windows.Forms.Button();
+            this.btRecentUse6 = new System.Windows.Forms.Button();
+            this.btRecentUse5 = new System.Windows.Forms.Button();
+            this.btRecentUse4 = new System.Windows.Forms.Button();
+            this.grpParamCmd = new System.Windows.Forms.GroupBox();
+            this.cbxParam2 = new System.Windows.Forms.ComboBox();
+            this.chkParam1 = new System.Windows.Forms.CheckBox();
+            this.cbxParam1 = new System.Windows.Forms.ComboBox();
+            this.txtParam3 = new System.Windows.Forms.TextBox();
+            this.rbtParam2 = new System.Windows.Forms.RadioButton();
+            this.rbtParam1 = new System.Windows.Forms.RadioButton();
+            this.txtParam2 = new System.Windows.Forms.TextBox();
+            this.txtParam1 = new System.Windows.Forms.TextBox();
+            this.btParamConfirm = new System.Windows.Forms.Button();
+            this.lbParam4 = new System.Windows.Forms.Label();
+            this.lbParam3 = new System.Windows.Forms.Label();
+            this.lbParam2 = new System.Windows.Forms.Label();
+            this.lbParam1 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.btPortCtrl = new System.Windows.Forms.Button();
             this.cbxPortNum = new System.Windows.Forms.ComboBox();
@@ -56,29 +77,11 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.grpRecentCmd = new System.Windows.Forms.GroupBox();
-            this.btRecentUse3 = new System.Windows.Forms.Button();
-            this.btRecentUse1 = new System.Windows.Forms.Button();
-            this.btRecentUse4 = new System.Windows.Forms.Button();
             this.btStartNetwork = new System.Windows.Forms.Button();
             this.btQueryRouteState = new System.Windows.Forms.Button();
             this.btRedownAllDoc = new System.Windows.Forms.Button();
-            this.btRecentUse2 = new System.Windows.Forms.Button();
             this.btReadAllDoc = new System.Windows.Forms.Button();
             this.grpCmdMenu = new System.Windows.Forms.GroupBox();
-            this.grpParamCmd = new System.Windows.Forms.GroupBox();
-            this.cbxParam2 = new System.Windows.Forms.ComboBox();
-            this.chkParam1 = new System.Windows.Forms.CheckBox();
-            this.cbxParam1 = new System.Windows.Forms.ComboBox();
-            this.txtParam3 = new System.Windows.Forms.TextBox();
-            this.rbtParam2 = new System.Windows.Forms.RadioButton();
-            this.rbtParam1 = new System.Windows.Forms.RadioButton();
-            this.txtParam2 = new System.Windows.Forms.TextBox();
-            this.txtParam1 = new System.Windows.Forms.TextBox();
-            this.btParamConfirm = new System.Windows.Forms.Button();
-            this.lbParam4 = new System.Windows.Forms.Label();
-            this.lbParam3 = new System.Windows.Forms.Label();
-            this.lbParam2 = new System.Windows.Forms.Label();
-            this.lbParam1 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.h初始化ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.硬件初始化ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,7 +95,7 @@
             this.查询主节点地址ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询主节点状态字和通信速率ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询主节点干扰状态ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.查询从节点最大超时时间ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.查询从节点监控最大超时时间ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询无线通信参数ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询通信延时相关的广播时长ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询本地通信模块的运行模式ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -154,24 +157,6 @@
             this.lbCenterAddr = new System.Windows.Forms.Label();
             this.lbDocCnt = new System.Windows.Forms.Label();
             this.dgvDoc = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.序号DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.模块地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.表地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.协议类型DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.版本DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.升级状态DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.发送DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.接收DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.读数DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dsDoc = new System.Data.DataSet();
             this.tbDoc = new System.Data.DataTable();
             this.序号 = new System.Data.DataColumn();
@@ -193,18 +178,26 @@
             this.label13 = new System.Windows.Forms.Label();
             this.rtbMsg = new System.Windows.Forms.RichTextBox();
             this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
-            this.btRecentUse5 = new System.Windows.Forms.Button();
-            this.btRecentUse6 = new System.Windows.Forms.Button();
-            this.btRecentUse7 = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.中继级别 = new System.Data.DataColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.grpRecentUse.SuspendLayout();
+            this.grpParamCmd.SuspendLayout();
             this.grpLoopReadAmeter.SuspendLayout();
             this.grpRecentCmd.SuspendLayout();
             this.grpCmdMenu.SuspendLayout();
-            this.grpParamCmd.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -213,7 +206,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvDoc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dsDoc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDoc)).BeginInit();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -228,7 +220,7 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.Control;
-            this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
+            this.splitContainer1.Panel1.Controls.Add(this.grpRecentUse);
             this.splitContainer1.Panel1.Controls.Add(this.grpParamCmd);
             this.splitContainer1.Panel1.Controls.Add(this.label12);
             this.splitContainer1.Panel1.Controls.Add(this.btPortCtrl);
@@ -244,6 +236,225 @@
             this.splitContainer1.Size = new System.Drawing.Size(1342, 682);
             this.splitContainer1.SplitterDistance = 369;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // grpRecentUse
+            // 
+            this.grpRecentUse.Controls.Add(this.btRecentUse3);
+            this.grpRecentUse.Controls.Add(this.btRecentUse1);
+            this.grpRecentUse.Controls.Add(this.btRecentUse2);
+            this.grpRecentUse.Controls.Add(this.btRecentUse6);
+            this.grpRecentUse.Controls.Add(this.btRecentUse5);
+            this.grpRecentUse.Controls.Add(this.btRecentUse4);
+            this.grpRecentUse.Location = new System.Drawing.Point(155, 49);
+            this.grpRecentUse.Name = "grpRecentUse";
+            this.grpRecentUse.Size = new System.Drawing.Size(204, 195);
+            this.grpRecentUse.TabIndex = 18;
+            this.grpRecentUse.TabStop = false;
+            this.grpRecentUse.Text = "最近执行的6个命令";
+            // 
+            // btRecentUse3
+            // 
+            this.btRecentUse3.Location = new System.Drawing.Point(6, 77);
+            this.btRecentUse3.Name = "btRecentUse3";
+            this.btRecentUse3.Size = new System.Drawing.Size(191, 23);
+            this.btRecentUse3.TabIndex = 0;
+            this.btRecentUse3.Text = "查询厂商代码和版本信息";
+            this.btRecentUse3.UseVisualStyleBackColor = true;
+            this.btRecentUse3.Click += new System.EventHandler(this.AllCmdButton_Click);
+            // 
+            // btRecentUse1
+            // 
+            this.btRecentUse1.Location = new System.Drawing.Point(6, 19);
+            this.btRecentUse1.Name = "btRecentUse1";
+            this.btRecentUse1.Size = new System.Drawing.Size(191, 23);
+            this.btRecentUse1.TabIndex = 0;
+            this.btRecentUse1.Text = "添加从节点";
+            this.btRecentUse1.UseVisualStyleBackColor = true;
+            this.btRecentUse1.Click += new System.EventHandler(this.AllCmdButton_Click);
+            // 
+            // btRecentUse2
+            // 
+            this.btRecentUse2.Location = new System.Drawing.Point(6, 48);
+            this.btRecentUse2.Name = "btRecentUse2";
+            this.btRecentUse2.Size = new System.Drawing.Size(191, 23);
+            this.btRecentUse2.TabIndex = 0;
+            this.btRecentUse2.Text = "查询主节点地址";
+            this.btRecentUse2.UseVisualStyleBackColor = true;
+            this.btRecentUse2.Click += new System.EventHandler(this.AllCmdButton_Click);
+            // 
+            // btRecentUse6
+            // 
+            this.btRecentUse6.Location = new System.Drawing.Point(6, 166);
+            this.btRecentUse6.Name = "btRecentUse6";
+            this.btRecentUse6.Size = new System.Drawing.Size(191, 23);
+            this.btRecentUse6.TabIndex = 0;
+            this.btRecentUse6.Text = "查询场强门限";
+            this.btRecentUse6.UseVisualStyleBackColor = true;
+            this.btRecentUse6.Click += new System.EventHandler(this.AllCmdButton_Click);
+            // 
+            // btRecentUse5
+            // 
+            this.btRecentUse5.Location = new System.Drawing.Point(6, 137);
+            this.btRecentUse5.Name = "btRecentUse5";
+            this.btRecentUse5.Size = new System.Drawing.Size(191, 23);
+            this.btRecentUse5.TabIndex = 0;
+            this.btRecentUse5.Text = "设置主节点地址";
+            this.btRecentUse5.UseVisualStyleBackColor = true;
+            this.btRecentUse5.Click += new System.EventHandler(this.AllCmdButton_Click);
+            // 
+            // btRecentUse4
+            // 
+            this.btRecentUse4.Location = new System.Drawing.Point(6, 106);
+            this.btRecentUse4.Name = "btRecentUse4";
+            this.btRecentUse4.Size = new System.Drawing.Size(191, 23);
+            this.btRecentUse4.TabIndex = 0;
+            this.btRecentUse4.Text = "查询无线通信参数";
+            this.btRecentUse4.UseVisualStyleBackColor = true;
+            this.btRecentUse4.Click += new System.EventHandler(this.AllCmdButton_Click);
+            // 
+            // grpParamCmd
+            // 
+            this.grpParamCmd.Controls.Add(this.cbxParam2);
+            this.grpParamCmd.Controls.Add(this.chkParam1);
+            this.grpParamCmd.Controls.Add(this.cbxParam1);
+            this.grpParamCmd.Controls.Add(this.txtParam3);
+            this.grpParamCmd.Controls.Add(this.rbtParam2);
+            this.grpParamCmd.Controls.Add(this.rbtParam1);
+            this.grpParamCmd.Controls.Add(this.txtParam2);
+            this.grpParamCmd.Controls.Add(this.txtParam1);
+            this.grpParamCmd.Controls.Add(this.btParamConfirm);
+            this.grpParamCmd.Controls.Add(this.lbParam4);
+            this.grpParamCmd.Controls.Add(this.lbParam3);
+            this.grpParamCmd.Controls.Add(this.lbParam2);
+            this.grpParamCmd.Controls.Add(this.lbParam1);
+            this.grpParamCmd.Location = new System.Drawing.Point(155, 264);
+            this.grpParamCmd.Name = "grpParamCmd";
+            this.grpParamCmd.Size = new System.Drawing.Size(204, 210);
+            this.grpParamCmd.TabIndex = 1;
+            this.grpParamCmd.TabStop = false;
+            this.grpParamCmd.Text = "当前命令名";
+            this.grpParamCmd.Visible = false;
+            // 
+            // cbxParam2
+            // 
+            this.cbxParam2.FormattingEnabled = true;
+            this.cbxParam2.Location = new System.Drawing.Point(114, 19);
+            this.cbxParam2.Name = "cbxParam2";
+            this.cbxParam2.Size = new System.Drawing.Size(36, 20);
+            this.cbxParam2.TabIndex = 7;
+            // 
+            // chkParam1
+            // 
+            this.chkParam1.AutoSize = true;
+            this.chkParam1.Location = new System.Drawing.Point(25, 46);
+            this.chkParam1.Name = "chkParam1";
+            this.chkParam1.Size = new System.Drawing.Size(48, 16);
+            this.chkParam1.TabIndex = 6;
+            this.chkParam1.Text = "chk1";
+            this.chkParam1.UseVisualStyleBackColor = true;
+            // 
+            // cbxParam1
+            // 
+            this.cbxParam1.FormattingEnabled = true;
+            this.cbxParam1.Location = new System.Drawing.Point(154, 19);
+            this.cbxParam1.Name = "cbxParam1";
+            this.cbxParam1.Size = new System.Drawing.Size(36, 20);
+            this.cbxParam1.TabIndex = 5;
+            // 
+            // txtParam3
+            // 
+            this.txtParam3.Location = new System.Drawing.Point(25, 90);
+            this.txtParam3.Multiline = true;
+            this.txtParam3.Name = "txtParam3";
+            this.txtParam3.Size = new System.Drawing.Size(165, 43);
+            this.txtParam3.TabIndex = 4;
+            this.txtParam3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtParam3_KeyPress);
+            // 
+            // rbtParam2
+            // 
+            this.rbtParam2.AutoSize = true;
+            this.rbtParam2.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.rbtParam2.Location = new System.Drawing.Point(143, 68);
+            this.rbtParam2.Name = "rbtParam2";
+            this.rbtParam2.Size = new System.Drawing.Size(43, 14);
+            this.rbtParam2.TabIndex = 3;
+            this.rbtParam2.Text = "关闭";
+            this.rbtParam2.UseVisualStyleBackColor = true;
+            // 
+            // rbtParam1
+            // 
+            this.rbtParam1.AutoSize = true;
+            this.rbtParam1.Checked = true;
+            this.rbtParam1.Font = new System.Drawing.Font("宋体", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.rbtParam1.Location = new System.Drawing.Point(79, 68);
+            this.rbtParam1.Name = "rbtParam1";
+            this.rbtParam1.Size = new System.Drawing.Size(43, 14);
+            this.rbtParam1.TabIndex = 3;
+            this.rbtParam1.TabStop = true;
+            this.rbtParam1.Text = "开启";
+            this.rbtParam1.UseVisualStyleBackColor = true;
+            // 
+            // txtParam2
+            // 
+            this.txtParam2.Location = new System.Drawing.Point(72, 18);
+            this.txtParam2.Name = "txtParam2";
+            this.txtParam2.Size = new System.Drawing.Size(36, 21);
+            this.txtParam2.TabIndex = 2;
+            this.txtParam2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtParam2_KeyPress);
+            // 
+            // txtParam1
+            // 
+            this.txtParam1.Location = new System.Drawing.Point(25, 19);
+            this.txtParam1.Name = "txtParam1";
+            this.txtParam1.Size = new System.Drawing.Size(36, 21);
+            this.txtParam1.TabIndex = 2;
+            this.txtParam1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtParam1_KeyPress);
+            // 
+            // btParamConfirm
+            // 
+            this.btParamConfirm.Location = new System.Drawing.Point(25, 139);
+            this.btParamConfirm.Name = "btParamConfirm";
+            this.btParamConfirm.Size = new System.Drawing.Size(165, 25);
+            this.btParamConfirm.TabIndex = 1;
+            this.btParamConfirm.Text = "确定";
+            this.btParamConfirm.UseVisualStyleBackColor = true;
+            this.btParamConfirm.Click += new System.EventHandler(this.btParamConfirm_Click);
+            // 
+            // lbParam4
+            // 
+            this.lbParam4.AutoSize = true;
+            this.lbParam4.Location = new System.Drawing.Point(23, 70);
+            this.lbParam4.Name = "lbParam4";
+            this.lbParam4.Size = new System.Drawing.Size(23, 12);
+            this.lbParam4.TabIndex = 0;
+            this.lbParam4.Text = "lb4";
+            // 
+            // lbParam3
+            // 
+            this.lbParam3.AutoSize = true;
+            this.lbParam3.Location = new System.Drawing.Point(167, 46);
+            this.lbParam3.Name = "lbParam3";
+            this.lbParam3.Size = new System.Drawing.Size(23, 12);
+            this.lbParam3.TabIndex = 0;
+            this.lbParam3.Text = "lb3";
+            // 
+            // lbParam2
+            // 
+            this.lbParam2.AutoSize = true;
+            this.lbParam2.Location = new System.Drawing.Point(127, 47);
+            this.lbParam2.Name = "lbParam2";
+            this.lbParam2.Size = new System.Drawing.Size(23, 12);
+            this.lbParam2.TabIndex = 0;
+            this.lbParam2.Text = "lb2";
+            // 
+            // lbParam1
+            // 
+            this.lbParam1.AutoSize = true;
+            this.lbParam1.Location = new System.Drawing.Point(89, 47);
+            this.lbParam1.Name = "lbParam1";
+            this.lbParam1.Size = new System.Drawing.Size(23, 12);
+            this.lbParam1.TabIndex = 0;
+            this.lbParam1.Text = "lb1";
             // 
             // label12
             // 
@@ -509,36 +720,6 @@
             this.grpRecentCmd.TabStop = false;
             this.grpRecentCmd.Text = "常用命令";
             // 
-            // btRecentUse3
-            // 
-            this.btRecentUse3.Location = new System.Drawing.Point(6, 77);
-            this.btRecentUse3.Name = "btRecentUse3";
-            this.btRecentUse3.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse3.TabIndex = 0;
-            this.btRecentUse3.Text = "查询厂商代码和版本";
-            this.btRecentUse3.UseVisualStyleBackColor = true;
-            this.btRecentUse3.Click += new System.EventHandler(this.AllCmdButton_Click);
-            // 
-            // btRecentUse1
-            // 
-            this.btRecentUse1.Location = new System.Drawing.Point(6, 19);
-            this.btRecentUse1.Name = "btRecentUse1";
-            this.btRecentUse1.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse1.TabIndex = 0;
-            this.btRecentUse1.Text = "添加从节点";
-            this.btRecentUse1.UseVisualStyleBackColor = true;
-            this.btRecentUse1.Click += new System.EventHandler(this.AllCmdButton_Click);
-            // 
-            // btRecentUse4
-            // 
-            this.btRecentUse4.Location = new System.Drawing.Point(6, 106);
-            this.btRecentUse4.Name = "btRecentUse4";
-            this.btRecentUse4.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse4.TabIndex = 0;
-            this.btRecentUse4.Text = "查询无线通信参数";
-            this.btRecentUse4.UseVisualStyleBackColor = true;
-            this.btRecentUse4.Click += new System.EventHandler(this.AllCmdButton_Click);
-            // 
             // btStartNetwork
             // 
             this.btStartNetwork.Location = new System.Drawing.Point(9, 78);
@@ -569,16 +750,6 @@
             this.btRedownAllDoc.UseVisualStyleBackColor = true;
             this.btRedownAllDoc.Click += new System.EventHandler(this.AllCmdButton_Click);
             // 
-            // btRecentUse2
-            // 
-            this.btRecentUse2.Location = new System.Drawing.Point(6, 48);
-            this.btRecentUse2.Name = "btRecentUse2";
-            this.btRecentUse2.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse2.TabIndex = 0;
-            this.btRecentUse2.Text = "查询主节点地址";
-            this.btRecentUse2.UseVisualStyleBackColor = true;
-            this.btRecentUse2.Click += new System.EventHandler(this.AllCmdButton_Click);
-            // 
             // btReadAllDoc
             // 
             this.btReadAllDoc.Location = new System.Drawing.Point(9, 20);
@@ -598,148 +769,6 @@
             this.grpCmdMenu.TabIndex = 0;
             this.grpCmdMenu.TabStop = false;
             this.grpCmdMenu.Text = "命令菜单";
-            // 
-            // grpParamCmd
-            // 
-            this.grpParamCmd.Controls.Add(this.cbxParam2);
-            this.grpParamCmd.Controls.Add(this.chkParam1);
-            this.grpParamCmd.Controls.Add(this.cbxParam1);
-            this.grpParamCmd.Controls.Add(this.txtParam3);
-            this.grpParamCmd.Controls.Add(this.rbtParam2);
-            this.grpParamCmd.Controls.Add(this.rbtParam1);
-            this.grpParamCmd.Controls.Add(this.txtParam2);
-            this.grpParamCmd.Controls.Add(this.txtParam1);
-            this.grpParamCmd.Controls.Add(this.btParamConfirm);
-            this.grpParamCmd.Controls.Add(this.lbParam4);
-            this.grpParamCmd.Controls.Add(this.lbParam3);
-            this.grpParamCmd.Controls.Add(this.lbParam2);
-            this.grpParamCmd.Controls.Add(this.lbParam1);
-            this.grpParamCmd.Location = new System.Drawing.Point(155, 287);
-            this.grpParamCmd.Name = "grpParamCmd";
-            this.grpParamCmd.Size = new System.Drawing.Size(204, 187);
-            this.grpParamCmd.TabIndex = 1;
-            this.grpParamCmd.TabStop = false;
-            this.grpParamCmd.Text = "当前命令名";
-            this.grpParamCmd.Visible = false;
-            // 
-            // cbxParam2
-            // 
-            this.cbxParam2.FormattingEnabled = true;
-            this.cbxParam2.Location = new System.Drawing.Point(114, 19);
-            this.cbxParam2.Name = "cbxParam2";
-            this.cbxParam2.Size = new System.Drawing.Size(36, 20);
-            this.cbxParam2.TabIndex = 7;
-            // 
-            // chkParam1
-            // 
-            this.chkParam1.AutoSize = true;
-            this.chkParam1.Location = new System.Drawing.Point(25, 46);
-            this.chkParam1.Name = "chkParam1";
-            this.chkParam1.Size = new System.Drawing.Size(48, 16);
-            this.chkParam1.TabIndex = 6;
-            this.chkParam1.Text = "chk1";
-            this.chkParam1.UseVisualStyleBackColor = true;
-            // 
-            // cbxParam1
-            // 
-            this.cbxParam1.FormattingEnabled = true;
-            this.cbxParam1.Location = new System.Drawing.Point(154, 19);
-            this.cbxParam1.Name = "cbxParam1";
-            this.cbxParam1.Size = new System.Drawing.Size(36, 20);
-            this.cbxParam1.TabIndex = 5;
-            // 
-            // txtParam3
-            // 
-            this.txtParam3.Location = new System.Drawing.Point(25, 90);
-            this.txtParam3.Multiline = true;
-            this.txtParam3.Name = "txtParam3";
-            this.txtParam3.Size = new System.Drawing.Size(165, 43);
-            this.txtParam3.TabIndex = 4;
-            this.txtParam3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtParam3_KeyPress);
-            // 
-            // rbtParam2
-            // 
-            this.rbtParam2.AutoSize = true;
-            this.rbtParam2.Location = new System.Drawing.Point(143, 68);
-            this.rbtParam2.Name = "rbtParam2";
-            this.rbtParam2.Size = new System.Drawing.Size(47, 16);
-            this.rbtParam2.TabIndex = 3;
-            this.rbtParam2.Text = "关闭";
-            this.rbtParam2.UseVisualStyleBackColor = true;
-            // 
-            // rbtParam1
-            // 
-            this.rbtParam1.AutoSize = true;
-            this.rbtParam1.Checked = true;
-            this.rbtParam1.Location = new System.Drawing.Point(79, 68);
-            this.rbtParam1.Name = "rbtParam1";
-            this.rbtParam1.Size = new System.Drawing.Size(47, 16);
-            this.rbtParam1.TabIndex = 3;
-            this.rbtParam1.TabStop = true;
-            this.rbtParam1.Text = "开启";
-            this.rbtParam1.UseVisualStyleBackColor = true;
-            // 
-            // txtParam2
-            // 
-            this.txtParam2.Location = new System.Drawing.Point(72, 18);
-            this.txtParam2.Name = "txtParam2";
-            this.txtParam2.Size = new System.Drawing.Size(36, 21);
-            this.txtParam2.TabIndex = 2;
-            this.txtParam2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtParam2_KeyPress);
-            // 
-            // txtParam1
-            // 
-            this.txtParam1.Location = new System.Drawing.Point(25, 19);
-            this.txtParam1.Name = "txtParam1";
-            this.txtParam1.Size = new System.Drawing.Size(36, 21);
-            this.txtParam1.TabIndex = 2;
-            this.txtParam1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtParam1_KeyPress);
-            // 
-            // btParamConfirm
-            // 
-            this.btParamConfirm.Location = new System.Drawing.Point(25, 139);
-            this.btParamConfirm.Name = "btParamConfirm";
-            this.btParamConfirm.Size = new System.Drawing.Size(165, 25);
-            this.btParamConfirm.TabIndex = 1;
-            this.btParamConfirm.Text = "确定";
-            this.btParamConfirm.UseVisualStyleBackColor = true;
-            this.btParamConfirm.Click += new System.EventHandler(this.btParamConfirm_Click);
-            // 
-            // lbParam4
-            // 
-            this.lbParam4.AutoSize = true;
-            this.lbParam4.Location = new System.Drawing.Point(23, 70);
-            this.lbParam4.Name = "lbParam4";
-            this.lbParam4.Size = new System.Drawing.Size(23, 12);
-            this.lbParam4.TabIndex = 0;
-            this.lbParam4.Text = "lb4";
-            // 
-            // lbParam3
-            // 
-            this.lbParam3.AutoSize = true;
-            this.lbParam3.Location = new System.Drawing.Point(167, 46);
-            this.lbParam3.Name = "lbParam3";
-            this.lbParam3.Size = new System.Drawing.Size(23, 12);
-            this.lbParam3.TabIndex = 0;
-            this.lbParam3.Text = "lb3";
-            // 
-            // lbParam2
-            // 
-            this.lbParam2.AutoSize = true;
-            this.lbParam2.Location = new System.Drawing.Point(127, 47);
-            this.lbParam2.Name = "lbParam2";
-            this.lbParam2.Size = new System.Drawing.Size(23, 12);
-            this.lbParam2.TabIndex = 0;
-            this.lbParam2.Text = "lb2";
-            // 
-            // lbParam1
-            // 
-            this.lbParam1.AutoSize = true;
-            this.lbParam1.Location = new System.Drawing.Point(89, 47);
-            this.lbParam1.Name = "lbParam1";
-            this.lbParam1.Size = new System.Drawing.Size(23, 12);
-            this.lbParam1.TabIndex = 0;
-            this.lbParam1.Text = "lb1";
             // 
             // menuStrip1
             // 
@@ -761,7 +790,7 @@
             this.menuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
             this.menuStrip1.Location = new System.Drawing.Point(9, 17);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(125, 277);
+            this.menuStrip1.Size = new System.Drawing.Size(125, 258);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -812,7 +841,7 @@
             this.查询主节点地址ToolStripMenuItem,
             this.查询主节点状态字和通信速率ToolStripMenuItem,
             this.查询主节点干扰状态ToolStripMenuItem,
-            this.查询从节点最大超时时间ToolStripMenuItem,
+            this.查询从节点监控最大超时时间ToolStripMenuItem,
             this.查询无线通信参数ToolStripMenuItem,
             this.查询通信延时相关的广播时长ToolStripMenuItem,
             this.查询本地通信模块的运行模式ToolStripMenuItem,
@@ -861,11 +890,11 @@
             this.查询主节点干扰状态ToolStripMenuItem.Text = "查询主节点干扰状态";
             this.查询主节点干扰状态ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // 查询从节点最大超时时间ToolStripMenuItem
+            // 查询从节点监控最大超时时间ToolStripMenuItem
             // 
-            this.查询从节点最大超时时间ToolStripMenuItem.Name = "查询从节点最大超时时间ToolStripMenuItem";
-            this.查询从节点最大超时时间ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.查询从节点最大超时时间ToolStripMenuItem.Text = "查询从节点最大超时时间";
+            this.查询从节点监控最大超时时间ToolStripMenuItem.Name = "查询从节点监控最大超时时间ToolStripMenuItem";
+            this.查询从节点监控最大超时时间ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询从节点监控最大超时时间ToolStripMenuItem.Text = "查询从节点监控最大超时时间";
             // 
             // 查询无线通信参数ToolStripMenuItem
             // 
@@ -1396,19 +1425,11 @@
             this.dataGridViewTextBoxColumn3,
             this.dataGridViewTextBoxColumn4,
             this.dataGridViewTextBoxColumn5,
-            this.dataGridViewTextBoxColumn6,
             this.dataGridViewTextBoxColumn7,
+            this.dataGridViewTextBoxColumn6,
             this.dataGridViewTextBoxColumn8,
             this.dataGridViewTextBoxColumn9,
-            this.序号DataGridViewTextBoxColumn,
-            this.模块地址DataGridViewTextBoxColumn,
-            this.表地址DataGridViewTextBoxColumn,
-            this.协议类型DataGridViewTextBoxColumn,
-            this.版本DataGridViewTextBoxColumn,
-            this.升级状态DataGridViewTextBoxColumn,
-            this.发送DataGridViewTextBoxColumn,
-            this.接收DataGridViewTextBoxColumn,
-            this.读数DataGridViewTextBoxColumn});
+            this.dataGridViewTextBoxColumn10});
             this.dgvDoc.DataMember = "Table1";
             this.dgvDoc.DataSource = this.dsDoc;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -1427,123 +1448,6 @@
             this.dgvDoc.Size = new System.Drawing.Size(352, 653);
             this.dgvDoc.TabIndex = 0;
             // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "序号";
-            this.dataGridViewTextBoxColumn1.HeaderText = "序号";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.Width = 40;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.DataPropertyName = "模块地址";
-            this.dataGridViewTextBoxColumn2.HeaderText = "模块地址";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.Width = 90;
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            this.dataGridViewTextBoxColumn3.DataPropertyName = "表地址";
-            this.dataGridViewTextBoxColumn3.HeaderText = "表地址";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            this.dataGridViewTextBoxColumn3.Width = 90;
-            // 
-            // dataGridViewTextBoxColumn4
-            // 
-            this.dataGridViewTextBoxColumn4.DataPropertyName = "协议类型";
-            this.dataGridViewTextBoxColumn4.HeaderText = "协议类型";
-            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            this.dataGridViewTextBoxColumn4.Width = 80;
-            // 
-            // dataGridViewTextBoxColumn5
-            // 
-            this.dataGridViewTextBoxColumn5.DataPropertyName = "版本";
-            this.dataGridViewTextBoxColumn5.HeaderText = "版本";
-            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            this.dataGridViewTextBoxColumn5.Width = 50;
-            // 
-            // dataGridViewTextBoxColumn6
-            // 
-            this.dataGridViewTextBoxColumn6.DataPropertyName = "升级状态";
-            this.dataGridViewTextBoxColumn6.HeaderText = "升级状态";
-            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-            this.dataGridViewTextBoxColumn6.Width = 60;
-            // 
-            // dataGridViewTextBoxColumn7
-            // 
-            this.dataGridViewTextBoxColumn7.DataPropertyName = "发送";
-            this.dataGridViewTextBoxColumn7.HeaderText = "发送";
-            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-            this.dataGridViewTextBoxColumn7.Width = 40;
-            // 
-            // dataGridViewTextBoxColumn8
-            // 
-            this.dataGridViewTextBoxColumn8.DataPropertyName = "接收";
-            this.dataGridViewTextBoxColumn8.HeaderText = "接收";
-            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
-            this.dataGridViewTextBoxColumn8.Width = 40;
-            // 
-            // dataGridViewTextBoxColumn9
-            // 
-            this.dataGridViewTextBoxColumn9.DataPropertyName = "读数";
-            this.dataGridViewTextBoxColumn9.HeaderText = "读数";
-            this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
-            this.dataGridViewTextBoxColumn9.Width = 90;
-            // 
-            // 序号DataGridViewTextBoxColumn
-            // 
-            this.序号DataGridViewTextBoxColumn.DataPropertyName = "序号";
-            this.序号DataGridViewTextBoxColumn.HeaderText = "序号";
-            this.序号DataGridViewTextBoxColumn.Name = "序号DataGridViewTextBoxColumn";
-            // 
-            // 模块地址DataGridViewTextBoxColumn
-            // 
-            this.模块地址DataGridViewTextBoxColumn.DataPropertyName = "模块地址";
-            this.模块地址DataGridViewTextBoxColumn.HeaderText = "模块地址";
-            this.模块地址DataGridViewTextBoxColumn.Name = "模块地址DataGridViewTextBoxColumn";
-            // 
-            // 表地址DataGridViewTextBoxColumn
-            // 
-            this.表地址DataGridViewTextBoxColumn.DataPropertyName = "表地址";
-            this.表地址DataGridViewTextBoxColumn.HeaderText = "表地址";
-            this.表地址DataGridViewTextBoxColumn.Name = "表地址DataGridViewTextBoxColumn";
-            // 
-            // 协议类型DataGridViewTextBoxColumn
-            // 
-            this.协议类型DataGridViewTextBoxColumn.DataPropertyName = "协议类型";
-            this.协议类型DataGridViewTextBoxColumn.HeaderText = "协议类型";
-            this.协议类型DataGridViewTextBoxColumn.Name = "协议类型DataGridViewTextBoxColumn";
-            // 
-            // 版本DataGridViewTextBoxColumn
-            // 
-            this.版本DataGridViewTextBoxColumn.DataPropertyName = "版本";
-            this.版本DataGridViewTextBoxColumn.HeaderText = "版本";
-            this.版本DataGridViewTextBoxColumn.Name = "版本DataGridViewTextBoxColumn";
-            // 
-            // 升级状态DataGridViewTextBoxColumn
-            // 
-            this.升级状态DataGridViewTextBoxColumn.DataPropertyName = "升级状态";
-            this.升级状态DataGridViewTextBoxColumn.HeaderText = "升级状态";
-            this.升级状态DataGridViewTextBoxColumn.Name = "升级状态DataGridViewTextBoxColumn";
-            // 
-            // 发送DataGridViewTextBoxColumn
-            // 
-            this.发送DataGridViewTextBoxColumn.DataPropertyName = "发送";
-            this.发送DataGridViewTextBoxColumn.HeaderText = "发送";
-            this.发送DataGridViewTextBoxColumn.Name = "发送DataGridViewTextBoxColumn";
-            // 
-            // 接收DataGridViewTextBoxColumn
-            // 
-            this.接收DataGridViewTextBoxColumn.DataPropertyName = "接收";
-            this.接收DataGridViewTextBoxColumn.HeaderText = "接收";
-            this.接收DataGridViewTextBoxColumn.Name = "接收DataGridViewTextBoxColumn";
-            // 
-            // 读数DataGridViewTextBoxColumn
-            // 
-            this.读数DataGridViewTextBoxColumn.DataPropertyName = "读数";
-            this.读数DataGridViewTextBoxColumn.HeaderText = "读数";
-            this.读数DataGridViewTextBoxColumn.Name = "读数DataGridViewTextBoxColumn";
-            // 
             // dsDoc
             // 
             this.dsDoc.DataSetName = "NewDataSet";
@@ -1561,7 +1465,8 @@
             this.升级状态,
             this.发送,
             this.接收,
-            this.读数});
+            this.读数,
+            this.中继级别});
             this.tbDoc.TableName = "Table1";
             // 
             // 序号
@@ -1696,51 +1601,79 @@
             this.rtbMsg.TabIndex = 0;
             this.rtbMsg.Text = "";
             // 
-            // btRecentUse5
+            // 中继级别
             // 
-            this.btRecentUse5.Location = new System.Drawing.Point(6, 137);
-            this.btRecentUse5.Name = "btRecentUse5";
-            this.btRecentUse5.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse5.TabIndex = 0;
-            this.btRecentUse5.Text = "设置主节点地址";
-            this.btRecentUse5.UseVisualStyleBackColor = true;
-            this.btRecentUse5.Click += new System.EventHandler(this.AllCmdButton_Click);
+            this.中继级别.ColumnName = "中继级别";
             // 
-            // btRecentUse6
+            // dataGridViewTextBoxColumn1
             // 
-            this.btRecentUse6.Location = new System.Drawing.Point(6, 166);
-            this.btRecentUse6.Name = "btRecentUse6";
-            this.btRecentUse6.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse6.TabIndex = 0;
-            this.btRecentUse6.Text = "查询场强门限";
-            this.btRecentUse6.UseVisualStyleBackColor = true;
-            this.btRecentUse6.Click += new System.EventHandler(this.AllCmdButton_Click);
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "序号";
+            this.dataGridViewTextBoxColumn1.HeaderText = "序号";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.Width = 40;
             // 
-            // btRecentUse7
+            // dataGridViewTextBoxColumn2
             // 
-            this.btRecentUse7.Location = new System.Drawing.Point(6, 195);
-            this.btRecentUse7.Name = "btRecentUse7";
-            this.btRecentUse7.Size = new System.Drawing.Size(192, 23);
-            this.btRecentUse7.TabIndex = 0;
-            this.btRecentUse7.Text = "设置场强门限";
-            this.btRecentUse7.UseVisualStyleBackColor = true;
-            this.btRecentUse7.Click += new System.EventHandler(this.AllCmdButton_Click);
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "模块地址";
+            this.dataGridViewTextBoxColumn2.HeaderText = "模块地址";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.Width = 90;
             // 
-            // groupBox1
+            // dataGridViewTextBoxColumn3
             // 
-            this.groupBox1.Controls.Add(this.btRecentUse3);
-            this.groupBox1.Controls.Add(this.btRecentUse1);
-            this.groupBox1.Controls.Add(this.btRecentUse7);
-            this.groupBox1.Controls.Add(this.btRecentUse2);
-            this.groupBox1.Controls.Add(this.btRecentUse6);
-            this.groupBox1.Controls.Add(this.btRecentUse5);
-            this.groupBox1.Controls.Add(this.btRecentUse4);
-            this.groupBox1.Location = new System.Drawing.Point(155, 49);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(204, 232);
-            this.groupBox1.TabIndex = 18;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "最近执行的7个命令";
+            this.dataGridViewTextBoxColumn3.DataPropertyName = "表地址";
+            this.dataGridViewTextBoxColumn3.HeaderText = "表地址";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.Width = 90;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.DataPropertyName = "协议类型";
+            this.dataGridViewTextBoxColumn4.HeaderText = "协议类型";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            this.dataGridViewTextBoxColumn4.Width = 80;
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            this.dataGridViewTextBoxColumn5.DataPropertyName = "版本";
+            this.dataGridViewTextBoxColumn5.HeaderText = "版本";
+            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            this.dataGridViewTextBoxColumn5.Width = 50;
+            // 
+            // dataGridViewTextBoxColumn7
+            // 
+            this.dataGridViewTextBoxColumn7.DataPropertyName = "中继级别";
+            this.dataGridViewTextBoxColumn7.HeaderText = "中继级别";
+            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            this.dataGridViewTextBoxColumn7.Width = 60;
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            this.dataGridViewTextBoxColumn6.DataPropertyName = "升级状态";
+            this.dataGridViewTextBoxColumn6.HeaderText = "升级状态";
+            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            this.dataGridViewTextBoxColumn6.Width = 60;
+            // 
+            // dataGridViewTextBoxColumn8
+            // 
+            this.dataGridViewTextBoxColumn8.DataPropertyName = "发送";
+            this.dataGridViewTextBoxColumn8.HeaderText = "发送";
+            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+            this.dataGridViewTextBoxColumn8.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn9
+            // 
+            this.dataGridViewTextBoxColumn9.DataPropertyName = "接收";
+            this.dataGridViewTextBoxColumn9.HeaderText = "接收";
+            this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
+            this.dataGridViewTextBoxColumn9.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn10
+            // 
+            this.dataGridViewTextBoxColumn10.DataPropertyName = "读数";
+            this.dataGridViewTextBoxColumn10.HeaderText = "读数";
+            this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
+            this.dataGridViewTextBoxColumn10.Width = 90;
             // 
             // ConcSimulator_North
             // 
@@ -1755,13 +1688,14 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.grpRecentUse.ResumeLayout(false);
+            this.grpParamCmd.ResumeLayout(false);
+            this.grpParamCmd.PerformLayout();
             this.grpLoopReadAmeter.ResumeLayout(false);
             this.grpLoopReadAmeter.PerformLayout();
             this.grpRecentCmd.ResumeLayout(false);
             this.grpCmdMenu.ResumeLayout(false);
             this.grpCmdMenu.PerformLayout();
-            this.grpParamCmd.ResumeLayout(false);
-            this.grpParamCmd.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
@@ -1773,7 +1707,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvDoc)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dsDoc)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDoc)).EndInit();
-            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1795,7 +1728,7 @@
         private System.Windows.Forms.ToolStripMenuItem 查询从节点侦听信息ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询主节点地址ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询主节点状态字和通信速率ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 查询从节点最大超时时间ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 查询从节点监控最大超时时间ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询无线通信参数ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询通信延时相关的广播时长ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询本地通信模块的运行模式ToolStripMenuItem;
@@ -1924,28 +1857,20 @@
         private System.Windows.Forms.Label lbParam4;
         private System.Windows.Forms.Label lbParam3;
         private System.Windows.Forms.ComboBox cbxParam2;
+        private System.Windows.Forms.OpenFileDialog openFileDlg;
+        private System.Windows.Forms.GroupBox grpRecentUse;
+        private System.Windows.Forms.Button btRecentUse6;
+        private System.Windows.Forms.Button btRecentUse5;
+        private System.Data.DataColumn 中继级别;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 序号DataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 模块地址DataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 表地址DataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 协议类型DataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 版本DataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 升级状态DataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 发送DataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 接收DataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 读数DataGridViewTextBoxColumn;
-        private System.Windows.Forms.OpenFileDialog openFileDlg;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btRecentUse7;
-        private System.Windows.Forms.Button btRecentUse6;
-        private System.Windows.Forms.Button btRecentUse5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
     }
 }

@@ -19,20 +19,32 @@ namespace ElectricPowerDebuger.Common
         {
             byte tmp;
             int iLoop, iPos = iStart;
-            for (iLoop = 0; iLoop < strSource.Length; )
+
+            strSource = strSource.Trim().Replace(" ", "").Replace(",", "").Replace("\t", "").Replace("\r", "").Replace("\n", "");
+            try
             {
-                DataByte[iPos++] = Convert.ToByte(strSource.Substring(iLoop, 2), 16);
-                iLoop += 2;
-            }
-            if (true == bReverse)
-            {
-                for (iLoop = 0; iLoop < (iPos - iStart) / 2; iLoop++)
+                if (strSource.Length % 2 != 0) throw new Exception();
+
+                for (iLoop = 0; iLoop < strSource.Length; )
                 {
-                    tmp = DataByte[iLoop + iStart];
-                    DataByte[iLoop + iStart] = DataByte[iPos - 1 - iLoop];
-                    DataByte[iPos - 1 - iLoop] = tmp;
+                    DataByte[iPos++] = Convert.ToByte(strSource.Substring(iLoop, 2), 16);
+                    iLoop += 2;
+                }
+                if (true == bReverse)
+                {
+                    for (iLoop = 0; iLoop < (iPos - iStart) / 2; iLoop++)
+                    {
+                        tmp = DataByte[iLoop + iStart];
+                        DataByte[iLoop + iStart] = DataByte[iPos - 1 - iLoop];
+                        DataByte[iPos - 1 - iLoop] = tmp;
+                    }
                 }
             }
+            catch(Exception)
+            {
+                return 0;
+            }
+
             return (iPos - iStart);
         }
 
@@ -52,18 +64,27 @@ namespace ElectricPowerDebuger.Common
             }
             bytes = new byte[strSource.Length / 2];
 
-            for (iLoop = 0; iLoop < bytes.Length; iLoop++)
+            try
             {
-                bytes[iLoop] = Convert.ToByte(strSource.Substring(iLoop * 2, 2), 16);
-            }
-            if (true == bReverse)
-            {
+                if (strSource.Length % 2 != 0) throw new Exception();
+
                 for (iLoop = 0; iLoop < bytes.Length; iLoop++)
                 {
-                    tmp = bytes[iLoop];
-                    bytes[iLoop] = bytes[bytes.Length - 1 - iLoop];
-                    bytes[bytes.Length - 1 - iLoop] = tmp;
+                    bytes[iLoop] = Convert.ToByte(strSource.Substring(iLoop * 2, 2), 16);
                 }
+                if (true == bReverse)
+                {
+                    for (iLoop = 0; iLoop < bytes.Length; iLoop++)
+                    {
+                        tmp = bytes[iLoop];
+                        bytes[iLoop] = bytes[bytes.Length - 1 - iLoop];
+                        bytes[bytes.Length - 1 - iLoop] = tmp;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
             }
 
             return bytes;

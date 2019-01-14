@@ -601,7 +601,7 @@ namespace ElectricPowerDebuger.Protocol
             strTmp = "命令状态：" + ((tmp & 0x01) > 0 ? "已处理" : "未处理");
             payloadNode.Nodes.Add(strTmp);
 
-            strTmp = "信道状态：" + (tmp >> 1).ToString("X8");
+            strTmp = "信道状态：" + ((tmp >> 1) == 0x7FFFFFFF ? "空闲" : (tmp >> 1).ToString("X8"));
             payloadNode.Nodes.Add(strTmp);
             index += 4;
 
@@ -635,7 +635,7 @@ namespace ElectricPowerDebuger.Protocol
             "无效数据单元",
             "长度错误",
             "校验错误",
-            "信息类不错在",
+            "信息类不存在",
             "格式错误",
             "表号重复",
             "表号不存在",
@@ -798,7 +798,10 @@ namespace ElectricPowerDebuger.Protocol
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
 
-                strTmp = "版本日期：" + buf[index + 2].ToString("X2") + buf[index + 1].ToString("X2") + buf[index].ToString("X2");
+                strTmp = "版本日期：" 
+                        + DateTime.Now.Year/100 + buf[index + 2].ToString("X2") + "-"
+                        + buf[index + 1].ToString("X2") + "-"
+                        + buf[index].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
                 index += 3;
 
@@ -975,7 +978,7 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     u16Temp = (UInt16)(buf[index] + buf[index + 1] * 256);
                     baud = (UInt16)(u16Temp & 0x7FFF);
-                    strTmp = ("通信速率" + (i + 1)).PadLeft(7) + "：" 
+                    strTmp = ("通信速率" + (i + 1)).PadRight(10) + "：" 
                             + (baud == 0 ? "9600 bps" : baud.ToString() + ((u16Temp >> 15) > 0 ? " Kbps" : " bps"));
                     payloadNode.Nodes.Add(strTmp);
                     index += 2;
@@ -1079,6 +1082,7 @@ namespace ElectricPowerDebuger.Protocol
             "次高",
             "次低",
             "最低",
+            "全功率",
         };
         private static TreeNode ExplainDataQuery_BroadcastDelayTime(FrameFormat frame)
         {
@@ -1181,8 +1185,8 @@ namespace ElectricPowerDebuger.Protocol
                         + " | 广播-" + ((buf[index] & 0x04) > 0 ? "支持" : "不支持");
                 payloadNode.Nodes.Add(strTmp);
                 strTmp = "失败节点切换方式："
-                        + ((buf[index] & 0x08) > 0 ? "支持" : "不支持") + "-通信模块主动切换"
-                        + ((buf[index] & 0x10) > 0 ? "支持" : "不支持") + "-集中器通知通信模块切换";
+                        + "通信模块主动切换-" + ((buf[index] & 0x08) > 0 ? "支持" : "不支持") 
+                        + " | 集中器通知通信模块切换-" + ((buf[index] & 0x10) > 0 ? "支持" : "不支持");
                 payloadNode.Nodes.Add(strTmp);
                 strTmp = "广播命令确认方式：" + ((buf[index] & 0x20) > 0 ? "广播执行前" : "广播执行后") + "返回确认报文";
                 payloadNode.Nodes.Add(strTmp);
@@ -1276,7 +1280,7 @@ namespace ElectricPowerDebuger.Protocol
                 {
                     u16Temp = (UInt16)(buf[index] + buf[index + 1] * 256);
                     baud = (UInt16)(u16Temp & 0x7FFF);
-                    strTmp = ("通信速率" + (i + 1)).PadLeft(5) + "："
+                    strTmp = ("通信速率" + (i + 1)).PadRight(6) + "："
                             + (baud == 0 ? "9600 bps" : baud.ToString() + ((u16Temp >> 15) > 0 ? " Kbps" : " bps"));
                     payloadNode.Nodes.Add(strTmp);
                     index += 2;
@@ -1313,7 +1317,7 @@ namespace ElectricPowerDebuger.Protocol
                 byte u8Temp, u8AFN, u8Fn = 0;
 
                 u8AFN = buf[index];
-                strTmp = "AFN功能码：" + ExplainAFN(u8AFN);
+                strTmp = "AFN功能码：" + u8AFN.ToString("X2") + "H " + ExplainAFN(u8AFN);
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
 
@@ -2228,40 +2232,47 @@ namespace ElectricPowerDebuger.Protocol
 
                 strTmp = "中继抄到节点数量：" + (buf[index] + buf[index + 1] * 256);
                 payloadNode.Nodes.Add(strTmp);
-                aliasList.Add("【CRC总包数】   ：" + (buf[index] + buf[index + 1] * 256));
+                strTmp = "-----------------------重定义-->[CRC总包数]   ：" + (buf[index] + buf[index + 1] * 256);
+                payloadNode.Nodes.Add(strTmp);
                 index += 2;
 
                 strTmp = "路由工作状态：" + ((buf[index] & 0x01) > 0 ? "学习" : "抄表");
                 payloadNode.Nodes.Add(strTmp);
                 strTmp = "注册允许状态：" + ((buf[index] & 0x02) > 0 ? "允许" : "不允许");
                 payloadNode.Nodes.Add(strTmp);
-                aliasList.Add("【接收信标个数】：" + buf[index]);
+                strTmp = "-----------------------重定义-->[接收信标个数]：" + buf[index];
+                payloadNode.Nodes.Add(strTmp);
                 index += 1;
 
                 UInt16 u16Temp = (UInt16)(buf[index] + buf[index + 1] * 256);
                 strTmp = "通信速率    ：" + (u16Temp & 0x7FFF) + ((u16Temp >> 15) > 0 ? " Kbps" : " bps");
                 payloadNode.Nodes.Add(strTmp);
-                aliasList.Add("【CRC错误包数】 ：" + (buf[index] + buf[index + 1] * 256));
+                strTmp = "-----------------------重定义-->[CRC错误包数] ：" + (buf[index] + buf[index + 1] * 256);
+                payloadNode.Nodes.Add(strTmp);
                 index += 2;
 
                 strTmp = "第1相中继级别：" + (buf[index] & 0x0F);
                 payloadNode.Nodes.Add(strTmp);
-                aliasList.Add("【路径优先级错误】  ：" + buf[index]);
+                strTmp = "-----------------------重定义-->[路径优先级错误]  ：" + buf[index];
+                payloadNode.Nodes.Add(strTmp);
                 index += 1;
 
                 strTmp = "第2相中继级别：" + (buf[index] & 0x0F);
                 payloadNode.Nodes.Add(strTmp);
-                aliasList.Add("【强制组网结束标志】：" + buf[index]);
+                strTmp = "-----------------------重定义-->[强制组网结束标志]：" + buf[index];
+                payloadNode.Nodes.Add(strTmp);
                 index += 1;
 
                 strTmp = "第3相中继级别：" + (buf[index] & 0x0F);
                 payloadNode.Nodes.Add(strTmp);
-                aliasList.Add("【保存路径错误】    ：" + buf[index]);
+                strTmp = "-----------------------重定义-->[保存路径错误]    ：" + buf[index];
+                payloadNode.Nodes.Add(strTmp);
                 index += 1;
 
                 strTmp = "第1相工作步骤：" + (buf[index] < RouteWorkStateTbl.Length ? RouteWorkStateTbl[buf[index]] : "无法识别");
                 payloadNode.Nodes.Add(strTmp);
-                aliasList.Add("【取路径优先级错误】：" + buf[index]);
+                strTmp = "-----------------------重定义-->[取路径优先级错误]：" + buf[index];
+                payloadNode.Nodes.Add(strTmp);
                 index += 1;
 
                 strTmp = "第2相工作步骤：" + (buf[index] < RouteWorkStateTbl.Length ? RouteWorkStateTbl[buf[index]] : "无法识别" );
@@ -2270,17 +2281,9 @@ namespace ElectricPowerDebuger.Protocol
 
                 strTmp = "第3相工作步骤：" + (buf[index] < RouteWorkStateTbl.Length ? RouteWorkStateTbl[buf[index]] : "无法识别");
                 payloadNode.Nodes.Add(strTmp);
-                aliasList.Add("【维护个数】        ：" + (buf[index - 1] + buf[index] * 256));
+                strTmp = "-----------------------重定义-->[维护个数]        ：" + (buf[index - 1] + buf[index] * 256);
+                payloadNode.Nodes.Add(strTmp);
                 index += 1;
-
-                TreeNode node = new TreeNode("（复用数据重定义）");
-                payloadNode.Nodes.Add(node);
-                {
-                    foreach (string str in aliasList)
-                    {
-                        node.Nodes.Add(str);
-                    }
-                }
             }
 
             return payloadNode;
@@ -2574,7 +2577,7 @@ namespace ElectricPowerDebuger.Protocol
                         node.Nodes.Add(strTmp);
                         index += 2;
 
-                        strTmp = "BootLoader版本：" + buf[index].ToString("X2");
+                        strTmp = "Boot版本：" + buf[index].ToString("X2");
                         node.Nodes.Add(strTmp);
                         index += 1;
                     }
