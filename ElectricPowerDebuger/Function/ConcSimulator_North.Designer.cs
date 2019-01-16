@@ -18,6 +18,8 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+
+            this.Close();
         }
 
         #region 组件设计器生成的代码
@@ -28,8 +30,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grpRecentUse = new System.Windows.Forms.GroupBox();
             this.btRecentUse3 = new System.Windows.Forms.Button();
@@ -157,6 +159,16 @@
             this.lbCenterAddr = new System.Windows.Forms.Label();
             this.lbDocCnt = new System.Windows.Forms.Label();
             this.dgvDoc = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dsDoc = new System.Data.DataSet();
             this.tbDoc = new System.Data.DataTable();
             this.序号 = new System.Data.DataColumn();
@@ -168,6 +180,7 @@
             this.发送 = new System.Data.DataColumn();
             this.接收 = new System.Data.DataColumn();
             this.读数 = new System.Data.DataColumn();
+            this.中继级别 = new System.Data.DataColumn();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
@@ -178,17 +191,16 @@
             this.label13 = new System.Windows.Forms.Label();
             this.rtbMsg = new System.Windows.Forms.RichTextBox();
             this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
-            this.中继级别 = new System.Data.DataColumn();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.序号DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.模块地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.表地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.协议类型DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.版本DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.升级状态DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.发送DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.接收DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.读数DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.中继级别DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -332,7 +344,7 @@
             this.grpParamCmd.Size = new System.Drawing.Size(204, 210);
             this.grpParamCmd.TabIndex = 1;
             this.grpParamCmd.TabStop = false;
-            this.grpParamCmd.Text = "当前命令名";
+            this.grpParamCmd.Text = "当前命令名-动态调整";
             this.grpParamCmd.Visible = false;
             // 
             // cbxParam2
@@ -380,6 +392,7 @@
             this.rbtParam2.TabIndex = 3;
             this.rbtParam2.Text = "关闭";
             this.rbtParam2.UseVisualStyleBackColor = true;
+            this.rbtParam2.CheckedChanged += new System.EventHandler(this.rbtParam_CheckedChanged);
             // 
             // rbtParam1
             // 
@@ -393,6 +406,7 @@
             this.rbtParam1.TabStop = true;
             this.rbtParam1.Text = "开启";
             this.rbtParam1.UseVisualStyleBackColor = true;
+            this.rbtParam1.CheckedChanged += new System.EventHandler(this.rbtParam_CheckedChanged);
             // 
             // txtParam2
             // 
@@ -1410,14 +1424,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvDoc.AutoGenerateColumns = false;
             this.dgvDoc.BackgroundColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.ScrollBar;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvDoc.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.ScrollBar;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvDoc.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dgvDoc.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgvDoc.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn1,
@@ -1429,17 +1443,27 @@
             this.dataGridViewTextBoxColumn6,
             this.dataGridViewTextBoxColumn8,
             this.dataGridViewTextBoxColumn9,
-            this.dataGridViewTextBoxColumn10});
+            this.dataGridViewTextBoxColumn10,
+            this.序号DataGridViewTextBoxColumn,
+            this.模块地址DataGridViewTextBoxColumn,
+            this.表地址DataGridViewTextBoxColumn,
+            this.协议类型DataGridViewTextBoxColumn,
+            this.版本DataGridViewTextBoxColumn,
+            this.升级状态DataGridViewTextBoxColumn,
+            this.发送DataGridViewTextBoxColumn,
+            this.接收DataGridViewTextBoxColumn,
+            this.读数DataGridViewTextBoxColumn,
+            this.中继级别DataGridViewTextBoxColumn});
             this.dgvDoc.DataMember = "Table1";
             this.dgvDoc.DataSource = this.dsDoc;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvDoc.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvDoc.DefaultCellStyle = dataGridViewCellStyle4;
             this.dgvDoc.Location = new System.Drawing.Point(0, 28);
             this.dgvDoc.Margin = new System.Windows.Forms.Padding(0);
             this.dgvDoc.Name = "dgvDoc";
@@ -1447,6 +1471,76 @@
             this.dgvDoc.RowTemplate.Height = 23;
             this.dgvDoc.Size = new System.Drawing.Size(352, 653);
             this.dgvDoc.TabIndex = 0;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "序号";
+            this.dataGridViewTextBoxColumn1.HeaderText = "序号";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "模块地址";
+            this.dataGridViewTextBoxColumn2.HeaderText = "模块地址";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.Width = 90;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.DataPropertyName = "表地址";
+            this.dataGridViewTextBoxColumn3.HeaderText = "表地址";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.Width = 90;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.DataPropertyName = "协议类型";
+            this.dataGridViewTextBoxColumn4.HeaderText = "协议类型";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            this.dataGridViewTextBoxColumn4.Width = 80;
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            this.dataGridViewTextBoxColumn5.DataPropertyName = "版本";
+            this.dataGridViewTextBoxColumn5.HeaderText = "版本";
+            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            this.dataGridViewTextBoxColumn5.Width = 50;
+            // 
+            // dataGridViewTextBoxColumn7
+            // 
+            this.dataGridViewTextBoxColumn7.DataPropertyName = "中继级别";
+            this.dataGridViewTextBoxColumn7.HeaderText = "中继级别";
+            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            this.dataGridViewTextBoxColumn7.Width = 60;
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            this.dataGridViewTextBoxColumn6.DataPropertyName = "升级状态";
+            this.dataGridViewTextBoxColumn6.HeaderText = "升级状态";
+            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            this.dataGridViewTextBoxColumn6.Width = 60;
+            // 
+            // dataGridViewTextBoxColumn8
+            // 
+            this.dataGridViewTextBoxColumn8.DataPropertyName = "发送";
+            this.dataGridViewTextBoxColumn8.HeaderText = "发送";
+            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+            this.dataGridViewTextBoxColumn8.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn9
+            // 
+            this.dataGridViewTextBoxColumn9.DataPropertyName = "接收";
+            this.dataGridViewTextBoxColumn9.HeaderText = "接收";
+            this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
+            this.dataGridViewTextBoxColumn9.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn10
+            // 
+            this.dataGridViewTextBoxColumn10.DataPropertyName = "读数";
+            this.dataGridViewTextBoxColumn10.HeaderText = "读数";
+            this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
+            this.dataGridViewTextBoxColumn10.Width = 90;
             // 
             // dsDoc
             // 
@@ -1509,6 +1603,10 @@
             // 读数
             // 
             this.读数.ColumnName = "读数";
+            // 
+            // 中继级别
+            // 
+            this.中继级别.ColumnName = "中继级别";
             // 
             // label14
             // 
@@ -1601,79 +1699,65 @@
             this.rtbMsg.TabIndex = 0;
             this.rtbMsg.Text = "";
             // 
-            // 中继级别
+            // 序号DataGridViewTextBoxColumn
             // 
-            this.中继级别.ColumnName = "中继级别";
+            this.序号DataGridViewTextBoxColumn.DataPropertyName = "序号";
+            this.序号DataGridViewTextBoxColumn.HeaderText = "序号";
+            this.序号DataGridViewTextBoxColumn.Name = "序号DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn1
+            // 模块地址DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "序号";
-            this.dataGridViewTextBoxColumn1.HeaderText = "序号";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.Width = 40;
+            this.模块地址DataGridViewTextBoxColumn.DataPropertyName = "模块地址";
+            this.模块地址DataGridViewTextBoxColumn.HeaderText = "模块地址";
+            this.模块地址DataGridViewTextBoxColumn.Name = "模块地址DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn2
+            // 表地址DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn2.DataPropertyName = "模块地址";
-            this.dataGridViewTextBoxColumn2.HeaderText = "模块地址";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.Width = 90;
+            this.表地址DataGridViewTextBoxColumn.DataPropertyName = "表地址";
+            this.表地址DataGridViewTextBoxColumn.HeaderText = "表地址";
+            this.表地址DataGridViewTextBoxColumn.Name = "表地址DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn3
+            // 协议类型DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn3.DataPropertyName = "表地址";
-            this.dataGridViewTextBoxColumn3.HeaderText = "表地址";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            this.dataGridViewTextBoxColumn3.Width = 90;
+            this.协议类型DataGridViewTextBoxColumn.DataPropertyName = "协议类型";
+            this.协议类型DataGridViewTextBoxColumn.HeaderText = "协议类型";
+            this.协议类型DataGridViewTextBoxColumn.Name = "协议类型DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn4
+            // 版本DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn4.DataPropertyName = "协议类型";
-            this.dataGridViewTextBoxColumn4.HeaderText = "协议类型";
-            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            this.dataGridViewTextBoxColumn4.Width = 80;
+            this.版本DataGridViewTextBoxColumn.DataPropertyName = "版本";
+            this.版本DataGridViewTextBoxColumn.HeaderText = "版本";
+            this.版本DataGridViewTextBoxColumn.Name = "版本DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn5
+            // 升级状态DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn5.DataPropertyName = "版本";
-            this.dataGridViewTextBoxColumn5.HeaderText = "版本";
-            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            this.dataGridViewTextBoxColumn5.Width = 50;
+            this.升级状态DataGridViewTextBoxColumn.DataPropertyName = "升级状态";
+            this.升级状态DataGridViewTextBoxColumn.HeaderText = "升级状态";
+            this.升级状态DataGridViewTextBoxColumn.Name = "升级状态DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn7
+            // 发送DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn7.DataPropertyName = "中继级别";
-            this.dataGridViewTextBoxColumn7.HeaderText = "中继级别";
-            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-            this.dataGridViewTextBoxColumn7.Width = 60;
+            this.发送DataGridViewTextBoxColumn.DataPropertyName = "发送";
+            this.发送DataGridViewTextBoxColumn.HeaderText = "发送";
+            this.发送DataGridViewTextBoxColumn.Name = "发送DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn6
+            // 接收DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn6.DataPropertyName = "升级状态";
-            this.dataGridViewTextBoxColumn6.HeaderText = "升级状态";
-            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-            this.dataGridViewTextBoxColumn6.Width = 60;
+            this.接收DataGridViewTextBoxColumn.DataPropertyName = "接收";
+            this.接收DataGridViewTextBoxColumn.HeaderText = "接收";
+            this.接收DataGridViewTextBoxColumn.Name = "接收DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn8
+            // 读数DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn8.DataPropertyName = "发送";
-            this.dataGridViewTextBoxColumn8.HeaderText = "发送";
-            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
-            this.dataGridViewTextBoxColumn8.Width = 40;
+            this.读数DataGridViewTextBoxColumn.DataPropertyName = "读数";
+            this.读数DataGridViewTextBoxColumn.HeaderText = "读数";
+            this.读数DataGridViewTextBoxColumn.Name = "读数DataGridViewTextBoxColumn";
             // 
-            // dataGridViewTextBoxColumn9
+            // 中继级别DataGridViewTextBoxColumn
             // 
-            this.dataGridViewTextBoxColumn9.DataPropertyName = "接收";
-            this.dataGridViewTextBoxColumn9.HeaderText = "接收";
-            this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
-            this.dataGridViewTextBoxColumn9.Width = 40;
-            // 
-            // dataGridViewTextBoxColumn10
-            // 
-            this.dataGridViewTextBoxColumn10.DataPropertyName = "读数";
-            this.dataGridViewTextBoxColumn10.HeaderText = "读数";
-            this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
-            this.dataGridViewTextBoxColumn10.Width = 90;
+            this.中继级别DataGridViewTextBoxColumn.DataPropertyName = "中继级别";
+            this.中继级别DataGridViewTextBoxColumn.HeaderText = "中继级别";
+            this.中继级别DataGridViewTextBoxColumn.Name = "中继级别DataGridViewTextBoxColumn";
             // 
             // ConcSimulator_North
             // 
@@ -1872,5 +1956,15 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 序号DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 模块地址DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 表地址DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 协议类型DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 版本DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 升级状态DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 发送DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 接收DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 读数DataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 中继级别DataGridViewTextBoxColumn;
     }
 }

@@ -44,6 +44,7 @@ namespace ElectricPowerDebuger.Function
         {
             InitializeComponent();
             this.Dock = DockStyle.Fill;
+            dgvDoc.DoubleBuffered(true);
 
             _configPath = FrmMain.SystemConfigPath;
             _scom = new SerialCom();
@@ -222,12 +223,12 @@ namespace ElectricPowerDebuger.Function
 
                         if (cmd.GrpName != "")
                         {
-                            msg = cmd.GrpName + "失败，应答超时";
+                            msg = cmd.GrpName + "-失败 [@_@']";
                             ShowMsg(msg + "\r\n\r\n", Color.Red);
                         }
                         else
                         {
-                            msg = cmd.Name + "失败";
+                            msg = cmd.Name + "-失败 [@_@']]";
                             ShowMsg(msg + "\r\n\r\n", Color.Red);
                         }
 
@@ -385,10 +386,13 @@ namespace ElectricPowerDebuger.Function
                     rbtParam2.Visible = true;
                     lbParam2.Text = "目标地址";
                     lbParam2.Location = new Point(22, 60);
-                    lbParam2.Visible = true;
                     txtParam1.Location = new Point(78, 57);
                     txtParam1.Width = 111;
-                    txtParam1.Visible = true;
+                    if (rbtParam2.Checked)
+                    {
+                        lbParam2.Visible = true;
+                        txtParam1.Visible = true;
+                    }
                     btParamConfirm.Location = new Point(24, 90);
                     break;
 
@@ -1042,6 +1046,20 @@ namespace ElectricPowerDebuger.Function
             }
         }
 
+        private void rbtParam_CheckedChanged(object sender, EventArgs e)
+        {
+            if(((RadioButton)sender).Text == "主节点")
+            {
+                lbParam2.Visible = false;
+                txtParam1.Visible = false;
+            }
+            else if (((RadioButton)sender).Text == "子节点")
+            {
+                lbParam2.Visible = true;
+                txtParam1.Visible = true;
+            }
+        }
+
         private void btParamConfirm_Click(object sender, EventArgs e)
         {
             string cmdText = grpParamCmd.Text;
@@ -1527,7 +1545,7 @@ namespace ElectricPowerDebuger.Function
                 return;
             }
 
-            msg = " " + cmd.Name + " （下行）\r\n"
+            msg = cmd.Name + " （下行）\r\n"
                 + "    Tx：" + Util.GetStringHexFromBytes(buf, 0, buf.Length, " ") + "\r\n";
             ShowMsg(msg, Color.Blue);
 
@@ -1643,7 +1661,7 @@ namespace ElectricPowerDebuger.Function
             }
 
             // 显示 命令名、接收数据
-            strTmp = " " + cmdName + " （上行）\r\n"
+            strTmp = cmdName + " （上行）\r\n"
                     + "    Rx：" + Util.GetStringHexFromBytes(buf, 0, buf.Length, " ") + "\r\n";
             ShowMsg(strTmp, Color.DarkRed);
 
@@ -1667,6 +1685,7 @@ namespace ElectricPowerDebuger.Function
                 string[] strs = docInfo.Trim().Split(new string[] { " " }, 7, StringSplitOptions.RemoveEmptyEntries);
 
                 DataRow row = tbDoc.NewRow();
+                row.BeginEdit();
                 row[序号] = tbDoc.Rows.Count + 1;
                 row[模块地址] = strs[1];
                 row[表地址] = strs[1];
@@ -1677,6 +1696,7 @@ namespace ElectricPowerDebuger.Function
                 row[发送] = 0;
                 row[接收] = 0;
                 row[读数] = "";
+                row.EndEdit();
                 tbDoc.Rows.Add(row);
             }));
             
@@ -1688,7 +1708,7 @@ namespace ElectricPowerDebuger.Function
         {
             if (msg == "") return;
 
-            msg = (showTime ? "[" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff") + "] " : "") + msg;
+            msg = (showTime ? "[" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff") + "]  " : "") + msg;
 
             RichTextBoxAppand(rtbMsg, msg, fgColor);
         }
@@ -1812,8 +1832,9 @@ namespace ElectricPowerDebuger.Function
         }
         #endregion
 
-        #region 窗口关闭
-        private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
+        #region 窗口关闭处理
+
+        private void Close()
         {
             _thrTransceiver.Abort();
             if (_scom.IsOpen)

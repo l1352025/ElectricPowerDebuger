@@ -32,6 +32,8 @@ namespace ElectricPowerDebuger.Protocol
             public byte[] DataBuf;                      // 数据域
             public byte Crc8;                           // Crc8校验
             public byte Tail;                           // 帧尾
+
+            public string ErrorInfo;                    // 帧错误信息
         };
 
         // 控制域
@@ -212,13 +214,17 @@ namespace ElectricPowerDebuger.Protocol
             {
                 int index = 0, relayCnt;
 
-                if (rxBuf.Length < index + FrameFixedLen) throw new Exception("无效帧");
+                if (rxBuf.Length < index + FrameFixedLen) throw new Exception("长度错误");
 
                 //帧头
                 rxData.Header = rxBuf[index++]; 
                 //长度        
                 rxData.Length = rxBuf[index] + rxBuf[index + 1] * 256;
                 index += 2;
+
+                if (rxData.Header != 0x68) throw new Exception("帧头错误");
+                if (rxData.Length > rxBuf.Length) throw new Exception("长度错误");
+
                 //控制域
                 rxData.CtrlWord.All = rxBuf[index];
                 rxData.CtrlWord.DirFlag = (rxBuf[index] & 0x80) > 0 ? true : false;
@@ -272,7 +278,7 @@ namespace ElectricPowerDebuger.Protocol
                 //地址域
                 if (rxData.InfoUp.B1_CommModuleFlag == true || rxData.InfoDown.B1_CommModuleFlag == true)
                 {
-                    if (rxBuf.Length < index + (relayCnt + 2) * LongAddrSize + 5) throw new Exception("无效帧");
+                    if (rxBuf.Length < index + (relayCnt + 2) * LongAddrSize + 5) throw new Exception("长度错误");
 
                     rxData.SrcAddr = new byte[LongAddrSize];
                     Array.Copy(rxBuf, index, rxData.SrcAddr, 0, LongAddrSize);
@@ -301,23 +307,37 @@ namespace ElectricPowerDebuger.Protocol
                 rxData.DataBuf = new byte[rxData.Length - index - 2];
                 Array.Copy(rxBuf, index, rxData.DataBuf, 0, rxData.DataBuf.Length);
                 index += rxData.DataBuf.Length;
+
                 //校验和
                 rxData.Crc8 = rxBuf[index++];
+
+                byte chksum = 0;
+                for (int i = 3; i < index - 1; i++ )
+                {
+                    chksum += rxBuf[i];
+                }
+                if (rxData.Crc8 != chksum) throw new Exception("校验错误");
+
                 //帧尾
                 rxData.Tail = rxBuf[index++];
-                
             }
             catch (Exception ex)
             {
                 switch (ex.Message)
                 {
-                    case "无效帧":
+                    case "帧头错误":
+                    case "长度错误":
                         rxData.Length = 0x00;
+                        rxData.ErrorInfo = ex.Message;
+                        break;
+
+                    case "校验错误":
+                        rxData.ErrorInfo = ex.Message;
                         break;
 
                     default:
                         rxData.Length = 0x00;
-                        MessageBox.Show("数据解析异常:" + ex.Message + ex.StackTrace);
+                        rxData.ErrorInfo = "数据异常:" + ex.Message;
                         break;
                 }
             }
@@ -690,9 +710,14 @@ namespace ElectricPowerDebuger.Protocol
             string strDataType = "";
             for (; index < buf.Length; index++)
             {
-                if (buf[index] == 0x68 && buf[index + 7] == 0x68)
+                if (buf[index] == 0x68 && buf.Length > 10 && buf.Length == (12 + buf[index + 10]))
                 {
                     strDataType = "645-07报文";
+                    break;
+                }
+                else if (buf[index] == 0x68 && buf.Length > 11 && buf.Length == (13 + buf[index + 11]))
+                {
+                    strDataType = "188-04报文";
                     break;
                 }
             }

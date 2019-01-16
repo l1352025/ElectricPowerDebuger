@@ -1243,6 +1243,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 return payloadNode;
             }
+            // 低功耗表透抄-应答
             private static TreeNode ExplainLowPowerMeterCmdFrame_LowPowerMeterReadResponse(byte[] buf)
             {
                 TreeNode payloadNode = new TreeNode("Mac层负载：低功耗表命令帧");

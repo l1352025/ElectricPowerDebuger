@@ -13,7 +13,7 @@ namespace ElectricPowerDebuger
 {
     public partial class FrmMain : Form
     {
-        public static string SystemConfigPath = Application.ExecutablePath +  @".cfg";  // 配置文件路径
+        public static string SystemConfigPath = Application.ExecutablePath.Remove(Application.ExecutablePath.Length - 4) + @".cfg";  // 配置文件路径
 
         private static Control concSimulatorCurrent = new ConcSimulator_North();
         private static Control dataMonitor = new DataMonitor();
