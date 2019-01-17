@@ -45,6 +45,7 @@ namespace ElectricPowerDebuger.Function
             InitializeComponent();
             this.Dock = DockStyle.Fill;
             dgvDoc.DoubleBuffered(true);
+            rtbMsg.DoubleBuffered(true);
 
             _configPath = FrmMain.SystemConfigPath;
             _scom = new SerialCom();
@@ -1698,6 +1699,7 @@ namespace ElectricPowerDebuger.Function
                 row[读数] = "";
                 row.EndEdit();
                 tbDoc.Rows.Add(row);
+                dgvDoc.FirstDisplayedScrollingRowIndex = dgvDoc.RowCount - 1;
             }));
             
         }

@@ -132,7 +132,7 @@ namespace ElectricPowerDebuger.Protocol
             new DataExplain(0x81, 0x05, "读购入金额",       ExplainReadData),      
             
             // 8106 - 读密钥版本号
-            new DataExplain(0x81, 0x06, "读密钥版本号",       ExplainReadSecretKeyVersion),  
+            new DataExplain(0x81, 0x06, "读密钥版本号",   ExplainReadSecretKeyVersion),  
 
             // 810A - 读地址
             new DataExplain(0x81, 0x0A, "读地址",          ExplainReadDevAddr),  
@@ -156,14 +156,6 @@ namespace ElectricPowerDebuger.Protocol
             
         };
 
-        public struct MeterStatus
-        {
-            byte ValveStatus;       // 阀门状态     bit1-0:  00 - 开, 01 - 关， 11 - 异常
-            byte VBatStatus;        // 电池电压状态   bit2:  0 - 正常, 1 - 欠压
-            ushort reserved;        // 保留或厂家定义 bit15-3
-
-            ushort All;
-        }
 
         #region 协议帧提取
 
@@ -226,6 +218,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 rxData.Tail = rxBuf[index++];       //帧尾
 
+                rxData.ErrorInfo = "";
             }
             catch (Exception ex)
             {
@@ -262,11 +255,13 @@ namespace ElectricPowerDebuger.Protocol
 
             foreach (DataExplain dat in DataExplainTbl)
             {
-                if (dat.DI0 == frame.DataBuf[0]
-                    && dat.DI1 == frame.DataBuf[1]
-                   )
+                if (dat.DI0 == frame.DataBuf[0] && dat.DI1 == frame.DataBuf[1])
                 {
                     dataType = dat.DataName;
+                }
+                else if (0xD1 == frame.DataBuf[0] && dat.DI1 == (frame.DataBuf[1] & 0xF0))
+                {
+                    dataType = dat.DataName + ((frame.DataBuf[1] & 0x0F) + 1);  // 读历史计量数据1~12
                 }
             }
 
@@ -415,14 +410,13 @@ namespace ElectricPowerDebuger.Protocol
 
                 strTmp = "帧序号  ：" + frame.DataBuf[0];
                 parentNode.Nodes.Add(strTmp);
-                strTmp = "错误标志：" + (frame.DataBuf[1] + (frame.DataBuf[2] << 8)).ToString("X4") + " ("
-                    + "阀门-" + ((frame.DataBuf[1] & 0x03) == 0 ? "开启" : ((frame.DataBuf[1] & 0x03) == 1? "关闭" : "异常")) 
-                    + "电池-" + ((frame.DataBuf[1] & 0x04) == 0 ? "正常" : "欠压") + ")";
+                strTmp = "错误标志：" + (frame.DataBuf[1] + (frame.DataBuf[2] << 8)).ToString("X4")
+                                + " (" + GetMeterStatusInfo(frame.DataBuf[1], frame.DataBuf[2]) + ")";
                 parentNode.Nodes.Add(strTmp);
             }
             else
             {
-                // 正常应答
+                // 正常应答 或 请求
                 node = ExplainFrameData(frame);
                 if (node != null)
                 {
@@ -440,6 +434,44 @@ namespace ElectricPowerDebuger.Protocol
         #endregion
 
         #region 读数据
+
+        // 解析单位代号
+        private static string GetUnitName(byte unitCode)
+        {
+            string unitName;
+
+            switch(unitCode)
+            {
+                case 0x02: unitName = "Wh";     break;
+                case 0x05: unitName = "kWh";    break;
+                case 0x08: unitName = "MWh";    break;
+                case 0x0A: unitName = "MWh x100"; break;
+                case 0x01: unitName = "J";      break;
+                case 0x0B: unitName = "kJ";     break;
+                case 0x0E: unitName = "MJ";     break;
+                case 0x11: unitName = "GJ";     break;
+                case 0x13: unitName = "GJ x100"; break;
+                case 0x14: unitName = "W";      break;
+                case 0x17: unitName = "kW";     break;
+                case 0x1A: unitName = "MW";     break;
+                case 0x29: unitName = "L";      break;
+                case 0x2C: unitName = "m³"; break;
+                case 0x32: unitName = "L/h";    break;
+                case 0x35: unitName = "m³/h"; break;
+                default: unitName = "(未知单位)"; break;
+            }
+
+            return unitName;
+        }
+
+        // 解析状态ST
+        private static string GetMeterStatusInfo(byte statusB1, byte statusB2)
+        {
+            string status  = "阀门-" + ((statusB1 & 0x03) == 0 ? "开启" : ((statusB1 & 0x03) == 1 ? "关闭" : "异常"))
+                            + " | 电池-" + ((statusB1 & 0x04) == 0 ? "正常" : "欠压");
+            return status;
+        }
+
         // 读数据
         private static TreeNode ExplainReadData(FrameFormat frame)
         {
@@ -451,22 +483,225 @@ namespace ElectricPowerDebuger.Protocol
             if (!frame.CtrlWord.IsAckFrame)
             {
                 // 请求
+                if (buf.Length < index + 3) return payloadNode;
+
+                string strDataType = GetDataType(frame);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
+                payloadNode.Nodes.Add(strTmp);
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
             }
             else
             {
                 // 应答
-                if (buf.Length < index + 6) return payloadNode;
+                if (buf.Length < index + 3) return payloadNode;
 
-                strTmp = "通信地址："
-                            + buf[index + 5].ToString("X2")
-                            + buf[index + 4].ToString("X2")
-                            + buf[index + 3].ToString("X2")
+                string strDataType = GetDataType(frame);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
+                payloadNode.Nodes.Add(strTmp);
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+
+                if (strDataType.Contains("读计量数据")) 
+                {
+                    if ((frame.MeterType >= 0x10 && frame.MeterType <= 0x19)    // 水表
+                        || (frame.MeterType >= 0x30 && frame.MeterType <= 0x49) // 燃气表、其他仪表
+                        )
+                    {
+                        if (buf.Length < index + 19) return payloadNode;
+
+                        strTmp = "当前流量：" 
+                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2") 
+                            + buf[index + 1].ToString("X2") + "." + buf[index].ToString("X2")
+                            + " " + GetUnitName(buf[index + 4]); // 单位
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 5;
+                        strTmp = "上月流量："
+                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
+                            + buf[index + 1].ToString("X2") + "." + buf[index].ToString("X2")
+                            + " " + GetUnitName(buf[index + 4]); // 单位
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 5;
+                        strTmp = "实时时间："
+                            + buf[index + 6].ToString("X2") + buf[index + 5].ToString("X2") + "-"
+                            + buf[index + 4].ToString("X2") + "-"
+                            + buf[index + 3].ToString("X2") + " "
+                            + buf[index + 2].ToString("X2") + ":"
+                            + buf[index + 1].ToString("X2") + ":"
+                            + buf[index + 0].ToString("X2");
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 7;
+                        strTmp = "状态ST  ：" + GetMeterStatusInfo(buf[index], buf[index + 1]);
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 2;
+                    }
+                    else if ((frame.MeterType >= 0x20 && frame.MeterType <= 0x29))  // 热量表
+                    {
+                        if (buf.Length < index + 43) return payloadNode;
+
+                        strTmp = "上月热量："
+                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
+                            + buf[index + 1].ToString("X2") + "." + buf[index].ToString("X2")
+                            + " " + GetUnitName(buf[index + 4]); // 单位
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 5;
+                        strTmp = "当前热量："
+                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
+                            + buf[index + 1].ToString("X2") + "." + buf[index].ToString("X2")
+                            + " " + GetUnitName(buf[index + 4]); // 单位
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 5;
+                        strTmp = "热功率  ："
+                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
+                            + buf[index + 1].ToString("X2") + "." + buf[index].ToString("X2")
+                            + " " + GetUnitName(buf[index + 4]); // 单位
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 5;
+                        strTmp = "流量    ："
+                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
+                            + "." + buf[index + 1].ToString("X2") + buf[index].ToString("X2")
+                            + " " + GetUnitName(buf[index + 4]); // 单位
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 5;
+                        strTmp = "累计流量："
+                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
+                            + buf[index + 1].ToString("X2") + "." + buf[index].ToString("X2")
+                            + " " + GetUnitName(buf[index + 4]); // 单位
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 5;
+                        strTmp = "供水温度："
+                            + buf[index + 2].ToString("X2")
+                            + buf[index + 1].ToString("X2") + "."
+                            + buf[index + 0].ToString("X2") + " ℃";
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 3;
+                        strTmp = "回水温度："
+                            + buf[index + 2].ToString("X2")
+                            + buf[index + 1].ToString("X2") + "."
+                            + buf[index + 0].ToString("X2") + " ℃";
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 3;
+                        strTmp = "工作时间："
                             + buf[index + 2].ToString("X2")
                             + buf[index + 1].ToString("X2")
-                            + buf[index].ToString("X2");
-                payloadNode.Nodes.Add(strTmp);
-                index += 6;
+                            + buf[index + 0].ToString("X2") + " 小时";
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 3;
+                        strTmp = "实时时间："
+                            + buf[index + 6].ToString("X2") + buf[index + 5].ToString("X2") + "-"
+                            + buf[index + 4].ToString("X2") + "-"
+                            + buf[index + 3].ToString("X2") + " "
+                            + buf[index + 2].ToString("X2") + ":"
+                            + buf[index + 1].ToString("X2") + ":"
+                            + buf[index + 0].ToString("X2");
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 7;
+                        strTmp = "状态ST  ：" + GetMeterStatusInfo(buf[index], buf[index + 1]);
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 2;
+                    }
+                }
+                else if (strDataType.Contains("读历史计量数据"))
+                {
+                    if ((frame.MeterType >= 0x10 && frame.MeterType <= 0x19)    // 水表
+                        || (frame.MeterType >= 0x30 && frame.MeterType <= 0x49) // 燃气表、其他仪表
+                        )
+                    {
+                        if (buf.Length < index + 5) return payloadNode;
 
+                        strTmp = "上" + ((frame.DataBuf[1] & 0x0F) + 1) + "月流量："
+                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
+                            + buf[index + 1].ToString("X2") + "." + buf[index].ToString("X2")
+                            + " " + GetUnitName(buf[index + 4]); // 单位
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 5;
+                    }
+                    else if ((frame.MeterType >= 0x20 && frame.MeterType <= 0x29))  // 热量表
+                    {
+                        if (buf.Length < index + 5) return payloadNode;
+
+                        strTmp = "上" + ((frame.DataBuf[1] & 0x0F) + 1) + "月热量："
+                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
+                            + buf[index + 1].ToString("X2") + "." + buf[index].ToString("X2")
+                            + " " + GetUnitName(buf[index + 4]); // 单位
+                        payloadNode.Nodes.Add(strTmp);
+                        index += 5;
+                    }
+                }
+                else if (strDataType.Contains("读价格表"))
+                {
+                    if (buf.Length < index + 15) return payloadNode;
+
+                    strTmp = "价格一：" + ((buf[index + 2] << 8) + buf[index + 1]).ToString("X") 
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元/m³";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 3;
+                    strTmp = "用量一：" + ((buf[index + 2] << 16) + (buf[index + 1] << 8) + buf[index]).ToString("X")
+                        + " m³";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 3;
+                    strTmp = "价格二：" + ((buf[index + 2] << 8) + buf[index + 1]).ToString("X")
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元/m³";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 3;
+                    strTmp = "用量二：" + ((buf[index + 2] << 16) + (buf[index + 1] << 8) + buf[index]).ToString("X")
+                        + " m³";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 3;
+                    strTmp = "价格三：" + ((buf[index + 2] << 8) + buf[index + 1]).ToString("X")
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元/m³";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 3;
+                }
+                else if (strDataType.Contains("读结算日"))
+                {
+                    if (buf.Length < index + 1) return payloadNode;
+
+                    strTmp = "结算日：" + buf[index].ToString("X2");
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                }
+                else if (strDataType.Contains("读抄表日"))
+                {
+                    if (buf.Length < index + 1) return payloadNode;
+
+                    strTmp = "抄表日：" + buf[index].ToString("X2");
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                }
+                else if (strDataType.Contains("读购入金额"))
+                {
+                    if (buf.Length < index + 15) return payloadNode;
+
+                    strTmp = "本次购买序号：" + buf[index];
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                    strTmp = "本次购入金额：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 4;
+                    strTmp = "累计购入金额：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 4;
+                    strTmp = "剩余金额：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 4;
+                    strTmp = "状态ST  ：" + GetMeterStatusInfo(buf[index], buf[index + 1]);
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 2;
+                }
             }
 
             return payloadNode;
@@ -485,21 +720,160 @@ namespace ElectricPowerDebuger.Protocol
             if (!frame.CtrlWord.IsAckFrame)
             {
                 // 请求
+                if (buf.Length < index + 3) return payloadNode;
+
+                string strDataType = GetDataType(frame);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
+                payloadNode.Nodes.Add(strTmp);
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+
+                if (strDataType.Contains("写价格表"))
+                {
+                    if (buf.Length < index + 16) return payloadNode;
+
+                    strTmp = "价格一：" + ((buf[index + 2] << 8) + buf[index + 1]).ToString("X")
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元/m³";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 3;
+                    strTmp = "用量一：" + ((buf[index + 2] << 16) + (buf[index + 1] << 8) + buf[index]).ToString("X")
+                        + " m³";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 3;
+                    strTmp = "价格二：" + ((buf[index + 2] << 8) + buf[index + 1]).ToString("X")
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元/m³";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 3;
+                    strTmp = "用量二：" + ((buf[index + 2] << 16) + (buf[index + 1] << 8) + buf[index]).ToString("X")
+                        + " m³";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 3;
+                    strTmp = "价格三：" + ((buf[index + 2] << 8) + buf[index + 1]).ToString("X")
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元/m³";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 3;
+                    strTmp = "启用日期：" + buf[index].ToString("X2");
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                }
+                else if (strDataType.Contains("写结算日"))
+                {
+                    if (buf.Length < index + 1) return payloadNode;
+
+                    strTmp = "结算日：" + buf[index].ToString("X2");
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                }
+                else if (strDataType.Contains("写抄表日"))
+                {
+                    if (buf.Length < index + 1) return payloadNode;
+
+                    strTmp = "抄表日：" + buf[index].ToString("X2");
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                }
+                else if (strDataType.Contains("写购入金额"))
+                {
+                    if (buf.Length < index + 5) return payloadNode;
+
+                    strTmp = "本次购买序号：" + buf[index];
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                    strTmp = "本次购入金额：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 4;
+                }
+                else if (strDataType.Contains("写新密钥"))
+                {
+                    if (buf.Length < index + 9) return payloadNode;
+
+                    strTmp = "新密钥版本：" + buf[index].ToString("X2");
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                    strTmp = "新密钥数据：" + Util.GetStringHexFromBytes(buf, index, 8, "", true);
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 8;
+                }
+                else if (strDataType.Contains("写标准时间"))
+                {
+                    if (buf.Length < index + 7) return payloadNode;
+
+                    strTmp = "实时时间："
+                            + buf[index + 6].ToString("X2") + buf[index + 5].ToString("X2") + "-"
+                            + buf[index + 4].ToString("X2") + "-"
+                            + buf[index + 3].ToString("X2") + " "
+                            + buf[index + 2].ToString("X2") + ":"
+                            + buf[index + 1].ToString("X2") + ":"
+                            + buf[index + 0].ToString("X2");
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 7;
+                }
+                else if (strDataType.Contains("写阀门控制"))
+                {
+                    if (buf.Length < index + 1) return payloadNode;
+
+                    strTmp = "阀门操作：" + (buf[index] == 0x55 ? "开阀" : (buf[index] == 0x99 ? "关阀" : "未知"));
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                }
             }
             else
             {
                 // 应答
-                if (buf.Length < index + 6) return payloadNode;
+                if (buf.Length < index + 3) return payloadNode;
 
-                strTmp = "通信地址："
-                            + buf[index + 5].ToString("X2")
-                            + buf[index + 4].ToString("X2")
-                            + buf[index + 3].ToString("X2")
-                            + buf[index + 2].ToString("X2")
-                            + buf[index + 1].ToString("X2")
-                            + buf[index].ToString("X2");
+                string strDataType = GetDataType(frame);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
-                index += 6;
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+
+                if (strDataType.Contains("写价格表"))
+                {
+                    if (buf.Length < index + 2) return payloadNode;
+
+                    strTmp = "状态ST  ：" + GetMeterStatusInfo(buf[index], buf[index + 1]);
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 2;
+                }
+                else if (strDataType.Contains("写购入金额"))
+                {
+                    if (buf.Length < index + 5) return payloadNode;
+
+                    strTmp = "本次购买序号：" + buf[index];
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                    strTmp = "本次购入金额：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
+                        + "." + (buf[index + 0]).ToString("X2")
+                        + " 元";
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 4;
+                }
+                else if (strDataType.Contains("写新密钥"))
+                {
+                    if (buf.Length < index + 1) return payloadNode;
+
+                    strTmp = "密钥版本号：" + buf[index].ToString("X2");
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 1;
+                }
+                else if (strDataType.Contains("写阀门控制"))
+                {
+                    if (buf.Length < index + 2) return payloadNode;
+
+                    strTmp = "状态ST  ：" + GetMeterStatusInfo(buf[index], buf[index + 1]);
+                    payloadNode.Nodes.Add(strTmp);
+                    index += 2;
+                }
 
             }
 
@@ -520,22 +894,28 @@ namespace ElectricPowerDebuger.Protocol
             if (!frame.CtrlWord.IsAckFrame)
             {
                 // 请求
+                if (buf.Length < index + 3) return payloadNode;
+
+                string strDataType = GetDataType(frame);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
+                payloadNode.Nodes.Add(strTmp);
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
             }
             else
             {
                 // 应答
-                if (buf.Length < index + 6) return payloadNode;
+                if (buf.Length < index + 3) return payloadNode;
 
-                strTmp = "通信地址："
-                            + buf[index + 5].ToString("X2")
-                            + buf[index + 4].ToString("X2")
-                            + buf[index + 3].ToString("X2")
-                            + buf[index + 2].ToString("X2")
-                            + buf[index + 1].ToString("X2")
-                            + buf[index].ToString("X2");
+                string strDataType = GetDataType(frame);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
-                index += 6;
-
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
             }
 
             return payloadNode;
@@ -552,22 +932,34 @@ namespace ElectricPowerDebuger.Protocol
             if (!frame.CtrlWord.IsAckFrame)
             {
                 // 请求
-                if (buf.Length < index + 6) return payloadNode;
+                if (buf.Length < index + 3) return payloadNode;
 
-                strTmp = "通信地址："
-                            + buf[index + 5].ToString("X2")
-                            + buf[index + 4].ToString("X2")
-                            + buf[index + 3].ToString("X2")
-                            + buf[index + 2].ToString("X2")
-                            + buf[index + 1].ToString("X2")
-                            + buf[index].ToString("X2");
+                string strDataType = GetDataType(frame);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
-                index += 6;
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
 
+                if (buf.Length < index + 7) return payloadNode;
+
+                strTmp = "新地址  ：" + Util.GetStringHexFromBytes(buf, index, 7, "", true);
+                payloadNode.Nodes.Add(strTmp);
+                index += 7;
             }
             else
             {
                 // 应答
+                if (buf.Length < index + 3) return payloadNode;
+
+                string strDataType = GetDataType(frame);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
+                payloadNode.Nodes.Add(strTmp);
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
             }
 
             return payloadNode;
@@ -586,22 +978,32 @@ namespace ElectricPowerDebuger.Protocol
             if (!frame.CtrlWord.IsAckFrame)
             {
                 // 请求
-                if (buf.Length < index + 6) return payloadNode;
+                if (buf.Length < index + 3) return payloadNode;
 
-                strTmp = "通信地址："
-                            + buf[index + 5].ToString("X2")
-                            + buf[index + 4].ToString("X2")
-                            + buf[index + 3].ToString("X2")
-                            + buf[index + 2].ToString("X2")
-                            + buf[index + 1].ToString("X2")
-                            + buf[index].ToString("X2");
+                string strDataType = GetDataType(frame);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
-                index += 6;
-
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
             }
             else
             {
                 // 应答
+                if (buf.Length < index + 4) return payloadNode;
+
+                string strDataType = GetDataType(frame);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
+                payloadNode.Nodes.Add(strTmp);
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+
+                strTmp = "密钥版本号：" + buf[index].ToString("X2");
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
             }
 
             return payloadNode;
@@ -620,869 +1022,48 @@ namespace ElectricPowerDebuger.Protocol
             if (!frame.CtrlWord.IsAckFrame)
             {
                 // 请求
-                if (buf.Length < index + 6) return payloadNode;
-
-                strTmp = "通信地址："
-                            + buf[index + 5].ToString("X2")
-                            + buf[index + 4].ToString("X2")
-                            + buf[index + 3].ToString("X2")
-                            + buf[index + 2].ToString("X2")
-                            + buf[index + 1].ToString("X2")
-                            + buf[index].ToString("X2");
-                payloadNode.Nodes.Add(strTmp);
-                index += 6;
-
-            }
-            else
-            {
-                // 应答
-            }
-
-            return payloadNode;
-        }
-        #endregion
-
-        #region 有【数据标识】--读数据、读后续数据、写数据、安全认证
-        private static TreeNode ExplainElectricEnergyData(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 4) return payloadNode;
+                if (buf.Length < index + 3) return payloadNode;
 
                 string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-            else
-            {
-                // 应答
-                if (buf.Length < index + 8) return payloadNode;
-
-                string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
+                index += 2;
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
-                index += 4;
+                index += 1;
 
-                strTmp = "";
-                if (strDataType.Contains("电能"))  // 组合有功/正向有功/反向有功总电能
-                {
-                    strTmp = "总电量  ：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
-                                + "." + buf[index].ToString("X2") + "kWh";
-                }
-                else if (strDataType.Contains("剩余电量"))
-                {
-                    strTmp = "剩余电量：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
-                                + "." + buf[index].ToString("X2") + "kWh";
-                }
-                else if (strDataType.Contains("透支电量"))
-                {
-                    strTmp = "透支电量：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
-                                + "." + buf[index].ToString("X2") + "kWh";
-                }
-                else if (strDataType.Contains("剩余金额"))
-                {
-                    strTmp = "剩余金额：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
-                                + "." + buf[index].ToString("X2") + "元";
-                }
-                else if (strDataType.Contains("透支金额"))
-                {
-                    strTmp = "透支金额：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
-                                + "." + buf[index].ToString("X2") + "元";
-                }
+                if (buf.Length < index + 5) return payloadNode;
 
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainMaxValueAndTime(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 4) return payloadNode;
-
-                string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-            else
-            {
-                // 应答
-                if (buf.Length < index + 12) return payloadNode;
-
-                string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "最大需量：" + buf[index + 2].ToString("X") + "." + (buf[index + 1] * 256 + buf[index]).ToString("X4") + "kW";
-                payloadNode.Nodes.Add(strTmp);
-                index += 3;
-                strTmp = "发生时间：" + DateTime.Now.Year / 100
-                            + buf[index + 4].ToString("X2") + "-"
-                            + buf[index + 3].ToString("X2") + "-"
-                            + buf[index + 2].ToString("X2") + " "
-                            + buf[index + 1].ToString("X2") + ":"
-                            + buf[index].ToString("X2");
+                strTmp = "当前流量："
+                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
+                            + buf[index + 1].ToString("X2") + "." + buf[index].ToString("X2")
+                            + " " + GetUnitName(buf[index + 4]); // 单位
                 payloadNode.Nodes.Add(strTmp);
                 index += 5;
-
-            }
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainVariable(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 4) return payloadNode;
-
-                string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
             }
             else
             {
                 // 应答
-                if (buf.Length < index + 10) return payloadNode;
-
-                string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                if (strDataType.Contains("电压数据块"))
-                {
-                    strTmp = "A相电压 ：" + buf[index + 1].ToString("X") + (buf[index] >> 4).ToString("X1") + "." + (buf[index] & 0x0F).ToString("X1") + "V";
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 2;
-                    strTmp = "B相电压 ：" + buf[index + 1].ToString("X") + (buf[index] >> 4).ToString("X1") + "." + (buf[index] & 0x0F).ToString("X1") + "V";
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 2;
-                    strTmp = "C相电压 ：" + buf[index + 1].ToString("X") + (buf[index] >> 4).ToString("X1") + "." + (buf[index] & 0x0F).ToString("X1") + "V";
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 2;
-                }
-            }
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainEventRecord(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 4) return payloadNode;
-
-                string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-            else
-            {
-                // 应答
-                if (buf.Length < index + 4) return payloadNode;
-
-                string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                if (strDataType.Contains("掉电总次数"))
-                {
-                    if (buf.Length < index + 3) return payloadNode;
-                    strTmp = "掉电总次数：" + ((buf[index + 2] << 16) + (buf[index + 1] << 8) + buf[index]).ToString("X");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 3;
-                }
-                else if (strDataType.Contains("掉电时间"))
-                {
-                    if (buf.Length < index + 6) return payloadNode;
-                    strTmp = "掉电时间：" + DateTime.Now.Year / 100
-                            + buf[index + 5].ToString("X2") + "-"
-                            + buf[index + 4].ToString("X2") + "-"
-                            + buf[index + 3].ToString("X2") + " "
-                            + buf[index + 2].ToString("X2") + ":"
-                            + buf[index + 1].ToString("X2") + ":"
-                            + buf[index].ToString("X2");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 6;
-                }
-                else if (strDataType.Contains("购电总次数"))
-                {
-                    if (buf.Length < index + 2) return payloadNode;
-                    strTmp = "购电总次数：" + ((buf[index + 1] << 8) + buf[index]).ToString("X");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 2;
-                }
-
-            }
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainParameter(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            // 请求 或 应答
-            if (buf.Length < index + 4) return payloadNode;
-
-            string strDataType = GetDataType(frame);
-            strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-            payloadNode.Nodes.Add(strTmp);
-            index += 4;
-
-            if (strDataType.Contains("日期及星期"))
-            {
-                if (buf.Length < index + 4) return payloadNode;
-                strTmp = "日期    ：" + DateTime.Now.Year / 100
-                        + buf[index + 3].ToString("X2") + "-"
-                        + buf[index + 2].ToString("X2") + "-"
-                        + buf[index + 1].ToString("X2");
-                payloadNode.Nodes.Add(strTmp);
-                strTmp = "星期    ：";
-                switch (buf[index])
-                {
-                    case 0: strTmp += "星期日"; break;
-                    case 1: strTmp += "星期一"; break;
-                    case 2: strTmp += "星期二"; break;
-                    case 3: strTmp += "星期三"; break;
-                    case 4: strTmp += "星期四"; break;
-                    case 5: strTmp += "星期五"; break;
-                    case 6: strTmp += "星期六"; break;
-                    default: strTmp += "未知"; break;
-                }
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-            else if (strDataType.Contains("时间"))
-            {
                 if (buf.Length < index + 3) return payloadNode;
-                strTmp = "时间    ："
-                        + buf[index + 2].ToString("X2") + ":"
-                        + buf[index + 1].ToString("X2") + ":"
-                        + buf[index].ToString("X2");
-                payloadNode.Nodes.Add(strTmp);
-                index += 3;
-            }
-            else if (strDataType.Contains("通信地址"))
-            {
-                if (buf.Length < index + 6) return payloadNode;
-                strTmp = "通信地址：" + Util.GetStringHexFromBytes(buf, index, 6, "", true);
-                payloadNode.Nodes.Add(strTmp);
-                index += 6;
-            }
-            else if (strDataType.Contains("表号"))
-            {
-                if (buf.Length < index + 6) return payloadNode;
-                strTmp = "表号    ：" + Util.GetStringHexFromBytes(buf, index, 6, "", true);
-                payloadNode.Nodes.Add(strTmp);
-                index += 6;
-            }
-            else if (strDataType.Contains("资产管理编号"))
-            {
-                if (buf.Length < index + 32) return payloadNode;
-                strTmp = "资产管理编号：" + Util.GetStringHexFromBytes(buf, index, 32, "");
-                payloadNode.Nodes.Add(strTmp);
-                index += 32;
-            }
-            else if (strDataType.Contains("电表运行状态字"))
-            {
-                if (buf.Length < index + 14) return payloadNode;
-                strTmp = "状态字1 ：" + ((buf[index + 1] << 8) + buf[index]).ToString("X4");
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-                strTmp = "状态字2 ：" + ((buf[index + 1] << 8) + buf[index]).ToString("X4");
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-                strTmp = "状态字3 ：" + ((buf[index + 1] << 8) + buf[index]).ToString("X4") + " （操作类）";
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-                strTmp = "状态字4 ：" + ((buf[index + 1] << 8) + buf[index]).ToString("X4") + " （A相故障状态）";
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-                strTmp = "状态字5 ：" + ((buf[index + 1] << 8) + buf[index]).ToString("X4") + " （B相故障状态）";
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-                strTmp = "状态字6 ：" + ((buf[index + 1] << 8) + buf[index]).ToString("X4") + " （C相故障状态）";
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-                strTmp = "状态字7 ：" + ((buf[index + 1] << 8) + buf[index]).ToString("X4") + " （合相故障状态）";
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-            }
-
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainFreezeData(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 4) return payloadNode;
 
                 string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-            else
-            {
-                // 应答
-                if (buf.Length < index + 4) return payloadNode;
-
-                string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                if (strDataType.Contains("日冻结时间"))
-                {
-                    if (buf.Length < index + 5) return payloadNode;
-                    strTmp = "冻结时间：" + DateTime.Now.Year / 100
-                            + buf[index + 4].ToString("X2") + "-"
-                            + buf[index + 3].ToString("X2") + "-"
-                            + buf[index + 2].ToString("X2") + " "
-                            + buf[index + 1].ToString("X2") + ":"
-                            + buf[index].ToString("X2") + ":00";
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 5;
-                }
-                else if (strDataType.Contains("日冻结正向电能"))
-                {
-                    if (buf.Length < index + 4) return payloadNode;
-                    strTmp = "正向电能：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
-                            + "." + buf[index].ToString("X2");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                }
-                else if (strDataType.Contains("日冻结反向电能"))
-                {
-                    if (buf.Length < index + 4) return payloadNode;
-                    strTmp = "反向电能：" + ((buf[index + 3] << 16) + (buf[index + 2] << 8) + buf[index + 1]).ToString("X")
-                            + "." + buf[index].ToString("X2");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                }
-
-            }
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainLoadRecord(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 4) return payloadNode;
-
-                string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-            else
-            {
-                // 应答
-                if (buf.Length < index + 4) return payloadNode;
-
-                string strDataType = GetDataType(frame);
-                strTmp = "数据标识：" + strDataType + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                if (strDataType.Contains("最早记录块"))
-                {
-                    // 暂不解析
-                }
-                else if (strDataType.Contains("给定时间记录块"))
-                {
-                    // 暂不解析
-                }
-                else if (strDataType.Contains("最近记录块"))
-                {
-                    // 暂不解析
-                }
-
-            }
-
-            return payloadNode;
-        }
-
-        #region 安全认证-指令
-        private static TreeNode ExplainDataReadBack(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 12) return payloadNode;
-
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "读取的数据长度：" + (buf[index] + buf[index + 1] * 256);
+                strTmp = "数据标识：" + strDataType + " (" + buf[index].ToString("X2") + buf[index + 1].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
-                strTmp = "读取的起始地址：" + (buf[index] + buf[index + 1] * 256);
+                strTmp = "帧序号  ：" + buf[index].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
-                index += 2;
-                strTmp = "文件标识：" + (buf[index] + buf[index + 1] * 256);
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-                strTmp = "目录标识：" + (buf[index] + buf[index + 1] * 256);
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
+                index += 1;
 
-            }
-            else
-            {
-                // 应答
-                if (buf.Length < index + 16) return payloadNode;
+                if (buf.Length < index + 2) return payloadNode;
 
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "读取的数据长度：" + (buf[index] + buf[index + 1] * 256);
+                strTmp = "状态ST  ：" + GetMeterStatusInfo(buf[index], buf[index + 1]);
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
-                strTmp = "读取的起始地址：" + (buf[index] + buf[index + 1] * 256);
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-                strTmp = "文件标识：" + (buf[index] + buf[index + 1] * 256);
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-                strTmp = "目录标识：" + (buf[index] + buf[index + 1] * 256);
-                payloadNode.Nodes.Add(strTmp);
-                index += 2;
-
-                strTmp = "回抄的数据(" + (buf.Length - 16) + " byte)：" + Util.GetStringHexFromBytes(buf, index, buf.Length - 16);
-                payloadNode.Nodes.Add(strTmp);
-                index += (buf.Length - 16);
-
-                strTmp = "MAC     ：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
             }
 
             return payloadNode;
         }
-
-        private static TreeNode ExplainQueryStatus(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 12) return payloadNode;
-
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-            else
-            {
-                // 应答
-                if (buf.Length < index + 30) return payloadNode;
-
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "剩余金额：" + BitConverter.ToUInt32(buf, index);
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "MAC     ：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "购电次数：" + BitConverter.ToUInt32(buf, index);
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "MAC     ：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "客户编号："
-                        + buf[index + 5].ToString("X2") + buf[index + 4].ToString("X2")
-                        + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
-                        + buf[index + 1].ToString("X2") + buf[index].ToString("X2");
-                payloadNode.Nodes.Add(strTmp);
-                index += 6;
-                strTmp = "密钥信息：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainIdAuthCmd(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 4) return payloadNode;
-
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-
-                if (buf[0] == 0x01)
-                {
-                    if (buf.Length < index + 8) return payloadNode;
-
-                    strTmp = "密文    ：" + Util.GetStringHexFromBytes(buf, index, 8);
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 8;
-                }
-                else if (buf[0] == 0x02)
-                {
-                    if (buf.Length < index + 8) return payloadNode;
-
-                    strTmp = "随机数1 ：" + Util.GetStringHexFromBytes(buf, index, 8);
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 8;
-                }
-                else if (buf[0] == 0x03)
-                {
-                    if (buf.Length < index + 8) return payloadNode;
-
-                    strTmp = "分散因子：" + Util.GetStringHexFromBytes(buf, index, 8);
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 8;
-                }
-                else if (buf[0] == 0xFF)
-                {
-                    if (buf.Length < index + 24) return payloadNode;
-
-                    strTmp = "密文    ：" + Util.GetStringHexFromBytes(buf, index, 8);
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 8;
-                    strTmp = "随机数1 ：" + Util.GetStringHexFromBytes(buf, index, 8);
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 8;
-                    strTmp = "分散因子：" + Util.GetStringHexFromBytes(buf, index, 8);
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 8;
-                }
-            }
-            else
-            {
-                // 应答
-                if (buf.Length < index + 8) return payloadNode;
-
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "随机数2 ：" + Util.GetStringHexFromBytes(buf, index, 4);
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-
-                if (buf.Length < index + 8) return payloadNode;
-
-                strTmp = "ESAM序列号：" + Util.GetStringHexFromBytes(buf, index, 8);
-                payloadNode.Nodes.Add(strTmp);
-                index += 8;
-            }
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainIdAuthTimeSet(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 4) return payloadNode;
-
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-
-                if (buf[0] == 0x01)
-                {
-                    if (buf.Length < index + 2) return payloadNode;
-
-                    strTmp = "有效时长：" + (buf[index + 1] * 256 + buf[index]).ToString("X") + "分钟";
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 2;
-                }
-                else if (buf[0] == 0x02)
-                {
-                    if (buf.Length < index + 4) return payloadNode;
-
-                    strTmp = "MAC     ：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                }
-                else if (buf[0] == 0xFF)
-                {
-                    if (buf.Length < index + 12) return payloadNode;
-
-                    strTmp = "有效时长：" + (buf[index + 1] * 256 + buf[index]).ToString("X") + "分钟";
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 2;
-                    strTmp = "MAC     ：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                }
-            }
-            else
-            {
-                // 应答
-            }
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainIdAuthFail(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 22) return payloadNode;
-
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-            else
-            {
-                // 应答
-                if (buf.Length < index + 22) return payloadNode;
-
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "客户编号："
-                        + buf[index + 5].ToString("X2") + buf[index + 4].ToString("X2")
-                        + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
-                        + buf[index + 1].ToString("X2") + buf[index].ToString("X2");
-                payloadNode.Nodes.Add(strTmp);
-                index += 6;
-                strTmp = "剩余金额：" + BitConverter.ToUInt32(buf, index);
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "购电次数：" + BitConverter.ToUInt32(buf, index);
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-                strTmp = "密钥信息：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-            }
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainRegisterOrRecharge(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 4) return payloadNode;
-
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-
-                if (buf[0] == 0x01)
-                {
-                    if (buf.Length < index + 4) return payloadNode;
-
-                    strTmp = "购电金额：" + BitConverter.ToUInt32(buf, index);
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                }
-                else if (buf[0] == 0x02)
-                {
-                    if (buf.Length < index + 4) return payloadNode;
-
-                    strTmp = "购电次数：" + BitConverter.ToUInt32(buf, index);
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                }
-                else if (buf[0] == 0x03)
-                {
-                    if (buf.Length < index + 4) return payloadNode;
-
-                    strTmp = "MAC1    ：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                }
-                else if (buf[0] == 0x04)
-                {
-                    if (buf.Length < index + 6) return payloadNode;
-
-                    strTmp = "客户编号："
-                            + buf[index + 5].ToString("X2") + buf[index + 4].ToString("X2")
-                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
-                            + buf[index + 1].ToString("X2") + buf[index].ToString("X2");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 6;
-                }
-                else if (buf[0] == 0x05)
-                {
-                    if (buf.Length < index + 4) return payloadNode;
-
-                    strTmp = "MAC2    ：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                }
-                else if (buf[0] == 0xFF)
-                {
-                    if (buf.Length < index + 22) return payloadNode;
-
-                    strTmp = "剩余金额：" + BitConverter.ToUInt32(buf, index);
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                    strTmp = "购电次数：" + BitConverter.ToUInt32(buf, index);
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                    strTmp = "MAC1    ：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                    strTmp = "客户编号："
-                            + buf[index + 5].ToString("X2") + buf[index + 4].ToString("X2")
-                            + buf[index + 3].ToString("X2") + buf[index + 2].ToString("X2")
-                            + buf[index + 1].ToString("X2") + buf[index].ToString("X2");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 6;
-                    strTmp = "MAC2    ：" + BitConverter.ToUInt32(buf, index).ToString("X8");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 4;
-                }
-            }
-            else
-            {
-                // 应答
-            }
-
-            return payloadNode;
-        }
-
-        private static TreeNode ExplainKeyUpdate(FrameFormat frame)
-        {
-            TreeNode payloadNode = new TreeNode("数据载荷");
-            byte[] buf = frame.DataBuf;
-            string strTmp = "";
-            int index = 0;
-
-            if (!frame.CtrlWord.IsAckFrame)
-            {
-                // 请求
-                if (buf.Length < index + 4) return payloadNode;
-
-                strTmp = "数据标识：" + GetDataType(frame) + " (" + BitConverter.ToUInt32(buf, index).ToString("X8") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index += 4;
-
-                if (buf[0] == 0x01)
-                {
-                    if (buf.Length < index + 8) return payloadNode;
-
-                    strTmp = "密钥信息+MAC：" + Util.GetStringHexFromBytes(buf, index, 8, " ");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 8;
-                }
-                else if (buf[0] == 0x02)
-                {
-                    if (buf.Length < index + 32) return payloadNode;
-
-                    strTmp = "密钥：" + Util.GetStringHexFromBytes(buf, index, 32, " ");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 32;
-                }
-                else if (buf[0] == 0xFF)
-                {
-                    if (buf.Length < index + 40) return payloadNode;
-
-                    strTmp = "密钥信息+MAC：" + Util.GetStringHexFromBytes(buf, index, 8, " ");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 8;
-                    strTmp = "密钥：" + Util.GetStringHexFromBytes(buf, index, 32, " ");
-                    payloadNode.Nodes.Add(strTmp);
-                    index += 32;
-                }
-            }
-            else
-            {
-                // 应答
-            }
-
-            return payloadNode;
-        }
-
         #endregion
 
-        #endregion
     }
 }
