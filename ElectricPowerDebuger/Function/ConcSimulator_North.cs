@@ -23,6 +23,7 @@ namespace ElectricPowerDebuger.Function
         private ConcurrentQueue<Command> _sendQueue;
         private Thread _thrTransceiver;
         private bool _IsSendNewCmd;
+        private LogHelper _errorLog;
 
         delegate void CallbackFunc(params object[] args);
         private CallbackFunc _cmdEndCallback;
@@ -56,6 +57,8 @@ namespace ElectricPowerDebuger.Function
             _thrTransceiver = new Thread(TransceiverHandle);
             _thrTransceiver.IsBackground = true;
             _thrTransceiver.Start();
+
+            _errorLog = new LogHelper(_configPath + "/error.log");
 
             _currProtol = XmlHelper.GetNodeDefValue(_configPath, "Config/Global/ProtocolVer", "");
             UpdateRecentCmdName();

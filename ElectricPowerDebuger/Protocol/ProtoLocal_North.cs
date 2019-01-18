@@ -131,8 +131,8 @@ namespace ElectricPowerDebuger.Protocol
             new CmdExplain(0x03, "查询数据",    7, "查询从节点监控最大超时时间",  Color.Magenta, ExplainDataQuery_SubNodeListenMaxTimeoutTime),
             new CmdExplain(0x03, "查询数据",    8, "查询无线通信参数",            Color.Magenta, ExplainDataQuery_WirelessCommParam),
             new CmdExplain(0x03, "查询数据",    9, "查询通信延时相关的广播时长",  Color.Magenta, ExplainDataQuery_BroadcastDelayTime),
-            new CmdExplain(0x03, "查询数据",    10, "查询本地通信模块的运行模式",   Color.Magenta, ExplainDataQuery_LocalCommModuleRunningMode),
-            new CmdExplain(0x03, "查询数据",    11, "查询本地通信模块的AFN索引",    Color.Magenta, ExplainDataQuery_LocalCommModuleAfnIndex),
+            new CmdExplain(0x03, "查询数据",    10, "查询本地通信模块运行模式信息",   Color.Magenta, ExplainDataQuery_LocalCommModuleRunningMode),
+            new CmdExplain(0x03, "查询数据",    11, "查询本地通信模块AFN索引",    Color.Magenta, ExplainDataQuery_LocalCommModuleAfnIndex),
             new CmdExplain(0x03, "查询数据",    100, "查询场强门限",              Color.Magenta, ExplainDataQuery_RssiThreshold),
 
             new CmdExplain(0x04, "链路接口测试",  1, "发送测试",                   Color.Black, ExplainDataLinkTest_SendTest),
@@ -337,7 +337,9 @@ namespace ElectricPowerDebuger.Protocol
 
                     default:
                         rxData.Length = 0x00;
-                        rxData.ErrorInfo = "数据异常:" + ex.Message;
+                        rxData.ErrorInfo = "数据异常";
+                        string msg = "ProtoLocal_North.ExplainRxPacket() Error: " + ex.Message + "\r\n  " + Util.GetStringHexFromBytes(rxBuf, 0, rxBuf.Length, " ");
+                        LogHelper.WriteLine("error.log", msg);
                         break;
                 }
             }
@@ -466,7 +468,7 @@ namespace ElectricPowerDebuger.Protocol
         public static TreeNode GetProtoTree(byte[] databuf)
         {
             FrameFormat frame = ExplainRxPacket(databuf);
-            TreeNode parentNode = new TreeNode("串口协议帧");
+            TreeNode parentNode = new TreeNode("1376.2报文");
             TreeNode node = null;
             string strTmp = "";
             string strCommType;
@@ -1266,14 +1268,14 @@ namespace ElectricPowerDebuger.Protocol
                 index += 2;
 
                 strTmp = "通信协议发布日期    ：" 
-                        + "20" + buf[index + 2].ToString("X2") + "/"
+                        + DateTime.Now.Year/100 + buf[index + 2].ToString("X2") + "/"
                         + buf[index + 1].ToString("X2") + "/"
                         + buf[index + 0].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
                 index += 3;
 
                 strTmp = "通信协议最后备案日期："
-                        + "20" + buf[index + 2].ToString("X2") + "/"
+                        + DateTime.Now.Year/100 + buf[index + 2].ToString("X2") + "/"
                         + buf[index + 1].ToString("X2") + "/"
                         + buf[index + 0].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
@@ -1288,7 +1290,7 @@ namespace ElectricPowerDebuger.Protocol
                 index += 2;
 
                 strTmp = "版本日期  ："
-                        + "20" + buf[index + 2].ToString("X2") + "/"
+                        + DateTime.Now.Year/100 + buf[index + 2].ToString("X2") + "/"
                         + buf[index + 1].ToString("X2") + "/"
                         + buf[index + 0].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
@@ -3344,7 +3346,7 @@ namespace ElectricPowerDebuger.Protocol
 
                 if (buf.Length < 1) return payloadNode;
 
-                strTmp = "上报帧序号：" + buf[index];
+                strTmp = "上报帧序号：" + buf[index] + " (" + buf[index].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
                 int nodeCnt = buf[index];

@@ -29,6 +29,8 @@ namespace ElectricPowerDebuger.Protocol
             public byte[] DataBuf;                      // 数据域： （发送前 + 0x33）
             public byte Crc8;                           // Crc8校验： 帧头->CRC8之前的累加和
             public byte Tail;                           // 帧尾 ： 0x16
+
+            public string ErrorInfo;                    // 帧错误信息
         };
 
         // 控制域
@@ -204,14 +206,23 @@ namespace ElectricPowerDebuger.Protocol
 
             try
             {
-                int index = 0;
+                int index = 0, startIdx = -1;
 
-                for (index = 0; index < rxBuf.Length; index++)
+                for (index = 0; index < rxBuf.Length && rxBuf.Length > index + 10; index++)
                 {
-                    if (rxBuf[index] == 0x68 && rxBuf[index + 7] == 0x68) break;    // 跳过唤醒字FEFEFEFE
+                    // 跳过唤醒字FEFEFEFE， 帧头和长度判断
+                    if (rxBuf[index] == 0x68)
+                    {
+                        startIdx = index;
+                        if (rxBuf.Length >= (index + FrameFixedLen + rxBuf[index + 10]))
+                        {
+                            break;
+                        }
+                    }
                 }
 
-                if (rxBuf.Length < index + FrameFixedLen) throw new Exception("无效帧");
+                if (startIdx == -1) throw new Exception("帧头错误");
+                if (rxBuf.Length < index + FrameFixedLen + rxBuf[index + 11]) throw new Exception("长度错误");
 
                 rxData.Header = rxBuf[index++];         //帧头
 
@@ -239,13 +250,38 @@ namespace ElectricPowerDebuger.Protocol
                     }
                 }
                 rxData.Crc8 = rxBuf[index++];       //校验和
+
+                byte chksum = 0;
+                for (int i = startIdx; i < index - 1; i++)
+                {
+                    chksum += rxBuf[i];
+                }
+                if (rxData.Crc8 != chksum) throw new Exception("校验错误");
+
                 rxData.Tail = rxBuf[index++];       //帧尾
 
             }
             catch (Exception ex)
             {
-                rxData.CtrlWord.CmdType = CommandType.Invalid;
-                MessageBox.Show("数据解析异常:" + ex.Message + ex.StackTrace);
+                switch (ex.Message)
+                {
+                    case "帧头错误":
+                    case "长度错误":
+                        rxData.CtrlWord.CmdType = CommandType.Invalid;
+                        rxData.ErrorInfo = ex.Message;
+                        break;
+
+                    case "校验错误":
+                        rxData.ErrorInfo = ex.Message;
+                        break;
+
+                    default:
+                        rxData.CtrlWord.CmdType = CommandType.Invalid;
+                        rxData.ErrorInfo = "数据异常";
+                        string msg = "ProtoDLT645_07.ExplainRxPacket() Error: " + ex.Message + "\r\n  " + Util.GetStringHexFromBytes(rxBuf, 0, rxBuf.Length, " ");
+                        LogHelper.WriteLine("error.log", msg);
+                        break;
+                }
             }
 
             return rxData;
@@ -377,13 +413,12 @@ namespace ElectricPowerDebuger.Protocol
         public static TreeNode GetProtoTree(byte[] databuf)
         {
             FrameFormat frame = ExplainRxPacket(databuf);
-            TreeNode parentNode = new TreeNode("645-07报文");
             TreeNode node = null;
-            string strTmp = "";
+            string strTmp = (frame.ErrorInfo != "" ? (" (" + frame.ErrorInfo + " )") : "");
+            TreeNode parentNode = new TreeNode("645-07报文" + strTmp);
 
             if(frame.CtrlWord.CmdType == CommandType.Invalid)
             {
-                parentNode.Nodes.Add("无效帧");
                 return parentNode;
             }
 

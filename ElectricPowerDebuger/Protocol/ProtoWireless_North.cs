@@ -1620,10 +1620,21 @@ namespace ElectricPowerDebuger.Protocol
                 strTmp = "软件版本：" + buf[index].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
+                /*  // 2019之前协议
                 strTmp = "场强门限：" + buf[index];
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
                 strTmp = "接收场强：" + buf[index];
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+                 * */
+                strTmp = "到DAU场强 ：" + buf[index];
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+                strTmp = "到掌机场强：" + buf[index];
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+                strTmp = "ResetNumber：" + buf[index];
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
 

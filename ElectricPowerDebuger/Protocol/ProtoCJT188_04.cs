@@ -14,8 +14,8 @@ namespace ElectricPowerDebuger.Protocol
         public const byte FrameTail = 0x16;             // 帧尾
         public const byte FrameFixedLen = 13;           // 0x68, 仪表类型(1), 地址(7), 控制域(1), 长度(1), 数据域（N），校验和(1), 0x16
         public const byte LongAddrSize = 7;             // 地址的长度
-        public const string BroadcastAddr = "999999999999"; // 广播地址
-        public const string CommonUseAddr = "AAAAAAAAAAAA"; // 通配地址
+        public const string BroadcastAddr = "99999999999999"; // 广播地址
+        public const string CommonUseAddr = "AAAAAAAAAAAAAA"; // 通配地址
 
         #region 帧格式定义
         // 通信报文格式
@@ -236,8 +236,9 @@ namespace ElectricPowerDebuger.Protocol
 
                     default:
                         rxData.CtrlWord.CmdType = CommandType.Invalid;
-                        rxData.ErrorInfo = "数据异常" + ex.Message;
-
+                        rxData.ErrorInfo = "数据异常";
+                        string msg = "ProtoCJT188_04.ExplainRxPacket() Error: " + ex.Message + "\r\n  " + Util.GetStringHexFromBytes(rxBuf, 0, rxBuf.Length, " ");
+                        LogHelper.WriteLine("error.log", msg);
                         break;
                 }
             }
@@ -370,13 +371,12 @@ namespace ElectricPowerDebuger.Protocol
         public static TreeNode GetProtoTree(byte[] databuf)
         {
             FrameFormat frame = ExplainRxPacket(databuf);
-            TreeNode parentNode = new TreeNode("188-04报文");
             TreeNode node = null;
-            string strTmp = "";
+            string strTmp = (frame.ErrorInfo != "" ? (" (" + frame.ErrorInfo + " )") : "");
+            TreeNode parentNode = new TreeNode("188-04报文" + strTmp);
 
             if (frame.CtrlWord.CmdType == CommandType.Invalid)
             {
-                parentNode.Nodes.Add("无效帧-" + frame.ErrorInfo);
                 return parentNode;
             }
 
