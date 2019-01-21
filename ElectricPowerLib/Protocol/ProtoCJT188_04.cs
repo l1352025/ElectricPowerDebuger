@@ -1,4 +1,4 @@
-﻿using ElectricPowerDebuger.Common;
+﻿using ElectricPowerLib.Common;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ElectricPowerDebuger.Protocol
+namespace ElectricPowerLib.Protocol
 {
-    class ProtoCJT188_04
+    public class ProtoCJT188_04
     {
         public const byte FrameHeader = 0x68;           // 帧头
         public const byte FrameTail = 0x16;             // 帧尾

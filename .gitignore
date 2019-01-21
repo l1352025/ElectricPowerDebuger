@@ -1,3 +1,7 @@
 /ElectricPowerDebuger/obj
 /ElectricPowerDebuger/bin
 /*.suo
+/ElectricPowerLib/obj
+/ElectricPowerLib/bin
+/ElectricPowerDebuger/lib
+/.vs

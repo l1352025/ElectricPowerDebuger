@@ -36,9 +36,7 @@
             this.grpRecentUse = new System.Windows.Forms.GroupBox();
             this.btRecentUse3 = new System.Windows.Forms.Button();
             this.btRecentUse1 = new System.Windows.Forms.Button();
-            this.btRecentUse2 = new System.Windows.Forms.Button();
             this.btRecentUse6 = new System.Windows.Forms.Button();
-            this.btRecentUse5 = new System.Windows.Forms.Button();
             this.btRecentUse4 = new System.Windows.Forms.Button();
             this.grpParamCmd = new System.Windows.Forms.GroupBox();
             this.cbxParam2 = new System.Windows.Forms.ComboBox();
@@ -100,7 +98,7 @@
             this.查询从节点监控最大超时时间ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询无线通信参数ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询通信延时相关的广播时长ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.查询本地通信模块的运行模式ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.查询本地通信模块运行模式信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询本地通信模块的AFN索引ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询场强门限ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.h链路测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -169,6 +167,16 @@
             this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.序号DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.模块地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.表地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.协议类型DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.版本DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.升级状态DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.发送DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.接收DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.读数DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.中继级别DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dsDoc = new System.Data.DataSet();
             this.tbDoc = new System.Data.DataTable();
             this.序号 = new System.Data.DataColumn();
@@ -191,16 +199,7 @@
             this.label13 = new System.Windows.Forms.Label();
             this.rtbMsg = new System.Windows.Forms.RichTextBox();
             this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
-            this.序号DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.模块地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.表地址DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.协议类型DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.版本DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.升级状态DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.发送DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.接收DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.读数DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.中继级别DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cbxRecentUseCmd = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -251,22 +250,17 @@
             // 
             // grpRecentUse
             // 
-            this.grpRecentUse.Controls.Add(this.btRecentUse3);
-            this.grpRecentUse.Controls.Add(this.btRecentUse1);
-            this.grpRecentUse.Controls.Add(this.btRecentUse2);
-            this.grpRecentUse.Controls.Add(this.btRecentUse6);
-            this.grpRecentUse.Controls.Add(this.btRecentUse5);
-            this.grpRecentUse.Controls.Add(this.btRecentUse4);
-            this.grpRecentUse.Location = new System.Drawing.Point(155, 49);
+            this.grpRecentUse.Controls.Add(this.cbxRecentUseCmd);
+            this.grpRecentUse.Location = new System.Drawing.Point(156, 193);
             this.grpRecentUse.Name = "grpRecentUse";
-            this.grpRecentUse.Size = new System.Drawing.Size(204, 195);
+            this.grpRecentUse.Size = new System.Drawing.Size(204, 49);
             this.grpRecentUse.TabIndex = 18;
             this.grpRecentUse.TabStop = false;
-            this.grpRecentUse.Text = "最近执行的6个命令";
+            this.grpRecentUse.Text = "命令历史记录";
             // 
             // btRecentUse3
             // 
-            this.btRecentUse3.Location = new System.Drawing.Point(6, 77);
+            this.btRecentUse3.Location = new System.Drawing.Point(153, 107);
             this.btRecentUse3.Name = "btRecentUse3";
             this.btRecentUse3.Size = new System.Drawing.Size(191, 23);
             this.btRecentUse3.TabIndex = 0;
@@ -276,7 +270,7 @@
             // 
             // btRecentUse1
             // 
-            this.btRecentUse1.Location = new System.Drawing.Point(6, 19);
+            this.btRecentUse1.Location = new System.Drawing.Point(153, 20);
             this.btRecentUse1.Name = "btRecentUse1";
             this.btRecentUse1.Size = new System.Drawing.Size(191, 23);
             this.btRecentUse1.TabIndex = 0;
@@ -284,19 +278,9 @@
             this.btRecentUse1.UseVisualStyleBackColor = true;
             this.btRecentUse1.Click += new System.EventHandler(this.AllCmdButton_Click);
             // 
-            // btRecentUse2
-            // 
-            this.btRecentUse2.Location = new System.Drawing.Point(6, 48);
-            this.btRecentUse2.Name = "btRecentUse2";
-            this.btRecentUse2.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse2.TabIndex = 0;
-            this.btRecentUse2.Text = "查询主节点地址";
-            this.btRecentUse2.UseVisualStyleBackColor = true;
-            this.btRecentUse2.Click += new System.EventHandler(this.AllCmdButton_Click);
-            // 
             // btRecentUse6
             // 
-            this.btRecentUse6.Location = new System.Drawing.Point(6, 166);
+            this.btRecentUse6.Location = new System.Drawing.Point(153, 78);
             this.btRecentUse6.Name = "btRecentUse6";
             this.btRecentUse6.Size = new System.Drawing.Size(191, 23);
             this.btRecentUse6.TabIndex = 0;
@@ -304,19 +288,9 @@
             this.btRecentUse6.UseVisualStyleBackColor = true;
             this.btRecentUse6.Click += new System.EventHandler(this.AllCmdButton_Click);
             // 
-            // btRecentUse5
-            // 
-            this.btRecentUse5.Location = new System.Drawing.Point(6, 137);
-            this.btRecentUse5.Name = "btRecentUse5";
-            this.btRecentUse5.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse5.TabIndex = 0;
-            this.btRecentUse5.Text = "设置主节点地址";
-            this.btRecentUse5.UseVisualStyleBackColor = true;
-            this.btRecentUse5.Click += new System.EventHandler(this.AllCmdButton_Click);
-            // 
             // btRecentUse4
             // 
-            this.btRecentUse4.Location = new System.Drawing.Point(6, 106);
+            this.btRecentUse4.Location = new System.Drawing.Point(153, 49);
             this.btRecentUse4.Name = "btRecentUse4";
             this.btRecentUse4.Size = new System.Drawing.Size(191, 23);
             this.btRecentUse4.TabIndex = 0;
@@ -339,9 +313,9 @@
             this.grpParamCmd.Controls.Add(this.lbParam3);
             this.grpParamCmd.Controls.Add(this.lbParam2);
             this.grpParamCmd.Controls.Add(this.lbParam1);
-            this.grpParamCmd.Location = new System.Drawing.Point(155, 264);
+            this.grpParamCmd.Location = new System.Drawing.Point(156, 260);
             this.grpParamCmd.Name = "grpParamCmd";
-            this.grpParamCmd.Size = new System.Drawing.Size(204, 210);
+            this.grpParamCmd.Size = new System.Drawing.Size(204, 214);
             this.grpParamCmd.TabIndex = 1;
             this.grpParamCmd.TabStop = false;
             this.grpParamCmd.Text = "当前命令名-动态调整";
@@ -723,13 +697,17 @@
             // 
             // grpRecentCmd
             // 
+            this.grpRecentCmd.Controls.Add(this.btRecentUse3);
+            this.grpRecentCmd.Controls.Add(this.btRecentUse1);
             this.grpRecentCmd.Controls.Add(this.btStartNetwork);
             this.grpRecentCmd.Controls.Add(this.btQueryRouteState);
             this.grpRecentCmd.Controls.Add(this.btRedownAllDoc);
+            this.grpRecentCmd.Controls.Add(this.btRecentUse6);
             this.grpRecentCmd.Controls.Add(this.btReadAllDoc);
+            this.grpRecentCmd.Controls.Add(this.btRecentUse4);
             this.grpRecentCmd.Location = new System.Drawing.Point(3, 49);
             this.grpRecentCmd.Name = "grpRecentCmd";
-            this.grpRecentCmd.Size = new System.Drawing.Size(144, 138);
+            this.grpRecentCmd.Size = new System.Drawing.Size(357, 138);
             this.grpRecentCmd.TabIndex = 1;
             this.grpRecentCmd.TabStop = false;
             this.grpRecentCmd.Text = "常用命令";
@@ -858,7 +836,7 @@
             this.查询从节点监控最大超时时间ToolStripMenuItem,
             this.查询无线通信参数ToolStripMenuItem,
             this.查询通信延时相关的广播时长ToolStripMenuItem,
-            this.查询本地通信模块的运行模式ToolStripMenuItem,
+            this.查询本地通信模块运行模式信息ToolStripMenuItem,
             this.查询本地通信模块的AFN索引ToolStripMenuItem,
             this.查询场强门限ToolStripMenuItem});
             this.h查询数据ToolStripMenuItem.Name = "h查询数据ToolStripMenuItem";
@@ -870,74 +848,74 @@
             // 查询厂商代码和版本信息ToolStripMenuItem
             // 
             this.查询厂商代码和版本信息ToolStripMenuItem.Name = "查询厂商代码和版本信息ToolStripMenuItem";
-            this.查询厂商代码和版本信息ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询厂商代码和版本信息ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询厂商代码和版本信息ToolStripMenuItem.Text = "查询厂商代码和版本信息";
             // 
             // 查询噪声值ToolStripMenuItem
             // 
             this.查询噪声值ToolStripMenuItem.Name = "查询噪声值ToolStripMenuItem";
-            this.查询噪声值ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询噪声值ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询噪声值ToolStripMenuItem.Text = "查询噪声值";
             // 
             // 查询从节点侦听信息ToolStripMenuItem
             // 
             this.查询从节点侦听信息ToolStripMenuItem.Name = "查询从节点侦听信息ToolStripMenuItem";
-            this.查询从节点侦听信息ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询从节点侦听信息ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询从节点侦听信息ToolStripMenuItem.Text = "查询从节点侦听信息";
             // 
             // 查询主节点地址ToolStripMenuItem
             // 
             this.查询主节点地址ToolStripMenuItem.Name = "查询主节点地址ToolStripMenuItem";
-            this.查询主节点地址ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询主节点地址ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询主节点地址ToolStripMenuItem.Text = "查询主节点地址";
             // 
             // 查询主节点状态字和通信速率ToolStripMenuItem
             // 
             this.查询主节点状态字和通信速率ToolStripMenuItem.Name = "查询主节点状态字和通信速率ToolStripMenuItem";
-            this.查询主节点状态字和通信速率ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询主节点状态字和通信速率ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询主节点状态字和通信速率ToolStripMenuItem.Text = "查询主节点状态字和通信速率";
             // 
             // 查询主节点干扰状态ToolStripMenuItem
             // 
             this.查询主节点干扰状态ToolStripMenuItem.Name = "查询主节点干扰状态ToolStripMenuItem";
-            this.查询主节点干扰状态ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询主节点干扰状态ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询主节点干扰状态ToolStripMenuItem.Text = "查询主节点干扰状态";
             this.查询主节点干扰状态ToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // 查询从节点监控最大超时时间ToolStripMenuItem
             // 
             this.查询从节点监控最大超时时间ToolStripMenuItem.Name = "查询从节点监控最大超时时间ToolStripMenuItem";
-            this.查询从节点监控最大超时时间ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询从节点监控最大超时时间ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询从节点监控最大超时时间ToolStripMenuItem.Text = "查询从节点监控最大超时时间";
             // 
             // 查询无线通信参数ToolStripMenuItem
             // 
             this.查询无线通信参数ToolStripMenuItem.Name = "查询无线通信参数ToolStripMenuItem";
-            this.查询无线通信参数ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询无线通信参数ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询无线通信参数ToolStripMenuItem.Text = "查询无线通信参数";
             // 
             // 查询通信延时相关的广播时长ToolStripMenuItem
             // 
             this.查询通信延时相关的广播时长ToolStripMenuItem.Name = "查询通信延时相关的广播时长ToolStripMenuItem";
-            this.查询通信延时相关的广播时长ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询通信延时相关的广播时长ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询通信延时相关的广播时长ToolStripMenuItem.Text = "查询通信延时相关的广播时长";
             // 
-            // 查询本地通信模块的运行模式ToolStripMenuItem
+            // 查询本地通信模块运行模式信息ToolStripMenuItem
             // 
-            this.查询本地通信模块的运行模式ToolStripMenuItem.Name = "查询本地通信模块的运行模式ToolStripMenuItem";
-            this.查询本地通信模块的运行模式ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.查询本地通信模块的运行模式ToolStripMenuItem.Text = "查询本地通信模块的运行模式";
+            this.查询本地通信模块运行模式信息ToolStripMenuItem.Name = "查询本地通信模块运行模式信息ToolStripMenuItem";
+            this.查询本地通信模块运行模式信息ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.查询本地通信模块运行模式信息ToolStripMenuItem.Text = "查询本地通信模块运行模式信息";
             // 
             // 查询本地通信模块的AFN索引ToolStripMenuItem
             // 
             this.查询本地通信模块的AFN索引ToolStripMenuItem.Name = "查询本地通信模块的AFN索引ToolStripMenuItem";
-            this.查询本地通信模块的AFN索引ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.查询本地通信模块的AFN索引ToolStripMenuItem.Text = "查询本地通信模块的AFN索引";
+            this.查询本地通信模块的AFN索引ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.查询本地通信模块的AFN索引ToolStripMenuItem.Text = "查询本地通信模块AFN索引";
             // 
             // 查询场强门限ToolStripMenuItem
             // 
             this.查询场强门限ToolStripMenuItem.Name = "查询场强门限ToolStripMenuItem";
-            this.查询场强门限ToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.查询场强门限ToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.查询场强门限ToolStripMenuItem.Text = "查询场强门限";
             // 
             // h链路测试ToolStripMenuItem
@@ -1464,6 +1442,7 @@
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvDoc.DefaultCellStyle = dataGridViewCellStyle4;
+            this.dgvDoc.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgvDoc.Location = new System.Drawing.Point(0, 28);
             this.dgvDoc.Margin = new System.Windows.Forms.Padding(0);
             this.dgvDoc.Name = "dgvDoc";
@@ -1541,6 +1520,66 @@
             this.dataGridViewTextBoxColumn10.HeaderText = "读数";
             this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
             this.dataGridViewTextBoxColumn10.Width = 90;
+            // 
+            // 序号DataGridViewTextBoxColumn
+            // 
+            this.序号DataGridViewTextBoxColumn.DataPropertyName = "序号";
+            this.序号DataGridViewTextBoxColumn.HeaderText = "序号";
+            this.序号DataGridViewTextBoxColumn.Name = "序号DataGridViewTextBoxColumn";
+            // 
+            // 模块地址DataGridViewTextBoxColumn
+            // 
+            this.模块地址DataGridViewTextBoxColumn.DataPropertyName = "模块地址";
+            this.模块地址DataGridViewTextBoxColumn.HeaderText = "模块地址";
+            this.模块地址DataGridViewTextBoxColumn.Name = "模块地址DataGridViewTextBoxColumn";
+            // 
+            // 表地址DataGridViewTextBoxColumn
+            // 
+            this.表地址DataGridViewTextBoxColumn.DataPropertyName = "表地址";
+            this.表地址DataGridViewTextBoxColumn.HeaderText = "表地址";
+            this.表地址DataGridViewTextBoxColumn.Name = "表地址DataGridViewTextBoxColumn";
+            // 
+            // 协议类型DataGridViewTextBoxColumn
+            // 
+            this.协议类型DataGridViewTextBoxColumn.DataPropertyName = "协议类型";
+            this.协议类型DataGridViewTextBoxColumn.HeaderText = "协议类型";
+            this.协议类型DataGridViewTextBoxColumn.Name = "协议类型DataGridViewTextBoxColumn";
+            // 
+            // 版本DataGridViewTextBoxColumn
+            // 
+            this.版本DataGridViewTextBoxColumn.DataPropertyName = "版本";
+            this.版本DataGridViewTextBoxColumn.HeaderText = "版本";
+            this.版本DataGridViewTextBoxColumn.Name = "版本DataGridViewTextBoxColumn";
+            // 
+            // 升级状态DataGridViewTextBoxColumn
+            // 
+            this.升级状态DataGridViewTextBoxColumn.DataPropertyName = "升级状态";
+            this.升级状态DataGridViewTextBoxColumn.HeaderText = "升级状态";
+            this.升级状态DataGridViewTextBoxColumn.Name = "升级状态DataGridViewTextBoxColumn";
+            // 
+            // 发送DataGridViewTextBoxColumn
+            // 
+            this.发送DataGridViewTextBoxColumn.DataPropertyName = "发送";
+            this.发送DataGridViewTextBoxColumn.HeaderText = "发送";
+            this.发送DataGridViewTextBoxColumn.Name = "发送DataGridViewTextBoxColumn";
+            // 
+            // 接收DataGridViewTextBoxColumn
+            // 
+            this.接收DataGridViewTextBoxColumn.DataPropertyName = "接收";
+            this.接收DataGridViewTextBoxColumn.HeaderText = "接收";
+            this.接收DataGridViewTextBoxColumn.Name = "接收DataGridViewTextBoxColumn";
+            // 
+            // 读数DataGridViewTextBoxColumn
+            // 
+            this.读数DataGridViewTextBoxColumn.DataPropertyName = "读数";
+            this.读数DataGridViewTextBoxColumn.HeaderText = "读数";
+            this.读数DataGridViewTextBoxColumn.Name = "读数DataGridViewTextBoxColumn";
+            // 
+            // 中继级别DataGridViewTextBoxColumn
+            // 
+            this.中继级别DataGridViewTextBoxColumn.DataPropertyName = "中继级别";
+            this.中继级别DataGridViewTextBoxColumn.HeaderText = "中继级别";
+            this.中继级别DataGridViewTextBoxColumn.Name = "中继级别DataGridViewTextBoxColumn";
             // 
             // dsDoc
             // 
@@ -1699,65 +1738,14 @@
             this.rtbMsg.TabIndex = 0;
             this.rtbMsg.Text = "";
             // 
-            // 序号DataGridViewTextBoxColumn
+            // cbxRecentUseCmd
             // 
-            this.序号DataGridViewTextBoxColumn.DataPropertyName = "序号";
-            this.序号DataGridViewTextBoxColumn.HeaderText = "序号";
-            this.序号DataGridViewTextBoxColumn.Name = "序号DataGridViewTextBoxColumn";
-            // 
-            // 模块地址DataGridViewTextBoxColumn
-            // 
-            this.模块地址DataGridViewTextBoxColumn.DataPropertyName = "模块地址";
-            this.模块地址DataGridViewTextBoxColumn.HeaderText = "模块地址";
-            this.模块地址DataGridViewTextBoxColumn.Name = "模块地址DataGridViewTextBoxColumn";
-            // 
-            // 表地址DataGridViewTextBoxColumn
-            // 
-            this.表地址DataGridViewTextBoxColumn.DataPropertyName = "表地址";
-            this.表地址DataGridViewTextBoxColumn.HeaderText = "表地址";
-            this.表地址DataGridViewTextBoxColumn.Name = "表地址DataGridViewTextBoxColumn";
-            // 
-            // 协议类型DataGridViewTextBoxColumn
-            // 
-            this.协议类型DataGridViewTextBoxColumn.DataPropertyName = "协议类型";
-            this.协议类型DataGridViewTextBoxColumn.HeaderText = "协议类型";
-            this.协议类型DataGridViewTextBoxColumn.Name = "协议类型DataGridViewTextBoxColumn";
-            // 
-            // 版本DataGridViewTextBoxColumn
-            // 
-            this.版本DataGridViewTextBoxColumn.DataPropertyName = "版本";
-            this.版本DataGridViewTextBoxColumn.HeaderText = "版本";
-            this.版本DataGridViewTextBoxColumn.Name = "版本DataGridViewTextBoxColumn";
-            // 
-            // 升级状态DataGridViewTextBoxColumn
-            // 
-            this.升级状态DataGridViewTextBoxColumn.DataPropertyName = "升级状态";
-            this.升级状态DataGridViewTextBoxColumn.HeaderText = "升级状态";
-            this.升级状态DataGridViewTextBoxColumn.Name = "升级状态DataGridViewTextBoxColumn";
-            // 
-            // 发送DataGridViewTextBoxColumn
-            // 
-            this.发送DataGridViewTextBoxColumn.DataPropertyName = "发送";
-            this.发送DataGridViewTextBoxColumn.HeaderText = "发送";
-            this.发送DataGridViewTextBoxColumn.Name = "发送DataGridViewTextBoxColumn";
-            // 
-            // 接收DataGridViewTextBoxColumn
-            // 
-            this.接收DataGridViewTextBoxColumn.DataPropertyName = "接收";
-            this.接收DataGridViewTextBoxColumn.HeaderText = "接收";
-            this.接收DataGridViewTextBoxColumn.Name = "接收DataGridViewTextBoxColumn";
-            // 
-            // 读数DataGridViewTextBoxColumn
-            // 
-            this.读数DataGridViewTextBoxColumn.DataPropertyName = "读数";
-            this.读数DataGridViewTextBoxColumn.HeaderText = "读数";
-            this.读数DataGridViewTextBoxColumn.Name = "读数DataGridViewTextBoxColumn";
-            // 
-            // 中继级别DataGridViewTextBoxColumn
-            // 
-            this.中继级别DataGridViewTextBoxColumn.DataPropertyName = "中继级别";
-            this.中继级别DataGridViewTextBoxColumn.HeaderText = "中继级别";
-            this.中继级别DataGridViewTextBoxColumn.Name = "中继级别DataGridViewTextBoxColumn";
+            this.cbxRecentUseCmd.FormattingEnabled = true;
+            this.cbxRecentUseCmd.Location = new System.Drawing.Point(6, 20);
+            this.cbxRecentUseCmd.Name = "cbxRecentUseCmd";
+            this.cbxRecentUseCmd.Size = new System.Drawing.Size(192, 20);
+            this.cbxRecentUseCmd.TabIndex = 7;
+            this.cbxRecentUseCmd.SelectedIndexChanged += new System.EventHandler(this.cbxRecentUseCmd_SelectedIndexChanged);
             // 
             // ConcSimulator_North
             // 
@@ -1815,7 +1803,7 @@
         private System.Windows.Forms.ToolStripMenuItem 查询从节点监控最大超时时间ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询无线通信参数ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询通信延时相关的广播时长ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 查询本地通信模块的运行模式ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 查询本地通信模块运行模式信息ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询本地通信模块的AFN索引ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询场强门限ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem h链路测试ToolStripMenuItem;
@@ -1880,7 +1868,6 @@
         private System.Windows.Forms.Button btStartNetwork;
         private System.Windows.Forms.Button btQueryRouteState;
         private System.Windows.Forms.Button btRedownAllDoc;
-        private System.Windows.Forms.Button btRecentUse2;
         private System.Windows.Forms.Button btRecentUse1;
         private System.Windows.Forms.Button btReadAllDoc;
         private System.Windows.Forms.Label label3;
@@ -1944,7 +1931,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDlg;
         private System.Windows.Forms.GroupBox grpRecentUse;
         private System.Windows.Forms.Button btRecentUse6;
-        private System.Windows.Forms.Button btRecentUse5;
         private System.Data.DataColumn 中继级别;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
@@ -1966,5 +1952,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn 接收DataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn 读数DataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn 中继级别DataGridViewTextBoxColumn;
+        private System.Windows.Forms.ComboBox cbxRecentUseCmd;
     }
 }

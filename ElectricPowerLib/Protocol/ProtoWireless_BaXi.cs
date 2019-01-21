@@ -14,16 +14,16 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using ElectricPowerDebuger.Common;
+using ElectricPowerLib.Common;
 
-namespace ElectricPowerDebuger.Protocol
+namespace ElectricPowerLib.Protocol
 {
 #if     ProtoVer_North
-    class ProtoWireless_North
+    public class ProtoWireless_North
 #elif   ProtoVer_NiBoEr
-    class ProtoWireless_NiBoEr
+    public class ProtoWireless_NiBoEr
 #elif   ProtoVer_BaXi
-    class ProtoWireless_BaXi
+    public class ProtoWireless_BaXi
 #endif
     {
         public const ushort FrameHeader = 0xAA55;       // 帧头 55AA

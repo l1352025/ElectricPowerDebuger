@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
 using System.Reflection;
-using ElectricPowerDebuger.Common;
-using ElectricPowerDebuger.Protocol;
+using ElectricPowerLib.Common;
+using ElectricPowerLib.Protocol;
 
 namespace ElectricPowerDebuger.Function
 {
@@ -280,7 +280,7 @@ namespace ElectricPowerDebuger.Function
                             break;
                         }
 
-                        string protoVer = Common.XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/Global/ProtocolVer");
+                        string protoVer = XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/Global/ProtocolVer");
 
                         if (protoVer == "南网-版本" || protoVer == "北网-版本")
                         {
@@ -665,7 +665,7 @@ namespace ElectricPowerDebuger.Function
 
             byte[] databuf = (byte[])curRow["原始报文"];
 
-            string protoVer = Common.XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/Global/ProtocolVer");
+            string protoVer = XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/Global/ProtocolVer");
 
             if (protoVer == "南网-版本")
             {
@@ -920,7 +920,7 @@ namespace ElectricPowerDebuger.Function
             PacketNode.Nodes.Add(AttrNode);
 
             // root--数据包--协议帧
-            string protoVer = Common.XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/Global/ProtocolVer");
+            string protoVer = XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/Global/ProtocolVer");
 
             TreeNode protoTree;
             if (protoVer == "南网-版本")

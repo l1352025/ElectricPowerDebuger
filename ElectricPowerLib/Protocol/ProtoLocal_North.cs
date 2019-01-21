@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using ElectricPowerLib.Common;
 
-namespace ElectricPowerDebuger.Protocol
+namespace ElectricPowerLib.Protocol
 {
-    using ElectricPowerDebuger.Common;
-    class ProtoLocal_North
+    public class ProtoLocal_North
     {
         public const byte FrameHeader = 0x68;           // 帧头
         public const byte FrameTail = 0x16;             // 帧尾

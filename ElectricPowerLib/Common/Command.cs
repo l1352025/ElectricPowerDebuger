@@ -5,14 +5,16 @@ using System.Text;
 
 namespace ElectricPowerLib.Common
 {
-    delegate void CommandHandler(Command cmd);
-    class Command
+    
+    public class Command
     {
+        public delegate void CommandHandler(Command cmd);
+
         public string Name;
+        public string GrpName;
         public byte[] TxBuf;
         public byte[] RxBuf;
         public List<object> Params;
-        public string GrpName;
         public int TimeWaitMS;
         public int RetryTimes;
         public bool IsEnable;

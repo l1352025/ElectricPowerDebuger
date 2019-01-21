@@ -8,10 +8,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Collections.Concurrent;
 using System.Threading;
-using ElectricPowerDebuger.Common;
+using ElectricPowerLib.Common;
 using System.IO.Ports;
 using System.IO;
-using ElectricPowerDebuger.Protocol;
+using ElectricPowerLib.Protocol;
 
 namespace ElectricPowerDebuger.Function
 {
@@ -61,7 +61,7 @@ namespace ElectricPowerDebuger.Function
             _errorLog = new LogHelper(_configPath + "/error.log");
 
             _currProtol = XmlHelper.GetNodeDefValue(_configPath, "Config/Global/ProtocolVer", "");
-            UpdateRecentCmdName();
+            LoadRecentCmdName();
 
         }
 
@@ -311,6 +311,13 @@ namespace ElectricPowerDebuger.Function
         {
             AllCmdItem_Clicked(sender, null);
         }
+
+        private void cbxRecentUseCmd_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbxRecentUseCmd.SelectedIndex < 0) return;
+
+            AllCmdItem_Clicked(sender, null);
+        }
         private void AllCmdItem_Clicked(object sender, ToolStripItemClickedEventArgs e)
         {
             string cmdText = "";
@@ -438,7 +445,7 @@ namespace ElectricPowerDebuger.Function
                     btParamConfirm.Location = new Point(24, 110);
                     break;
 
-                case "查询本地通信模块的AFN索引":
+                case "查询本地通信模块AFN索引":
                     lbParam1.Text = "AFN功能码：";
                     lbParam1.Location = new Point(22, 30);
                     lbParam1.Visible = true;
@@ -509,11 +516,11 @@ namespace ElectricPowerDebuger.Function
                     txtParam1.Width = 111;
                     txtParam1.Visible = true;
                     lbParam3.Text = "报文内容：";
-                    lbParam3.Location = new Point(22, 120);
+                    lbParam3.Location = new Point(22, 117);
                     lbParam3.Visible = true;
-                    txtParam3.Location = new Point(24, 147);
+                    txtParam3.Location = new Point(24, 140);
                     txtParam3.Visible = true;
-                    btParamConfirm.Location = new Point(24, 197);
+                    btParamConfirm.Location = new Point(24, 190);
                     break;
 
                 case "发射功率测试":
@@ -944,32 +951,53 @@ namespace ElectricPowerDebuger.Function
 
         }
 
-        private void UpdateRecentCmdName(string cmdText = "")
+        private void LoadRecentCmdName()
         {
             string recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North/RecentCmds");
             if (recentCmds == "")
             {
-                recentCmds = "添加主节点;查询主节点地址;查询厂商代码和版本;查询无线通信参数;"
-                            + "设置主节点地址;查询场强门限";
+                return;
             }
 
-            if ((!recentCmds.Split(';').Contains(cmdText))
-                || (cmdText == ""))
+            string[] strs = recentCmds.Split(new string[]{";"}, StringSplitOptions.RemoveEmptyEntries);
+            cbxRecentUseCmd.Items.Clear();
+            cbxRecentUseCmd.Items.AddRange(strs);
+
+            XmlHelper.SetNodeValue(_configPath, "/Config/ConcSimulator_North", "RecentCmds", recentCmds);
+        }
+        private void UpdateRecentCmdName(string cmdText = "")
+        {
+            int index = cbxRecentUseCmd.Items.IndexOf(cmdText);
+            string recentCmds = "";
+
+            if (index >= 0)
             {
-                if (cmdText != "")
-                {
-                    recentCmds = recentCmds.Substring(recentCmds.IndexOf(";") + 1) + ";" + cmdText;
-                }
-
-                string[] strs = recentCmds.Split(';');
-                btRecentUse1.Text = strs[0];
-                btRecentUse2.Text = strs[1];
-                btRecentUse3.Text = strs[2];
-                btRecentUse4.Text = strs[3];
-                btRecentUse5.Text = strs[4];
-                btRecentUse6.Text = strs[5];
-                XmlHelper.SetNodeValue(_configPath, "/Config/ConcSimulator_North", "RecentCmds", recentCmds);
+                cbxRecentUseCmd.Items.RemoveAt(index);
             }
+
+            if (cmdText != "")
+            {
+                cbxRecentUseCmd.Items.Insert(0, cmdText);
+            }
+            else
+            {
+                recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North/RecentCmds");
+                string[] strs = recentCmds.Split(';');
+                cbxRecentUseCmd.Items.Clear();
+                cbxRecentUseCmd.Items.AddRange(strs);
+            }
+
+            for (int i = cbxRecentUseCmd.Items.Count; cbxRecentUseCmd.Items.Count > 15; i--)
+            {
+                cbxRecentUseCmd.Items.RemoveAt(i - 1);
+            }
+
+            foreach (object str in cbxRecentUseCmd.Items)
+            {
+                recentCmds += str + ";";
+            }
+
+            XmlHelper.SetNodeValue(_configPath, "/Config/ConcSimulator_North", "RecentCmds", recentCmds);
         }
         #endregion
 
@@ -995,6 +1023,8 @@ namespace ElectricPowerDebuger.Function
             txtParam3.Text = "";
             cbxParam1.Text = "";
             cbxParam2.Text = "";
+
+            this.Refresh();
         }
         
         private void txtParam1_KeyPress(object sender, KeyPressEventArgs e)
@@ -1068,7 +1098,15 @@ namespace ElectricPowerDebuger.Function
         {
             string cmdText = grpParamCmd.Text;
 
-            SendToCmdQueue(cmdText);
+            try
+            {
+                SendToCmdQueue(cmdText);
+            }
+            catch (Exception ex) 
+            {
+                ShowMsg("SendToCmdQueue() error : "  + ex.Message, Color.Red);
+            }
+            
         }
         #endregion
 
@@ -1169,7 +1207,7 @@ namespace ElectricPowerDebuger.Function
                     txLen += intTemp;
                     break;
 
-                case "查询本地通信模块的AFN索引":
+                case "查询本地通信模块AFN索引":
                     TempBuf[txLen++] = Convert.ToByte(cbxParam1.Text.Substring(0,2), 16);   // "AFN功能码：";
                     break;
 

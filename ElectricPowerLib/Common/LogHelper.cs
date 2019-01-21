@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace ElectricPowerLib.Common
 {
-    class LogHelper:IDisposable
+    public class LogHelper:IDisposable
     {
         private static ConcurrentQueue<string> _logQueue;
         private static Thread _logOutputTask;

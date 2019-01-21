@@ -5,15 +5,15 @@ using System.Collections;
 
 namespace ElectricPowerLib.Common
 {
-    class SerialCom
+    public class SerialCom
     {
         public delegate void EventHandle(byte[] readBuffer); //接收数据处理函数委托
         public event EventHandle DataReceivedEvent;          //接收到数据引发事件
         public event EventHandler UnexpectedClosedEvent;     //端口异常关闭引发事件
 
         public SerialPort serialPort;   //串行端口
-        Thread thread;
-        volatile bool _keepReading;     //接收数据标志 true 接收数据 false 未接收数据
+        Thread thread;                  //接收线程
+        volatile bool _keepReading;     //接收线程控制标志
 
         /// <summary>
         /// 串口构造函数

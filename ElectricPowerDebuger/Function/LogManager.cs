@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO.Ports;
-using ElectricPowerDebuger.Common;
+using ElectricPowerLib.Common;
 
 namespace ElectricPowerDebuger.Function
 {

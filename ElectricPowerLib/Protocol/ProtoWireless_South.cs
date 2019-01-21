@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using ElectricPowerDebuger.Common;
+using ElectricPowerLib.Common;
 
-namespace ElectricPowerDebuger.Protocol
+namespace ElectricPowerLib.Protocol
 {
-    class ProtoWireless_South
+    public class ProtoWireless_South
     {
         public const ushort FrameHeader = 0xAA55;       // 帧头
         public const byte FrameFixedLen = 9;           // 帧头， Rssi,长度,信道号,phy帧头校验,Mac帧(>18),phy载荷校验

@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace ElectricPowerLib.Common
 {
-    class Util
+    public class Util
     {
 		public static int GetBytesFromStringHex(string strSource, byte[] DataByte, int iStart, bool bReverse = false)
         {
@@ -166,27 +166,33 @@ namespace ElectricPowerLib.Common
             return index;
         }
 
+        /// <summary>
+        /// 打包645协议帧
+        /// </summary>
+        /// <param name="addr">表地址</param>
+        /// <param name="data">[控制域+长度+数据域]</param>
+        /// <returns>返回打包好的645协议帧</returns>
         public static byte[] GetDlt645Frame(byte[] addr, byte[] data)
         {
-            byte[] frame = new byte[10 + data.Length];
+            byte[] txBuf = new byte[10 + data.Length];
             byte index = 0, crc = 0, iLoop;
 
-            frame[index++] = 0x68;
-            addr.CopyTo(frame, index);
+            txBuf[index++] = 0x68;
+            addr.CopyTo(txBuf, index);
             index += (byte)addr.Length;
-            frame[index++] = 0x68;
+            txBuf[index++] = 0x68;
 
-            data.CopyTo(frame, index);
+            data.CopyTo(txBuf, index);
             index += (byte)data.Length;
 
             for (iLoop = 0; iLoop < index; iLoop++)
             {
-                crc += frame[iLoop];
+                crc += txBuf[iLoop];
             }
-            frame[index++] = crc;
-            frame[index++] = 0x16;
+            txBuf[index++] = crc;
+            txBuf[index++] = 0x16;
 
-            return frame;
+            return txBuf;
         }
 
 #if true

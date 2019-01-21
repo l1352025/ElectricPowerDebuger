@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ElectricPowerDebuger.Protocol
+namespace ElectricPowerLib.Protocol
 {
-    class ProtoLocal_South
+    public class ProtoLocal_South
     {
         public const byte FrameHeader = 0x68;           // 帧头
         public const byte FrameTail = 0x16;             // 帧尾

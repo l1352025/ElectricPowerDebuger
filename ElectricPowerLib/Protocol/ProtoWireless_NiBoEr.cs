@@ -5,7 +5,7 @@
 #elif ProtoVer_BaXi         // 巴西版本
 #undef ProtoVer_BaXi
 #else
-#define ProtoVer_North      // 当前版本
+#define ProtoVer_NiBoEr      // 当前版本
 #endif
 
 using System;
@@ -14,16 +14,16 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using ElectricPowerDebuger.Common;
+using ElectricPowerLib.Common;
 
-namespace ElectricPowerDebuger.Protocol
+namespace ElectricPowerLib.Protocol
 {
 #if     ProtoVer_North
-    class ProtoWireless_North
+    public class ProtoWireless_North
 #elif   ProtoVer_NiBoEr
-    class ProtoWireless_NiBoEr
+    public class ProtoWireless_NiBoEr
 #elif   ProtoVer_BaXi
-    class ProtoWireless_BaXi
+    public class ProtoWireless_BaXi
 #endif
     {
         public const ushort FrameHeader = 0xAA55;       // 帧头 55AA
@@ -1243,7 +1243,6 @@ namespace ElectricPowerDebuger.Protocol
 
                 return payloadNode;
             }
-            // 低功耗表透抄-应答
             private static TreeNode ExplainLowPowerMeterCmdFrame_LowPowerMeterReadResponse(byte[] buf)
             {
                 TreeNode payloadNode = new TreeNode("Mac层负载：低功耗表命令帧");
@@ -1620,21 +1619,10 @@ namespace ElectricPowerDebuger.Protocol
                 strTmp = "软件版本：" + buf[index].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
-                /*  // 2019之前协议
                 strTmp = "场强门限：" + buf[index];
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
                 strTmp = "接收场强：" + buf[index];
-                payloadNode.Nodes.Add(strTmp);
-                index += 1;
-                 * */
-                strTmp = "到DAU场强 ：" + buf[index];
-                payloadNode.Nodes.Add(strTmp);
-                index += 1;
-                strTmp = "到掌机场强：" + buf[index];
-                payloadNode.Nodes.Add(strTmp);
-                index += 1;
-                strTmp = "ResetNumber：" + buf[index];
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
 
@@ -2224,10 +2212,6 @@ namespace ElectricPowerDebuger.Protocol
                 new CmdExplain( 0x0B, "收集水表上报数据应答",   Color.Magenta, new ExplainCallback(ExplainGatherWaterAmeterReportDataResponse)),
                 new CmdExplain( 0x0C, "水气表场强收集",         Color.Orange, new ExplainCallback(ExplainGatherWaterGasAmeterRssi)),
                 new CmdExplain( 0x0D, "水气表场强收集应答",     Color.Orange, new ExplainCallback(ExplainGatherWaterGasAmeterRssiResponse)),
-
-                // 手持机指令
-                new CmdExplain( 0xFA, "收集绑定水表数据",       Color.Magenta, new ExplainCallback(ExplainGatherBindWaterAmeterReportData)),
-                new CmdExplain( 0xFB, "收集绑定水表数据应答",   Color.Magenta, new ExplainCallback(ExplainGatherBindWaterAmeterReportDataResponse)),
             };
 
             public static String GetCmdName(byte cmdId)
@@ -2749,7 +2733,7 @@ namespace ElectricPowerDebuger.Protocol
                                 + buf[index].ToString("X2");
                         node.Nodes.Add(strTmp);
                         index += 4;
-                        strTmp = "仪表状态：" + buf[index].ToString("X2");
+                        strTmp = "欠压状态：" + buf[index].ToString("X2");
                         node.Nodes.Add(strTmp);
                         index += 1;
                         strTmp = "出厂年份：" + DateTime.Now.Year / 100 + buf[index].ToString("X2");
@@ -2812,105 +2796,6 @@ namespace ElectricPowerDebuger.Protocol
                     index += 8;
                 }
 
-                return payloadNode;
-            }
-
-            //收集绑定水表上报数据
-            private static TreeNode ExplainGatherBindWaterAmeterReportData(byte[] buf)
-            {
-                TreeNode payloadNode = new TreeNode("Nwk层负载 ：命令帧");
-
-                String strTmp = "";
-
-                if (buf.Length < 3) return payloadNode;
-
-                strTmp = "命令标识：" + GetCmdName(buf[0]) + "(0x" + buf[0].ToString("X2") + ")";
-                payloadNode.Nodes.Add(strTmp);
-
-                strTmp = "命令选项：" + buf[1].ToString("X2");
-                payloadNode.Nodes.Add(strTmp);
-                strTmp = "页序号  ：" + (buf[2] & 0x0F);
-                payloadNode.Nodes.Add(strTmp);
-
-                return payloadNode;
-            }
-            //收集绑定水表上报数据应答
-            private static TreeNode ExplainGatherBindWaterAmeterReportDataResponse(byte[] buf)
-            {
-                TreeNode payloadNode = new TreeNode("Nwk层负载 ：命令帧");
-
-                String strTmp = "";
-                int index = 0;
-                TreeNode node = null;
-
-                if (buf.Length < 4) return payloadNode;
-
-                strTmp = "命令标识：" + GetCmdName(buf[index]) + "(0x" + buf[index].ToString("X2") + ")";
-                payloadNode.Nodes.Add(strTmp);
-                index++;
-
-                strTmp = "命令选项：" + buf[index].ToString("X2");
-                payloadNode.Nodes.Add(strTmp);
-                index++;
-                strTmp = "总页数  ：" + (buf[index] >> 4);
-                payloadNode.Nodes.Add(strTmp);
-                strTmp = "页序号  ：" + (buf[index] & 0x0F);
-                payloadNode.Nodes.Add(strTmp);
-                index++;
-
-                int nodeCnt = buf[index];
-                strTmp = "水表数量：" + buf[index];
-                payloadNode.Nodes.Add(strTmp);
-                index++;
-
-                if (buf.Length < index + nodeCnt * 8) return payloadNode;
-
-                for (int i = 0; i < nodeCnt; i++)
-                {
-                    strTmp = "水表" + (i + 1) + "：" + Util.GetStringHexFromBytes(buf, index + 1, 7, "", true)
-                            + " (" + buf[index] + ")";
-                    node = new TreeNode(strTmp);
-                    payloadNode.Nodes.Add(node);
-                    index += 8;
-                    {
-                        strTmp = "上报时间：" + DateTime.Now.Year / 100
-                                 + buf[index + 5].ToString("X2") + "-"
-                                 + buf[index + 4].ToString("X2") + "-"
-                                 + buf[index + 3].ToString("X2") + " "
-                                 + buf[index + 2].ToString("X2") + ":"
-                                 + buf[index + 1].ToString("X2") + ":"
-                                 + buf[index].ToString("X2");
-                        node.Nodes.Add(strTmp);
-                        index += 6;
-                        strTmp = "表分类  ：" + buf[index].ToString("X2");
-                        node.Nodes.Add(strTmp);
-                        index += 1;
-                        strTmp = "累计用量："
-                                + buf[index + 3].ToString("X2")
-                                + buf[index + 2].ToString("X2")
-                                + buf[index + 1].ToString("X2") + "."
-                                + buf[index].ToString("X2");
-                        node.Nodes.Add(strTmp);
-                        index += 4;
-                        strTmp = "统计日期：" + buf[index].ToString("X2");
-                        node.Nodes.Add(strTmp);
-                        index += 1;
-                        strTmp = "上月累计："
-                                + buf[index + 3].ToString("X2")
-                                + buf[index + 2].ToString("X2")
-                                + buf[index + 1].ToString("X2") + "."
-                                + buf[index].ToString("X2");
-                        node.Nodes.Add(strTmp);
-                        index += 4;
-                        strTmp = "仪表状态：" + buf[index].ToString("X2");
-                        node.Nodes.Add(strTmp);
-                        index += 1;
-                        strTmp = "出厂年份：" + DateTime.Now.Year / 100 + buf[index].ToString("X2");
-                        node.Nodes.Add(strTmp);
-                        index += 1;
-                    }
-
-                }
                 return payloadNode;
             }
         }

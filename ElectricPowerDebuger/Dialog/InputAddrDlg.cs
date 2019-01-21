@@ -6,8 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using ElectricPowerDebuger.Common;
-using ElectricPowerDebuger.Protocol;
+using ElectricPowerLib.Common;
+using ElectricPowerLib.Protocol;
 
 namespace ElectricPowerDebuger.Dialog
 {

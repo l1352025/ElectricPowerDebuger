@@ -8,9 +8,9 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
-using ElectricPowerDebuger.Common;
+using ElectricPowerLib.Common;
 using ElectricPowerDebuger.Dialog;
-using ElectricPowerDebuger.Protocol;
+using ElectricPowerLib.Protocol;
 using System.Threading;
 
 
@@ -93,7 +93,7 @@ namespace ElectricPowerDebuger.Function
             cmbPort.Items.AddRange(new object[] {strPortName});
             cmbPort.Text = strPortName;
             cmbBaudrate.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/Baudrate", "");
-            if ("0" == Common.XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/CommonMsgAutoScroll", "1"))
+            if ("0" == XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/CommonMsgAutoScroll", "1"))
             {
                 tsmiAutoScrollCommMsg.Checked = false;
             }
@@ -1070,7 +1070,7 @@ namespace ElectricPowerDebuger.Function
         }
         private void tsmiAutoScrollCommMsg_Click(object sender, EventArgs e)
         {
-            Common.XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "CommonMsgAutoScroll", (tsmiAutoScrollCommMsg.Checked == true ? "1" : "0"));
+            XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "CommonMsgAutoScroll", (tsmiAutoScrollCommMsg.Checked == true ? "1" : "0"));
         }
         private void tsmiSaveCommMsgToFile_Click(object sender, EventArgs e)
         {
@@ -1082,7 +1082,7 @@ namespace ElectricPowerDebuger.Function
                 MessageBox.Show("没有通讯数据可以保存！", "信息", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Information);
                 return;
             }
-            strDirectory = Common.XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/CommMsgPath", System.Windows.Forms.Application.StartupPath);
+            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/CommMsgPath", System.Windows.Forms.Application.StartupPath);
             saveFileDlg.Filter = "*.txt(文本文件)|*.txt";
             saveFileDlg.DefaultExt = "txt";
             saveFileDlg.FileName = "通讯记录";
@@ -1099,7 +1099,7 @@ namespace ElectricPowerDebuger.Function
             if (strDirectory != Path.GetDirectoryName(strFileName))
             {
                 strDirectory = Path.GetDirectoryName(strFileName);
-                Common.XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "CommMsgPath", strDirectory);
+                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "CommMsgPath", strDirectory);
             }
             try
             {

@@ -35,6 +35,10 @@
     <ApplicationIcon>dianli1-32.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ElectricPowerLib">
+      <HintPath>lib\ElectricPowerLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,12 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Command.cs" />
-    <Compile Include="Common\DoubleBufferedHelper.cs" />
-    <Compile Include="Common\LogHelper.cs" />
-    <Compile Include="Common\SerialCom.cs" />
-    <Compile Include="Common\Util.cs" />
-    <Compile Include="Common\XmlHelper.cs" />
     <Compile Include="Dialog\AddTaskDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,14 +107,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protocol\ProtoCJT188_04.cs" />
-    <Compile Include="Protocol\ProtoDLT645_07.cs" />
-    <Compile Include="Protocol\ProtoLocal_North.cs" />
-    <Compile Include="Protocol\ProtoLocal_South.cs" />
-    <Compile Include="Protocol\ProtoWireless_BaXi.cs" />
-    <Compile Include="Protocol\ProtoWireless_NiBoEr.cs" />
-    <Compile Include="Protocol\ProtoWireless_North.cs" />
-    <Compile Include="Protocol\ProtoWireless_South.cs" />
     <EmbeddedResource Include="Dialog\AddTaskDlg.resx">
       <DependentUpon>AddTaskDlg.cs</DependentUpon>
     </EmbeddedResource>
@@ -152,6 +142,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -163,9 +154,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\DataSources\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="dianli-32.ico" />
     <Content Include="dianli1-32.ico" />
