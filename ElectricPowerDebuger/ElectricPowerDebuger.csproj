@@ -37,7 +37,6 @@
   <ItemGroup>
     <Reference Include="ElectricPowerLib">
       <HintPath>lib\ElectricPowerLib.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
