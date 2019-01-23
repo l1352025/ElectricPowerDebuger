@@ -18,6 +18,8 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+
+            this.Close();
         }
 
         #region 组件设计器生成的代码

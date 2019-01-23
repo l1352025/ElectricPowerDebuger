@@ -24,6 +24,11 @@ namespace ElectricPowerDebuger.Function
         private int InvalidFrameNum = 0;
         private bool IsScrollToEnd = true;
 
+        private string _configPath;
+        private bool _isAutoSaveLog;
+        private FrmMain.FormEventNotify _evtLogAutoSaveChanged;
+        private LogHelper _wirelessLog;
+
         private int xMsTimer = 0;
 
         public delegate void CmdSendHandler();
@@ -62,6 +67,28 @@ namespace ElectricPowerDebuger.Function
             cmbPort.Text = strPortName;
             cmbBaudrate.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/Baudrate", "19200");
             cmbChanel.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/ChanelGrp", "30");
+        
+            _configPath = FrmMain.SystemConfigPath;
+            _evtLogAutoSaveChanged = new FrmMain.FormEventNotify(msg => 
+            { 
+                if(msg == "true")
+                {
+                    _isAutoSaveLog = true;
+                    if( !Directory.Exists("空中监控报文"))
+                    {
+                        Directory.CreateDirectory("空中监控报文");
+                    }
+                    string logPath = "空中监控报文/" + DateTime.Now.ToString("yyyy-MM-dd") + "_Wireless.log";
+                    _wirelessLog = new LogHelper(logPath);
+                }
+                else
+                {
+                    _isAutoSaveLog = false;
+                    _wirelessLog.Close();
+                }
+            });
+            FrmMain.LogAutoSaveStateChanged += _evtLogAutoSaveChanged;
+
         }
 
         #region 串口通信
@@ -311,6 +338,13 @@ namespace ElectricPowerDebuger.Function
                         PortBufRdPos = (UInt16)((PortBufRdPos + 6) % PortRxBuf.Length); // 可能该包不完整，跳过6byte , 查找下一包
 
                         dataTableAppend(rxBuf);
+
+                        if (_isAutoSaveLog)
+                        {
+                            string logPath = "空中监控报文/" + DateTime.Now.ToString("yyyy-MM-dd") + "_Wireless.log";
+                            LogHelper.WriteLine(logPath, Util.GetStringHexFromBytes(rxBuf, 0, rxBuf.Length, " "));
+                            //_wirelessLog.WriteLine(Util.GetStringHexFromBytes(rxBuf, 0, rxBuf.Length, " "));
+                        }
                     }
                 }
 
@@ -451,7 +485,7 @@ namespace ElectricPowerDebuger.Function
             }
 
             strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/LogPath", Application.StartupPath);
-            saveFileDlg.Filter = "*.txt(文本文件)|*.txt";
+            saveFileDlg.Filter = "*.txt(文本文件)|*.txt|*.*(所有文件)|*.*";
             saveFileDlg.DefaultExt = "txt";
             saveFileDlg.FileName = "";
             saveFileDlg.ShowDialog();
@@ -515,7 +549,7 @@ namespace ElectricPowerDebuger.Function
 
             strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/LogPath", Application.StartupPath);
             openFileDlg.InitialDirectory = strDirectory;
-            openFileDlg.Filter = "*.TXT(文本文件)|*.TXT";
+            openFileDlg.Filter = "*.TXT(文本文件)|*.TXT|*.*(所有文件)|*.*";
             openFileDlg.DefaultExt = "TXT";
             openFileDlg.FileName = "";
             if (DialogResult.OK != openFileDlg.ShowDialog())
@@ -1047,5 +1081,16 @@ namespace ElectricPowerDebuger.Function
 
         #endregion
 
+        #region 对象销毁处理
+        private void Close()
+        {
+            FrmMain.LogAutoSaveStateChanged -= _evtLogAutoSaveChanged;
+            if (_wirelessLog != null)
+            {
+                _wirelessLog.Close();
+                _wirelessLog = null;
+            }
+        }
+        #endregion
     }
 }

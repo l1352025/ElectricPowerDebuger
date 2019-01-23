@@ -24,6 +24,9 @@ namespace ElectricPowerDebuger.Function
         private Thread _thrTransceiver;
         private bool _IsSendNewCmd;
         private LogHelper _errorLog;
+        private bool _isAutoSaveLog;
+        private FrmMain.FormEventNotify _evtLogAutoSaveChanged;
+        private LogHelper _conCenterLog;
 
         delegate void CallbackFunc(params object[] args);
         private CallbackFunc _cmdEndCallback;
@@ -37,7 +40,7 @@ namespace ElectricPowerDebuger.Function
 
         private static byte[] TempBuf = new byte[4096];
         private static int _docCnt = 0;
-        private static string _strCenterAddr = "201900000000";
+        private static string _strCenterAddr = "201901020304";
         private static byte _fsn = 0;
         private static string _currProtol;
 
@@ -61,8 +64,28 @@ namespace ElectricPowerDebuger.Function
             _errorLog = new LogHelper(_configPath + "/error.log");
 
             _currProtol = XmlHelper.GetNodeDefValue(_configPath, "Config/Global/ProtocolVer", "");
-            LoadRecentCmdName();
+            _evtLogAutoSaveChanged = new FrmMain.FormEventNotify(msg =>
+            {
+                if (msg == "true")
+                {
+                    _isAutoSaveLog = true;
+                    if (!Directory.Exists("集中器本地报文"))
+                    {
+                        Directory.CreateDirectory("集中器本地报文");
+                    }
+                    string logPath = "集中器本地报文/" + DateTime.Now.ToString("yyyy-MM-dd") + "_ConCenter.log";
+                    _conCenterLog = new LogHelper(logPath);
+                }
+                else
+                {
+                    _isAutoSaveLog = false;
+                    _conCenterLog.Close();
+                }
+            });
+            FrmMain.LogAutoSaveStateChanged += _evtLogAutoSaveChanged;
 
+            LoadRecentCmdName();
+            UpdateCenterAddr(_strCenterAddr);
         }
 
         #region 串口处理
@@ -232,7 +255,7 @@ namespace ElectricPowerDebuger.Function
                         }
                         else
                         {
-                            msg = cmd.Name + "-失败 [@_@']]";
+                            msg = cmd.Name + "-失败 [@_@']";
                             ShowMsg(msg + "\r\n\r\n", Color.Red);
                         }
 
@@ -1751,9 +1774,17 @@ namespace ElectricPowerDebuger.Function
         {
             if (msg == "") return;
 
-            msg = (showTime ? "[" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff") + "]  " : "") + msg;
+            rtbMsg.BeginInvoke(new EventHandler(delegate
+            {
+                msg = (showTime ? "[" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff") + "]  " : "") + msg;
 
-            RichTextBoxAppand(rtbMsg, msg, fgColor);
+                RichTextBoxAppand(rtbMsg, msg, fgColor);
+
+                if (_isAutoSaveLog)
+                {
+                    _conCenterLog.WriteLine(msg);
+                }
+            }));
         }
 
         private delegate void UpdateRichTextCallback(RichTextBox rtb, string msg, Color fgColor);
@@ -1883,6 +1914,14 @@ namespace ElectricPowerDebuger.Function
             if (_scom.IsOpen)
             {
                 _scom.Close();
+            }
+
+            FrmMain.LogAutoSaveStateChanged -= _evtLogAutoSaveChanged;
+
+            if (_conCenterLog != null)
+            {
+                _conCenterLog.Close();
+                _conCenterLog = null;
             }
         }
 

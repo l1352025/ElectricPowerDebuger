@@ -214,7 +214,7 @@ namespace ElectricPowerLib.Protocol
                     if (rxBuf[index] == 0x68)
                     {
                         startIdx = index;
-                        if (rxBuf.Length >= (index + FrameFixedLen + rxBuf[index + 10]))
+                        if (rxBuf.Length >= (index + FrameFixedLen + rxBuf[index + 9]))
                         {
                             break;
                         }
@@ -222,7 +222,7 @@ namespace ElectricPowerLib.Protocol
                 }
 
                 if (startIdx == -1) throw new Exception("帧头错误");
-                if (rxBuf.Length < index + FrameFixedLen + rxBuf[index + 11]) throw new Exception("长度错误");
+                if (rxBuf.Length < index + FrameFixedLen + rxBuf[index + 9]) throw new Exception("长度错误");
 
                 rxData.Header = rxBuf[index++];         //帧头
 

@@ -34,6 +34,7 @@ namespace ElectricPowerDebuger
             XmlHelper.CheckXmlFile(SystemConfigPath);
 
             combProtoVer.Text = XmlHelper.GetNodeDefValue(SystemConfigPath, "Config/Global/ProtocolVer", "北网-版本");
+            chkAutoSave.Checked = (XmlHelper.GetNodeDefValue(SystemConfigPath, "Config/Global/AutoSaveLog", "false") == "true" ? true : false);
         }
 
         private void combProtoVer_SelectedIndexChanged(object sender, EventArgs e)
