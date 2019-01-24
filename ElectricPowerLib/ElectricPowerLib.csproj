@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Common\Command.cs" />
     <Compile Include="Common\DoubleBufferedHelper.cs" />
+    <Compile Include="Common\FilePacket.cs" />
     <Compile Include="Common\LogHelper.cs" />
     <Compile Include="Common\SerialCom.cs" />
     <Compile Include="Common\Util.cs" />

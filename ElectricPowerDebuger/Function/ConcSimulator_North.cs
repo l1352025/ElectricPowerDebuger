@@ -1410,17 +1410,19 @@ namespace ElectricPowerDebuger.Function
                                 return;
                             }
 
+                            _upgradeFile = new FilePacket(openFileDlg.FileName, 128);
+
                             if (fileFlg == 3)
                             {
-                                info = ReadVersionInfoFromUpgradeFile(openFileDlg.FileName, 3);
+                                info = _upgradeFile.GetString("SRWF-", "", FilePacket.FindMode.End, 3072);
                             }
                             else if (fileFlg == 8)
                             {
-                                info = ReadVersionInfoFromUpgradeFile(openFileDlg.FileName, 8);
+                                info = _upgradeFile.GetString("SRWF-", "", FilePacket.FindMode.Begin, 1024);
                             }
                             else
                             {
-                                info = ReadVersionInfoFromUpgradeFile(openFileDlg.FileName, 7);
+                                info = _upgradeFile.GetString("SRWF-", "", FilePacket.FindMode.Begin, _upgradeFile.FileSize);
                             }
 
                             if (info != "")
@@ -1512,6 +1514,8 @@ namespace ElectricPowerDebuger.Function
 
         #endregion
 
+        FilePacket _upgradeFile;
+
         #region 读取升级文件的版本信息
         /// <summary>
         /// 读取升级文件的版本信息
@@ -1520,74 +1524,75 @@ namespace ElectricPowerDebuger.Function
         /// <param name="fileFlg">文件标识：3 - 主模块升级文件， 8 - 子模块升级文件， 7 - 主模块或子模块升级文件</param>
         /// <returns>string 文件版本信息</returns>
 
-        private string ReadVersionInfoFromUpgradeFile(string filename, byte fileFlg = 7)
+        /*
+    private string ReadVersionInfoFromUpgradeFile(string filename, byte fileFlg = 7)
+    {
+        byte[] first1k = new byte[1024];
+        byte[] last3k = new byte[3072];
+        byte[] infoHeader = new byte[] { 0x53, 0x52, 0x57, 0x46, 0x2d }; // "SRWF-"
+        string info = "";
+        int indexStart = -1, indexEnd = -1;
+
+        if (fileFlg == 3)   // 主模块bin文件 尾部3k查找版本信息
         {
-            byte[] first1k = new byte[1024];
-            byte[] last3k = new byte[3072];
-            byte[] infoHeader = new byte[] { 0x53, 0x52, 0x57, 0x46, 0x2d }; // "SRWF-"
-            string info = "";
-            int indexStart = -1, indexEnd = -1;
+            FileStream fs = File.OpenRead(openFileDlg.FileName);
+            fs.Seek(-last3k.Length, SeekOrigin.End);
+            fs.Read(last3k, 0, last3k.Length);
+            fs.Close();
 
-            if (fileFlg == 3)   // 主模块bin文件 尾部3k查找版本信息
+            indexStart = Util.IndexOf(last3k, infoHeader);
+
+            if(indexStart >= 0)
+                indexEnd = Util.IndexOf(last3k, 0x00, indexStart);
+
+            if(indexEnd >= 0)
+                info = Encoding.ASCII.GetString(last3k, indexStart, (indexEnd - indexStart));
+        }
+        else if (fileFlg == 8) // 子模块bin文件 头部1k查找版本信息
+        {
+            FileStream fs = File.OpenRead(openFileDlg.FileName);
+            fs.Read(first1k, 0, first1k.Length);
+            fs.Close();
+
+            indexStart = Util.IndexOf(first1k, infoHeader);
+
+            if (indexStart >= 0)
+                indexEnd = Util.IndexOf(first1k, 0x00, indexStart);
+
+            if (indexEnd >= 0)
+                info = Encoding.ASCII.GetString(first1k, indexStart, (indexEnd - indexStart));
+        }
+        else if (fileFlg == 7) // 主模块 或 子模块bin文件
+        {
+            FileStream fs = File.OpenRead(openFileDlg.FileName);
+            fs.Read(first1k, 0, first1k.Length);
+            fs.Seek(-last3k.Length, SeekOrigin.End);
+            fs.Read(last3k, 0, last3k.Length);
+            fs.Close();
+
+            indexStart = Util.IndexOf(first1k, infoHeader);
+
+            if (indexStart >= 0)
+                indexEnd = Util.IndexOf(first1k, 0x00, indexStart);
+
+            if (indexEnd >= 0)
+                info = Encoding.ASCII.GetString(first1k, indexStart, (indexEnd - indexStart));
+
+            if (info == "")
             {
-                FileStream fs = File.OpenRead(openFileDlg.FileName);
-                fs.Seek(-last3k.Length, SeekOrigin.End);
-                fs.Read(last3k, 0, last3k.Length);
-                fs.Close();
-
                 indexStart = Util.IndexOf(last3k, infoHeader);
 
-                if(indexStart >= 0)
+                if (indexStart >= 0)
                     indexEnd = Util.IndexOf(last3k, 0x00, indexStart);
 
-                if(indexEnd >= 0)
+                if (indexEnd >= 0)
                     info = Encoding.ASCII.GetString(last3k, indexStart, (indexEnd - indexStart));
             }
-            else if (fileFlg == 8) // 子模块bin文件 头部1k查找版本信息
-            {
-                FileStream fs = File.OpenRead(openFileDlg.FileName);
-                fs.Read(first1k, 0, first1k.Length);
-                fs.Close();
-
-                indexStart = Util.IndexOf(first1k, infoHeader);
-
-                if (indexStart >= 0)
-                    indexEnd = Util.IndexOf(first1k, 0x00, indexStart);
-
-                if (indexEnd >= 0)
-                    info = Encoding.ASCII.GetString(first1k, indexStart, (indexEnd - indexStart));
-            }
-            else if (fileFlg == 7) // 主模块 或 子模块bin文件
-            {
-                FileStream fs = File.OpenRead(openFileDlg.FileName);
-                fs.Read(first1k, 0, first1k.Length);
-                fs.Seek(-last3k.Length, SeekOrigin.End);
-                fs.Read(last3k, 0, last3k.Length);
-                fs.Close();
-
-                indexStart = Util.IndexOf(first1k, infoHeader);
-
-                if (indexStart >= 0)
-                    indexEnd = Util.IndexOf(first1k, 0x00, indexStart);
-
-                if (indexEnd >= 0)
-                    info = Encoding.ASCII.GetString(first1k, indexStart, (indexEnd - indexStart));
-
-                if (info == "")
-                {
-                    indexStart = Util.IndexOf(last3k, infoHeader);
-
-                    if (indexStart >= 0)
-                        indexEnd = Util.IndexOf(last3k, 0x00, indexStart);
-
-                    if (indexEnd >= 0)
-                        info = Encoding.ASCII.GetString(last3k, indexStart, (indexEnd - indexStart));
-                }
-            }
-
-            return info;
         }
 
+        return info;
+    }
+    */
         #endregion
 
 

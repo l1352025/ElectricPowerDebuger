@@ -126,24 +126,43 @@ namespace ElectricPowerLib.Common
 
         public static int IndexOf(byte[] srcArray, byte[] bytes)
         {
-            return IndexOf(srcArray, bytes, 0);
-        }
-        public static int IndexOf(byte[] srcArray, byte b)
-        {
-            return IndexOf(srcArray, new byte[] { b }, 0);
-        }
-        public static int IndexOf(byte[] srcArray, byte b, int startIndex)
-        {
-            return IndexOf(srcArray, new byte[] { b }, startIndex);
+            return IndexOf(srcArray, bytes, 0, srcArray.Length);
         }
 
-        public static int IndexOf(byte[] srcArray, byte[] bytes, int startIndex)
+        public static int IndexOf(byte[] srcArray, byte b)
+        {
+            return IndexOf(srcArray, new byte[] { b }, 0, srcArray.Length);
+        }
+
+        public static int IndexOf(byte[] srcArray, string str)
+        {
+            byte[] bytes = ( str != "" ? Encoding.UTF8.GetBytes(str) : new byte[] { 0x00 });
+            return IndexOf(srcArray, bytes, 0, srcArray.Length);
+        }
+
+        public static int IndexOf(byte[] srcArray, byte b, int startIndex, int offset)
+        {
+            return IndexOf(srcArray, new byte[] { b }, startIndex, offset);
+        }
+
+        public static int IndexOf(byte[] srcArray, string str, int startIndex, int offset)
+        {
+            byte[] bytes = (str != "" ? Encoding.UTF8.GetBytes(str) : new byte[] { 0x00 });
+            return IndexOf(srcArray, bytes, startIndex, offset);
+        }
+
+        public static int IndexOf(byte[] srcArray, byte[] bytes, int startIndex, int offset)
         {
             int index = -1, i, j;
 
             if (bytes == null || bytes.Length == 0) return index;
 
-            for (i = startIndex; i <= (srcArray.Length - bytes.Length); i++)
+            if(offset > (srcArray.Length - startIndex))
+            {
+                offset = (srcArray.Length - startIndex);
+            }
+
+            for (i = startIndex; i <= (startIndex + offset - bytes.Length); i++)
             {
                 if (srcArray[i] == bytes[0])
                 {

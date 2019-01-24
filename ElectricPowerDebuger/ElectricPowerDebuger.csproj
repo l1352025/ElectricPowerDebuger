@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="ElectricPowerLib">
       <HintPath>lib\ElectricPowerLib.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <Content Include="dianli-32.ico" />
     <Content Include="dianli1-32.ico" />
+    <None Include="lib\ElectricPowerLib.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
