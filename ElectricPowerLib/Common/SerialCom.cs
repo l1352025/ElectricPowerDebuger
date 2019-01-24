@@ -25,6 +25,11 @@ namespace ElectricPowerLib.Common
             _keepReading = false;
         }
 
+        public string[] GetPortNames()
+        {
+            return SerialPort.GetPortNames();
+        }
+
         /// <summary>
         /// 串口配置
         /// </summary>

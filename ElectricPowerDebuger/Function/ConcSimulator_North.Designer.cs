@@ -34,10 +34,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grpRecentUse = new System.Windows.Forms.GroupBox();
-            this.btRecentUse3 = new System.Windows.Forms.Button();
-            this.btRecentUse1 = new System.Windows.Forms.Button();
-            this.btRecentUse6 = new System.Windows.Forms.Button();
-            this.btRecentUse4 = new System.Windows.Forms.Button();
+            this.cbxRecentUseCmd = new System.Windows.Forms.ComboBox();
             this.grpParamCmd = new System.Windows.Forms.GroupBox();
             this.cbxParam2 = new System.Windows.Forms.ComboBox();
             this.chkParam1 = new System.Windows.Forms.CheckBox();
@@ -77,10 +74,14 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.grpRecentCmd = new System.Windows.Forms.GroupBox();
+            this.btRecentUse3 = new System.Windows.Forms.Button();
+            this.btRecentUse1 = new System.Windows.Forms.Button();
             this.btStartNetwork = new System.Windows.Forms.Button();
             this.btQueryRouteState = new System.Windows.Forms.Button();
             this.btRedownAllDoc = new System.Windows.Forms.Button();
+            this.btRecentUse6 = new System.Windows.Forms.Button();
             this.btReadAllDoc = new System.Windows.Forms.Button();
+            this.btRecentUse4 = new System.Windows.Forms.Button();
             this.grpCmdMenu = new System.Windows.Forms.GroupBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.h初始化ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -199,7 +200,8 @@
             this.label13 = new System.Windows.Forms.Label();
             this.rtbMsg = new System.Windows.Forms.RichTextBox();
             this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
-            this.cbxRecentUseCmd = new System.Windows.Forms.ComboBox();
+            this.btSave = new System.Windows.Forms.Button();
+            this.btClear = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -258,45 +260,14 @@
             this.grpRecentUse.TabStop = false;
             this.grpRecentUse.Text = "命令历史记录";
             // 
-            // btRecentUse3
+            // cbxRecentUseCmd
             // 
-            this.btRecentUse3.Location = new System.Drawing.Point(153, 107);
-            this.btRecentUse3.Name = "btRecentUse3";
-            this.btRecentUse3.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse3.TabIndex = 0;
-            this.btRecentUse3.Text = "查询厂商代码和版本信息";
-            this.btRecentUse3.UseVisualStyleBackColor = true;
-            this.btRecentUse3.Click += new System.EventHandler(this.AllCmdButton_Click);
-            // 
-            // btRecentUse1
-            // 
-            this.btRecentUse1.Location = new System.Drawing.Point(153, 20);
-            this.btRecentUse1.Name = "btRecentUse1";
-            this.btRecentUse1.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse1.TabIndex = 0;
-            this.btRecentUse1.Text = "添加从节点";
-            this.btRecentUse1.UseVisualStyleBackColor = true;
-            this.btRecentUse1.Click += new System.EventHandler(this.AllCmdButton_Click);
-            // 
-            // btRecentUse6
-            // 
-            this.btRecentUse6.Location = new System.Drawing.Point(153, 78);
-            this.btRecentUse6.Name = "btRecentUse6";
-            this.btRecentUse6.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse6.TabIndex = 0;
-            this.btRecentUse6.Text = "查询场强门限";
-            this.btRecentUse6.UseVisualStyleBackColor = true;
-            this.btRecentUse6.Click += new System.EventHandler(this.AllCmdButton_Click);
-            // 
-            // btRecentUse4
-            // 
-            this.btRecentUse4.Location = new System.Drawing.Point(153, 49);
-            this.btRecentUse4.Name = "btRecentUse4";
-            this.btRecentUse4.Size = new System.Drawing.Size(191, 23);
-            this.btRecentUse4.TabIndex = 0;
-            this.btRecentUse4.Text = "查询无线通信参数";
-            this.btRecentUse4.UseVisualStyleBackColor = true;
-            this.btRecentUse4.Click += new System.EventHandler(this.AllCmdButton_Click);
+            this.cbxRecentUseCmd.FormattingEnabled = true;
+            this.cbxRecentUseCmd.Location = new System.Drawing.Point(0, 20);
+            this.cbxRecentUseCmd.Name = "cbxRecentUseCmd";
+            this.cbxRecentUseCmd.Size = new System.Drawing.Size(191, 20);
+            this.cbxRecentUseCmd.TabIndex = 7;
+            this.cbxRecentUseCmd.SelectedIndexChanged += new System.EventHandler(this.cbxRecentUseCmd_SelectedIndexChanged);
             // 
             // grpParamCmd
             // 
@@ -712,6 +683,26 @@
             this.grpRecentCmd.TabStop = false;
             this.grpRecentCmd.Text = "常用命令";
             // 
+            // btRecentUse3
+            // 
+            this.btRecentUse3.Location = new System.Drawing.Point(153, 107);
+            this.btRecentUse3.Name = "btRecentUse3";
+            this.btRecentUse3.Size = new System.Drawing.Size(191, 23);
+            this.btRecentUse3.TabIndex = 0;
+            this.btRecentUse3.Text = "查询厂商代码和版本信息";
+            this.btRecentUse3.UseVisualStyleBackColor = true;
+            this.btRecentUse3.Click += new System.EventHandler(this.AllCmdButton_Click);
+            // 
+            // btRecentUse1
+            // 
+            this.btRecentUse1.Location = new System.Drawing.Point(153, 20);
+            this.btRecentUse1.Name = "btRecentUse1";
+            this.btRecentUse1.Size = new System.Drawing.Size(191, 23);
+            this.btRecentUse1.TabIndex = 0;
+            this.btRecentUse1.Text = "添加从节点";
+            this.btRecentUse1.UseVisualStyleBackColor = true;
+            this.btRecentUse1.Click += new System.EventHandler(this.AllCmdButton_Click);
+            // 
             // btStartNetwork
             // 
             this.btStartNetwork.Location = new System.Drawing.Point(9, 78);
@@ -742,6 +733,16 @@
             this.btRedownAllDoc.UseVisualStyleBackColor = true;
             this.btRedownAllDoc.Click += new System.EventHandler(this.AllCmdButton_Click);
             // 
+            // btRecentUse6
+            // 
+            this.btRecentUse6.Location = new System.Drawing.Point(153, 78);
+            this.btRecentUse6.Name = "btRecentUse6";
+            this.btRecentUse6.Size = new System.Drawing.Size(191, 23);
+            this.btRecentUse6.TabIndex = 0;
+            this.btRecentUse6.Text = "查询场强门限";
+            this.btRecentUse6.UseVisualStyleBackColor = true;
+            this.btRecentUse6.Click += new System.EventHandler(this.AllCmdButton_Click);
+            // 
             // btReadAllDoc
             // 
             this.btReadAllDoc.Location = new System.Drawing.Point(9, 20);
@@ -751,6 +752,16 @@
             this.btReadAllDoc.Text = "读出全部档案";
             this.btReadAllDoc.UseVisualStyleBackColor = true;
             this.btReadAllDoc.Click += new System.EventHandler(this.AllCmdButton_Click);
+            // 
+            // btRecentUse4
+            // 
+            this.btRecentUse4.Location = new System.Drawing.Point(153, 49);
+            this.btRecentUse4.Name = "btRecentUse4";
+            this.btRecentUse4.Size = new System.Drawing.Size(191, 23);
+            this.btRecentUse4.TabIndex = 0;
+            this.btRecentUse4.Text = "查询无线通信参数";
+            this.btRecentUse4.UseVisualStyleBackColor = true;
+            this.btRecentUse4.Click += new System.EventHandler(this.AllCmdButton_Click);
             // 
             // grpCmdMenu
             // 
@@ -1347,6 +1358,8 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.btSave);
+            this.splitContainer2.Panel2.Controls.Add(this.btClear);
             this.splitContainer2.Panel2.Controls.Add(this.label14);
             this.splitContainer2.Panel2.Controls.Add(this.label15);
             this.splitContainer2.Panel2.Controls.Add(this.label16);
@@ -1651,7 +1664,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.BackColor = System.Drawing.SystemColors.Control;
-            this.label14.Location = new System.Drawing.Point(316, 9);
+            this.label14.Location = new System.Drawing.Point(282, 9);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(29, 12);
             this.label14.TabIndex = 16;
@@ -1661,7 +1674,7 @@
             // 
             this.label15.BackColor = System.Drawing.Color.Green;
             this.label15.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label15.Location = new System.Drawing.Point(304, 10);
+            this.label15.Location = new System.Drawing.Point(270, 10);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(10, 10);
             this.label15.TabIndex = 13;
@@ -1671,7 +1684,7 @@
             // 
             this.label16.AutoSize = true;
             this.label16.BackColor = System.Drawing.SystemColors.Control;
-            this.label16.Location = new System.Drawing.Point(233, 9);
+            this.label16.Location = new System.Drawing.Point(204, 9);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(29, 12);
             this.label16.TabIndex = 15;
@@ -1679,9 +1692,9 @@
             // 
             // label17
             // 
-            this.label17.BackColor = System.Drawing.Color.Black;
+            this.label17.BackColor = System.Drawing.Color.Red;
             this.label17.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label17.Location = new System.Drawing.Point(288, 10);
+            this.label17.Location = new System.Drawing.Point(254, 10);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(10, 10);
             this.label17.TabIndex = 12;
@@ -1691,7 +1704,7 @@
             // 
             this.label18.AutoSize = true;
             this.label18.BackColor = System.Drawing.SystemColors.Control;
-            this.label18.Location = new System.Drawing.Point(180, 9);
+            this.label18.Location = new System.Drawing.Point(151, 9);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(29, 12);
             this.label18.TabIndex = 14;
@@ -1701,7 +1714,7 @@
             // 
             this.label19.BackColor = System.Drawing.Color.DarkRed;
             this.label19.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label19.Location = new System.Drawing.Point(221, 10);
+            this.label19.Location = new System.Drawing.Point(192, 10);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(10, 10);
             this.label19.TabIndex = 11;
@@ -1711,7 +1724,7 @@
             // 
             this.label20.BackColor = System.Drawing.Color.Blue;
             this.label20.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label20.Location = new System.Drawing.Point(168, 10);
+            this.label20.Location = new System.Drawing.Point(139, 10);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(10, 10);
             this.label20.TabIndex = 10;
@@ -1738,14 +1751,25 @@
             this.rtbMsg.TabIndex = 0;
             this.rtbMsg.Text = "";
             // 
-            // cbxRecentUseCmd
+            // btSave
             // 
-            this.cbxRecentUseCmd.FormattingEnabled = true;
-            this.cbxRecentUseCmd.Location = new System.Drawing.Point(6, 20);
-            this.cbxRecentUseCmd.Name = "cbxRecentUseCmd";
-            this.cbxRecentUseCmd.Size = new System.Drawing.Size(192, 20);
-            this.cbxRecentUseCmd.TabIndex = 7;
-            this.cbxRecentUseCmd.SelectedIndexChanged += new System.EventHandler(this.cbxRecentUseCmd_SelectedIndexChanged);
+            this.btSave.Location = new System.Drawing.Point(416, 5);
+            this.btSave.Name = "btSave";
+            this.btSave.Size = new System.Drawing.Size(68, 20);
+            this.btSave.TabIndex = 19;
+            this.btSave.Text = "保存记录";
+            this.btSave.UseVisualStyleBackColor = true;
+            this.btSave.Click += new System.EventHandler(this.btSave_Click);
+            // 
+            // btClear
+            // 
+            this.btClear.Location = new System.Drawing.Point(333, 5);
+            this.btClear.Name = "btClear";
+            this.btClear.Size = new System.Drawing.Size(68, 20);
+            this.btClear.TabIndex = 20;
+            this.btClear.Text = "清空记录";
+            this.btClear.UseVisualStyleBackColor = true;
+            this.btClear.Click += new System.EventHandler(this.btClear_Click);
             // 
             // ConcSimulator_North
             // 
@@ -1953,5 +1977,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn 读数DataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn 中继级别DataGridViewTextBoxColumn;
         private System.Windows.Forms.ComboBox cbxRecentUseCmd;
+        private System.Windows.Forms.Button btSave;
+        private System.Windows.Forms.Button btClear;
     }
 }
