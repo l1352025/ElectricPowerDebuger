@@ -13,6 +13,7 @@ namespace ElectricPowerLib.Common
         public string FileName { get; private set; }
         public int FileSize { get; private set; }
         public int FileKbSize { get; private set; }
+        public int FileCrc16 { get; private set; }
         public int PacketSize { get; private set; }
         public int PacketCount { get; private set; }
         public int LastPktSize { get; private set; }
@@ -33,7 +34,7 @@ namespace ElectricPowerLib.Common
             if (fs.Length < packetStartIndex)
             {
                 fs.Close();
-                throw new Exception($"文件长度 <= 起始位置 {packetStartIndex}");
+                throw new Exception("文件长度 <= 起始位置" + packetStartIndex );
             }
 
             FileName = filePath;
@@ -47,6 +48,8 @@ namespace ElectricPowerLib.Common
             fs.Seek(packetStartIndex, SeekOrigin.Begin);
             fs.Read(_dataBuffer, 0, _dataBuffer.Length);
             fs.Close();
+
+            FileCrc16 = Util.GetCRC16(_dataBuffer, 0, _dataBuffer.Length);
         }
 
         public int PacketToBuffer(byte[] dstBuffer, int dstIndex, int packetIndex)
@@ -55,6 +58,7 @@ namespace ElectricPowerLib.Common
 
             if (dstIndex + PacketSize <= dstBuffer.Length)
             {
+                CurrPktIndex = packetIndex;
                 size = (packetIndex == PacketCount - 1 ? LastPktSize : PacketSize);
                 Array.Copy(_dataBuffer, PacketSize * packetIndex, dstBuffer, dstIndex, size);
                 return PacketSize;
@@ -108,5 +112,6 @@ namespace ElectricPowerLib.Common
 
             return strFind;
         }
+
     }
 }

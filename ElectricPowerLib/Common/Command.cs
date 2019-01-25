@@ -12,6 +12,7 @@ namespace ElectricPowerLib.Common
 
         public string Name;
         public string GrpName;
+        public string Comment;
         public byte[] TxBuf;
         public byte[] RxBuf;
         public List<object> Params;

@@ -185,6 +185,56 @@ namespace ElectricPowerLib.Common
             return index;
         }
 
+        public static UInt16 GetCRC16(string str)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(str);
+            return GetCRC16(bytes, 0, bytes.Length);
+        }
+        public static UInt16 GetCRC16(byte[] buffer, int index, int length, UInt16 seed = 0x8408)
+        {
+            UInt16 uiCRC = 0xffff;
+
+            if (buffer.Length < index + length) throw new Exception("索引+长度 超出了buffer的大小");
+
+            for (int iLoop = 0; iLoop < length; iLoop++)
+            {
+                uiCRC ^= (UInt16)buffer[index + iLoop];
+                for (int iLoop1 = 0; iLoop1 < 8; iLoop1++)
+                {
+                    if ((uiCRC & 1) == 1)
+                    {
+                        uiCRC >>= 1;
+                        uiCRC ^= seed;
+                    }
+                    else
+                    {
+                        uiCRC >>= 1;
+                    }
+                }
+            }
+            uiCRC ^= 0xffff;
+            return uiCRC;
+        }
+
+        public static byte GetChecksum(string str)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(str);
+            return GetChecksum(bytes, 0, bytes.Length);
+        }
+        public static byte GetChecksum(byte[] buffer, int index, int length)
+        {
+            byte sum = 0;
+
+            if (buffer.Length < index + length) throw new Exception("索引+长度 超出了buffer的大小");
+
+            for (int i = 0; i < length; i++)
+            {
+                sum += buffer[i + index];
+            }
+
+            return sum;
+        }
+
         /// <summary>
         /// 打包645协议帧
         /// </summary>
