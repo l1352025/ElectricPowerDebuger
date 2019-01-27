@@ -9,6 +9,7 @@ namespace ElectricPowerLib.Common
     public class FilePacket
     {
         private byte[] _dataBuffer;
+        private byte[] _pktMissBitFlags;
 
         public string FileName { get; private set; }
         public int FileSize { get; private set; }
@@ -17,7 +18,10 @@ namespace ElectricPowerLib.Common
         public int PacketSize { get; private set; }
         public int PacketCount { get; private set; }
         public int LastPktSize { get; private set; }
-        public int CurrPktIndex { get; private set; }
+        public int CurrPktIndex { get; set; }
+        public int MissingPktCnt { get; private set; }
+        public int SendPktCnt { get; set; }
+        public int VersionCrc16 { get; set; }
 
         public enum FindMode
         {
@@ -43,6 +47,10 @@ namespace ElectricPowerLib.Common
             PacketSize = packetSize;
             PacketCount = (FileSize + packetSize - 1)/packetSize;
             LastPktSize = ((FileSize % packetSize != 0) ? (FileSize % packetSize) : packetSize);
+            MissingPktCnt = PacketCount;
+
+            _pktMissBitFlags = new byte[(PacketCount + 7) / 8];
+            ClearPacketMissingBitFlags();
 
             _dataBuffer = new byte[FileSize];
             fs.Seek(packetStartIndex, SeekOrigin.Begin);
@@ -111,6 +119,66 @@ namespace ElectricPowerLib.Common
             }
 
             return strFind;
+        }
+
+        public void ClearPacketMissingBitFlags()
+        {
+            for(int i = 0; i < _pktMissBitFlags.Length; i++)
+            {
+                _pktMissBitFlags[i] = 0xFF;
+            }
+        }
+
+        public void AddPacketMissingBitFlags(byte[] bitFlags)
+        {
+            if (_pktMissBitFlags.Length != bitFlags.Length) throw new Exception("缺包数位标记数组长度错误！");
+
+            for (int i = 0; i < _pktMissBitFlags.Length; i++)
+            {
+                _pktMissBitFlags[i] &= bitFlags[i];
+            }
+        }
+
+        public List<int> GetPacketMissingList()
+        {
+            List<int> list = new List<int>();
+            byte aByte;
+            int pktIdx = 0;
+
+            if(MissingPktCnt == PacketCount)
+            {
+                for(int i = 0; i < PacketCount; i++)
+                {
+                    list.Add(i);
+                }
+                return list;
+            }
+
+            for (int i = 0; i < _pktMissBitFlags.Length; i++)
+            {
+                aByte = _pktMissBitFlags[i++];
+
+                if (aByte == 0xFF)
+                {
+                    pktIdx += 8;
+                }
+                else
+                {
+                    for (int j = 0; j < 8 && pktIdx < PacketCount; j++)
+                    {
+                        if ((aByte & 0x01) == 0)
+                        {
+                            list.Add(pktIdx);
+                        }
+                        aByte >>= 1;
+                        pktIdx++;
+                    }
+                }
+            }
+
+            MissingPktCnt = list.Count;
+
+            return list;
         }
 
     }

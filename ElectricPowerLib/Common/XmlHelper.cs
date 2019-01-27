@@ -34,28 +34,12 @@ namespace ElectricPowerLib.Common
                 return;
             }
             XmlDocument doc = new XmlDocument();
-            XmlElement element;
 
             XmlNode xmlDeclare = doc.CreateXmlDeclaration("1.0", "utf-8", null);
             doc.AppendChild(xmlDeclare);
 
             XmlElement ConfigNode = (XmlElement)doc.CreateElement("Config");
             doc.AppendChild(ConfigNode);
-
-            element = (XmlElement)doc.CreateElement("Global");
-            ConfigNode.AppendChild(element);
-
-            element = (XmlElement)doc.CreateElement("ConcSimulator");
-            ConfigNode.AppendChild(element);
-
-            element = (XmlElement)doc.CreateElement("ConcSimulator_North");
-            ConfigNode.AppendChild(element);
-
-            element = (XmlElement)doc.CreateElement("DataMonitor");
-            ConfigNode.AppendChild(element);
-
-            element = (XmlElement)doc.CreateElement("LogManager");
-            ConfigNode.AppendChild(element);
 
             doc.Save(configFile);
         }

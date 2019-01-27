@@ -18,7 +18,9 @@ namespace ElectricPowerLib.Common
         public List<object> Params;
         public int TimeWaitMS;
         public int RetryTimes;
+        public int TxCnt;
         public bool IsEnable;
+        public bool IsNoResponse;
         public CommandHandler SendFunc;
         public CommandHandler RecvFunc;
 
@@ -39,6 +41,8 @@ namespace ElectricPowerLib.Common
             RecvFunc = recvFunc;
             Params = new List<object>();
             GrpName = "";
+            Comment = "";
+
         }
     };
 }
