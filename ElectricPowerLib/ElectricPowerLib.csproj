@@ -62,7 +62,14 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /y $(TargetPath) $(ProjectDir)\..\ElectricPowerDebuger\lib\
-copy /y $(TargetPath) $(ProjectDir)\..\..\WaterMeter_WirelessUpgrade\WirelessUpgrade\lib\</PostBuildEvent>
+
+if exist $(ProjectDir)\..\..\WaterMeter_WirelessUpgrade\WirelessUpgrade\lib\ (
+    copy /y $(TargetPath) $(ProjectDir)\..\..\WaterMeter_WirelessUpgrade\WirelessUpgrade\lib\
+)
+
+if exist $(ProjectDir)\..\..\WaterMeterWirelessUpgrade\WirelessUpgrade\lib\ (
+    copy /y $(TargetPath) $(ProjectDir)\..\..\WaterMeterWirelessUpgrade\WirelessUpgrade\lib\
+)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

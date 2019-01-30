@@ -18,9 +18,11 @@ namespace ElectricPowerLib.Common
         public int PacketSize { get; private set; }
         public int PacketCount { get; private set; }
         public int LastPktSize { get; private set; }
-        public int CurrPktIndex { get; set; }
-        public int MissingPktCnt { get; private set; }
-        public int SendPktCnt { get; set; }
+        public int PktMissingCnt { get; private set; }
+        public List<int> PktMissingList { get; private set; }
+        public int PktCurrIndex { get; set; }
+        public int PktSendCnt { get; set; }
+        public string Version { get; set; }
         public int VersionCrc16 { get; set; }
 
         public enum FindMode
@@ -47,7 +49,7 @@ namespace ElectricPowerLib.Common
             PacketSize = packetSize;
             PacketCount = (FileSize + packetSize - 1)/packetSize;
             LastPktSize = ((FileSize % packetSize != 0) ? (FileSize % packetSize) : packetSize);
-            MissingPktCnt = PacketCount;
+            PktMissingCnt = PacketCount;
 
             _pktMissBitFlags = new byte[(PacketCount + 7) / 8];
             ClearPacketMissingBitFlags();
@@ -60,13 +62,12 @@ namespace ElectricPowerLib.Common
             FileCrc16 = Util.GetCRC16(_dataBuffer, 0, _dataBuffer.Length);
         }
 
-        public int PacketToBuffer(byte[] dstBuffer, int dstIndex, int packetIndex)
+        public int CopyPacketToBuffer(byte[] dstBuffer, int dstIndex, int packetIndex)
         {
             int size = 0;
 
             if (dstIndex + PacketSize <= dstBuffer.Length)
             {
-                CurrPktIndex = packetIndex;
                 size = (packetIndex == PacketCount - 1 ? LastPktSize : PacketSize);
                 Array.Copy(_dataBuffer, PacketSize * packetIndex, dstBuffer, dstIndex, size);
                 return PacketSize;
@@ -145,7 +146,7 @@ namespace ElectricPowerLib.Common
             byte aByte;
             int pktIdx = 0;
 
-            if(MissingPktCnt == PacketCount)
+            if(PktMissingCnt == PacketCount)
             {
                 for(int i = 0; i < PacketCount; i++)
                 {
@@ -176,9 +177,78 @@ namespace ElectricPowerLib.Common
                 }
             }
 
-            MissingPktCnt = list.Count;
+            PktMissingCnt = list.Count;
 
             return list;
+        }
+        public int GetPacketMissingList(byte[] bitFlags)
+        {
+            byte aByte;
+            int pktIdx = 0;
+            int cnt = 0;
+
+            for (int i = 0; i < bitFlags.Length; i++)
+            {
+                aByte = bitFlags[i++];
+
+                if (aByte == 0xFF)
+                {
+                    pktIdx += 8;
+                }
+                else
+                {
+                    for (int j = 0; j < 8 && pktIdx < PacketCount; j++)
+                    {
+                        if ((aByte & 0x01) == 0)
+                        {
+                            cnt++;
+                        }
+                        aByte >>= 1;
+                        pktIdx++;
+                    }
+                }
+            }
+
+            return cnt;
+        }
+
+        // 方法二
+        public void GetCurrPacketMissingCnt(byte[] bitFlags, out int sefMissCnt, out int currMissCnt, byte missFlag = 0)
+        {
+            List<int> list = new List<int>();
+            byte aByte;
+            int pktIdx = 0;
+
+            for (int i = 0; i < bitFlags.Length; i++)
+            {
+                aByte = bitFlags[i++];
+
+                if (missFlag == 0 && aByte == 0xFF)
+                {
+                    pktIdx += 8;
+                }
+                else if (missFlag == 1 && aByte == 0x00)
+                {
+                    pktIdx += 8;
+                }
+                else
+                {
+                    for (int j = 0; j < 8 && pktIdx < PacketCount; j++)
+                    {
+                        if ((aByte & 0x01) == missFlag)
+                        {
+                            list.Add(pktIdx);
+                        }
+                        aByte >>= 1;
+                        pktIdx++;
+                    }
+                }
+            }
+
+            PktMissingList = (List<int>)PktMissingList.Union(list);
+
+            sefMissCnt = list.Count;
+            currMissCnt = PktMissingList.Count;
         }
 
     }
