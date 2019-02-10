@@ -601,6 +601,11 @@ namespace ElectricPowerLib.Protocol
                     {
                         frameType = "Mac层：" + MacExplain.GetLowPowerMeterCmdName(frame.Mac.Payload[0]);
                         frameColor = MacExplain.GetLowPowerMeterCmdColor(frame.Mac.Payload[0]);
+                        if(frameType.Contains("私有命令"))
+                        {
+                            frameType = frameType + "_" + MacExplain.GetSangReiLowPowerMeterCmdName(frame.Mac.Payload[4]);
+                            frameColor = MacExplain.GetSangReiLowPowerMeterCmdColor(frame.Mac.Payload[4]);
+                        }
                     }
                     break;
                 default:
@@ -714,8 +719,26 @@ namespace ElectricPowerLib.Protocol
                 new CmdExplain( 0x4A, "低功耗表维护",             Color.Blue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_LowPowerMeterMaintain)),
                 new CmdExplain( 0x4B, "低功耗表维护应答",         Color.Blue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_LowPowerMeterMaintainResponse)),
                 
-                // 桑锐水表指令
-                new CmdExplain( 0xAA, "桑锐水表命令",         Color.Blue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_SangReiWaterMeterCmd)),
+                // 私有协议命令
+                new CmdExplain( 0xAA, "私有命令",                 Color.Blue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_PrivateCmd)),
+                new CmdExplain( 0xAB, "私有命令应答",             Color.Blue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_PrivateCmd)),
+            };
+
+            private static readonly CmdExplain[] SangReiLowPowerMeterCmdTbl = new CmdExplain[]
+            {
+                // 桑锐水表命令
+                new CmdExplain( 0x00, "切换成单向模式",           Color.Blue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_SangReiWaterMeterCmd)),
+                new CmdExplain( 0x01, "切换成双向模式",           Color.Blue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_SangReiWaterMeterCmd)),
+                new CmdExplain( 0x02, "设置水表时钟",             Color.Blue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_SangReiWaterMeterCmd)),
+                new CmdExplain( 0x03, "读取水表时钟",             Color.Blue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_SangReiWaterMeterCmd)),
+
+                // 桑锐水表无线升级命令
+                new CmdExplain( 0x70, "通知系统升级-在App",        Color.DarkBlue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_SangReiWirelessUpgradeCmd)),
+                new CmdExplain( 0x71, "通知系统升级-在Boot",       Color.DarkBlue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_SangReiWirelessUpgradeCmd)),
+                new CmdExplain( 0x72, "发送升级数据包",            Color.DarkBlue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_SangReiWirelessUpgradeCmd)),
+                new CmdExplain( 0x73, "查询升级状态-在Boot",       Color.DarkBlue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_SangReiWirelessUpgradeCmd)),
+                new CmdExplain( 0x74, "查询升级状态-在App",        Color.DarkBlue, new ExplainCallback(ExplainLowPowerMeterCmdFrame_SangReiWirelessUpgradeCmd)),
+                
             };
 
             private static string[] SangReiWaterCmdNameTbl = new string[]
@@ -758,6 +781,17 @@ namespace ElectricPowerLib.Protocol
 
                 return strName;
             }
+            public static string GetSangReiLowPowerMeterCmdName(byte cmdSubId)
+            {
+                string strName = "未知的私有命令";
+
+                foreach (CmdExplain cmd in LowPowerMeterCmdTbl)
+                {
+                    if (cmd.CmdId == cmdSubId) { strName = cmd.CmdName; }
+                }
+
+                return strName;
+            }
 
             // 获取命令颜色
             public static Color GetCmdColor(byte cmdId)
@@ -787,6 +821,16 @@ namespace ElectricPowerLib.Protocol
                 foreach (CmdExplain cmd in LowPowerMeterCmdTbl)
                 {
                     if (cmd.CmdId == cmdId) { cmdColor = cmd.CmdColor; }
+                }
+                return cmdColor;
+            }
+            public static Color GetSangReiLowPowerMeterCmdColor(byte cmdSubId)
+            {
+                Color cmdColor = Color.Black;
+
+                foreach (CmdExplain cmd in LowPowerMeterCmdTbl)
+                {
+                    if (cmd.CmdId == cmdSubId) { cmdColor = cmd.CmdColor; }
                 }
                 return cmdColor;
             }
@@ -1642,6 +1686,31 @@ namespace ElectricPowerLib.Protocol
             }
 
             // 桑锐水表命令
+            private static TreeNode ExplainLowPowerMeterCmdFrame_PrivateCmd(byte[] buf)
+            {
+                TreeNode payloadNode = null;
+                int index = 0;
+
+                // 响应
+                if (buf.Length < index + 5) return payloadNode;
+
+                int SangReiID = (buf[index + 2] + buf[index + 3] * 256);
+
+                if (SangReiID == 0xDA26 && buf[index + 4] < 0x70)
+                {
+                    // 桑锐水表命令
+                    payloadNode = ExplainLowPowerMeterCmdFrame_SangReiWaterMeterCmd(buf);
+                }
+                else if (SangReiID == 0xDA26 && buf[index + 4] >= 0x70)
+                {
+                    // 桑锐无线升级命令
+                    payloadNode = ExplainLowPowerMeterCmdFrame_SangReiWirelessUpgradeCmd(buf);
+                }
+
+                return payloadNode;
+            }
+
+            // 桑锐水表命令
             private static TreeNode ExplainLowPowerMeterCmdFrame_SangReiWaterMeterCmd(byte[] buf)
             {
                 TreeNode payloadNode = new TreeNode("Mac层负载：低功耗表命令帧");
@@ -1661,7 +1730,7 @@ namespace ElectricPowerLib.Protocol
                 strTmp = "特征字  ：" + (buf[index] + buf[index + 1] * 256).ToString("X4");
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
-                string strCmd = (buf[index] < SangReiWaterCmdNameTbl.Length ? SangReiWaterCmdNameTbl[buf[index]] : "其他指令");
+                string strCmd = GetSangReiLowPowerMeterCmdName(buf[index]);
                 strTmp = "命令字  ：" + buf[index].ToString("X2") + " " + strCmd;
                 TreeNode node = new TreeNode(strTmp);
                 payloadNode.Nodes.Add(node);
@@ -1673,6 +1742,105 @@ namespace ElectricPowerLib.Protocol
                     case "切换成双向模式":
                         if (buf.Length == index + 1)
                         {
+                            node.Text += "-应答";
+                            strTmp = "执行结果：" + (buf[index] == 0xAA ? "成功" : "失败");
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 1;
+                        }
+                        break;
+
+                    case "设置水表时钟":
+                        if (buf.Length == index + 6)
+                        {
+                            strTmp = "水表时钟：" + DateTime.Now.Year / 100
+                                    + buf[index + 5].ToString("X2") + "-"
+                                    + buf[index + 4].ToString("X2") + "-"
+                                    + buf[index + 3].ToString("X2") + " "
+                                    + buf[index + 2].ToString("X2") + ":"
+                                    + buf[index + 1].ToString("X2") + ":"
+                                    + buf[index].ToString("X2");
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 6;
+                        }
+                        else if (buf.Length == index + 7)
+                        {
+                            node.Text += "-应答";
+                            strTmp = "执行结果：" + (buf[index] == 0xAA ? "成功" : "失败");
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 1;
+                            strTmp = "水表时钟：" + DateTime.Now.Year / 100
+                                    + buf[index + 5].ToString("X2") + "-"
+                                    + buf[index + 4].ToString("X2") + "-"
+                                    + buf[index + 3].ToString("X2") + " "
+                                    + buf[index + 2].ToString("X2") + ":"
+                                    + buf[index + 1].ToString("X2") + ":"
+                                    + buf[index].ToString("X2");
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 6;
+                        }
+                        break;
+
+                    case "读取水表时钟":
+                        if (buf.Length == index + 6)
+                        {
+                            node.Text += "-应答";
+                            strTmp = "水表时钟：" + DateTime.Now.Year / 100
+                                    + buf[index + 5].ToString("X2") + "-"
+                                    + buf[index + 4].ToString("X2") + "-"
+                                    + buf[index + 3].ToString("X2") + " "
+                                    + buf[index + 2].ToString("X2") + ":"
+                                    + buf[index + 1].ToString("X2") + ":"
+                                    + buf[index].ToString("X2");
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 6;
+                        }
+                        break;
+                }
+
+                return payloadNode;
+            }
+            // 桑锐无线升级命令
+            private static TreeNode ExplainLowPowerMeterCmdFrame_SangReiWirelessUpgradeCmd(byte[] buf)
+            {
+                TreeNode payloadNode = new TreeNode("Mac层负载：低功耗表命令帧");
+
+                String strTmp = "";
+                int index = 0;
+                byte cmdId = 0;
+
+                // 响应
+                if (buf.Length < index + 5) return payloadNode;
+
+                strTmp = "命令标识：" + GetLowPowerMeterCmdName(buf[index]) + " (0x" + buf[index].ToString("X2") + ")";
+                payloadNode.Nodes.Add(strTmp);
+                cmdId = buf[index];
+                index += 1;
+                strTmp = "报文长度：" + buf[index];
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
+                strTmp = "特征字  ：" + (buf[index] + buf[index + 1] * 256).ToString("X4");
+                payloadNode.Nodes.Add(strTmp);
+                index += 2;
+                string strCmd = GetSangReiLowPowerMeterCmdName(buf[index]);
+                strTmp = "命令字  ：" + buf[index].ToString("X2") + " " + strCmd;
+                TreeNode node = new TreeNode(strTmp);
+                payloadNode.Nodes.Add(node);
+                index += 1;
+
+                switch (strCmd)
+                {
+                    case "通知系统升级-在App":
+                    case "通知系统升级-在Boot":
+                        if (cmdId == 0xAA)
+                        {
+                            // 请求
+                            strTmp = "程序版本：" ;
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 1;
+                        }
+                        else if (cmdId == 0xAB)
+                        {
+                            // 应答
                             node.Text += "-应答";
                             strTmp = "执行结果：" + (buf[index] == 0xAA ? "成功" : "失败");
                             payloadNode.Nodes.Add(strTmp);

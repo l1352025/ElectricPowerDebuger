@@ -11,7 +11,6 @@ namespace ElectricPowerLib.Common
         public delegate void CommandHandler(Command cmd);
 
         public string Name;
-        public string GrpName;
         public string Comment;
         public byte[] TxBuf;
         public byte[] RxBuf;
@@ -19,6 +18,9 @@ namespace ElectricPowerLib.Common
         public int TimeWaitMS;
         public int RetryTimes;
         public int TxCnt;
+        public string GrpName;
+        public int GrpCmdCnt;
+        public int GrpCmdTxCnt;
         public bool IsEnable;
         public bool IsNoResponse;
         public CommandHandler SendFunc;
@@ -40,9 +42,11 @@ namespace ElectricPowerLib.Common
             SendFunc = sendFunc;
             RecvFunc = recvFunc;
             Params = new List<object>();
-            GrpName = "";
+            TxCnt = 0;
             Comment = "";
-
+            GrpName = cmdName;
+            GrpCmdCnt = 1;
+            GrpCmdTxCnt = 0;
         }
     };
 }

@@ -66,11 +66,11 @@ namespace ElectricPowerLib.Common
         {
             int size = 0;
 
-            if (dstIndex + PacketSize <= dstBuffer.Length)
+            size = (packetIndex == PacketCount - 1 ? LastPktSize : PacketSize);
+
+            if (dstIndex + size <= dstBuffer.Length)
             {
-                size = (packetIndex == PacketCount - 1 ? LastPktSize : PacketSize);
                 Array.Copy(_dataBuffer, PacketSize * packetIndex, dstBuffer, dstIndex, size);
-                return PacketSize;
             }
 
             return size;
