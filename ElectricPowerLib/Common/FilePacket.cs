@@ -130,13 +130,17 @@ namespace ElectricPowerLib.Common
             }
         }
 
-        public void AddPacketMissingBitFlags(byte[] bitFlags)
+        public void AddPacketMissingBitFlags(byte[] bitFlags, int index, int byteCnt)
         {
-            if (_pktMissBitFlags.Length != bitFlags.Length) throw new Exception("缺包数位标记数组长度错误！");
+            if (_pktMissBitFlags.Length != (index + byteCnt)
+                || bitFlags.Length < index + byteCnt)
+            {
+                throw new Exception("缺包数位标记数组长度错误！");
+            }
 
             for (int i = 0; i < _pktMissBitFlags.Length; i++)
             {
-                _pktMissBitFlags[i] &= bitFlags[i];
+                _pktMissBitFlags[i] &= bitFlags[i + index];
             }
         }
 
@@ -181,45 +185,15 @@ namespace ElectricPowerLib.Common
 
             return list;
         }
-        public int GetPacketMissingList(byte[] bitFlags)
-        {
-            byte aByte;
-            int pktIdx = 0;
-            int cnt = 0;
-
-            for (int i = 0; i < bitFlags.Length; i++)
-            {
-                aByte = bitFlags[i++];
-
-                if (aByte == 0xFF)
-                {
-                    pktIdx += 8;
-                }
-                else
-                {
-                    for (int j = 0; j < 8 && pktIdx < PacketCount; j++)
-                    {
-                        if ((aByte & 0x01) == 0)
-                        {
-                            cnt++;
-                        }
-                        aByte >>= 1;
-                        pktIdx++;
-                    }
-                }
-            }
-
-            return cnt;
-        }
-
+       
         // 方法二
-        public void GetCurrPacketMissingCnt(byte[] bitFlags, out int sefMissCnt, out int currMissCnt, byte missFlag = 0)
+        public void GetCurrPacketMissingCnt(byte[] bitFlags, int index, out int currMissCnt, out int totalMissCnt, byte missFlag = 0)
         {
             List<int> list = new List<int>();
             byte aByte;
             int pktIdx = 0;
 
-            for (int i = 0; i < bitFlags.Length; i++)
+            for (int i = index; i < bitFlags.Length ; i++)
             {
                 aByte = bitFlags[i++];
 
@@ -247,8 +221,8 @@ namespace ElectricPowerLib.Common
 
             PktMissingList = (List<int>)PktMissingList.Union(list);
 
-            sefMissCnt = list.Count;
-            currMissCnt = PktMissingList.Count;
+            currMissCnt = list.Count;
+            totalMissCnt = PktMissingList.Count;
         }
 
     }

@@ -1724,10 +1724,10 @@ namespace ElectricPowerLib.Protocol
                 strTmp = "命令标识：" + GetLowPowerMeterCmdName(buf[index]) + " (0x" + buf[index].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
-                strTmp = "报文长度：" + buf[index];
+                strTmp = "命令长度：" + buf[index];
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
-                strTmp = "特征字  ：" + (buf[index] + buf[index + 1] * 256).ToString("X4");
+                strTmp = "命令特征：" + (buf[index] + buf[index + 1] * 256).ToString("X4");
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
                 string strCmd = GetSangReiLowPowerMeterCmdName(buf[index]);
@@ -1805,7 +1805,7 @@ namespace ElectricPowerLib.Protocol
                 TreeNode payloadNode = new TreeNode("Mac层负载：低功耗表命令帧");
 
                 String strTmp = "";
-                int index = 0;
+                int index = 0, temp32;
                 byte cmdId = 0;
 
                 // 响应
@@ -1815,12 +1815,13 @@ namespace ElectricPowerLib.Protocol
                 payloadNode.Nodes.Add(strTmp);
                 cmdId = buf[index];
                 index += 1;
-                strTmp = "报文长度：" + buf[index];
+                strTmp = "命令长度：" + buf[index];
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
-                strTmp = "特征字  ：" + (buf[index] + buf[index + 1] * 256).ToString("X4");
+                strTmp = "命令特征：" + (buf[index] + buf[index + 1] * 256).ToString("X4");
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
+
                 string strCmd = GetSangReiLowPowerMeterCmdName(buf[index]);
                 strTmp = "命令字  ：" + buf[index].ToString("X2") + " " + strCmd;
                 TreeNode node = new TreeNode(strTmp);
@@ -1834,64 +1835,127 @@ namespace ElectricPowerLib.Protocol
                         if (cmdId == 0xAA)
                         {
                             // 请求
-                            strTmp = "程序版本：" ;
+                            if (buf.Length < index + 46) return payloadNode;
+
+                            strTmp = "程序版本 ：" + Encoding.UTF8.GetString(buf, index, 40).Trim();
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 40;
+                            strTmp = "版本CRC16：" + (buf[index] + buf[index + 1] * 256).ToString("X4");
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 2;
+                            strTmp = "总包数   ：" + (buf[index] + buf[index + 1] * 256);
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 2;
+                            strTmp = "升级信道 ：";
+                            switch(buf[index])
+                            {
+                                case 0: strTmp += "0 ( 489.7 Mhz -水表)"; break;
+                                case 1: strTmp += "1 ( 484.7 Mhz -公共)"; break;
+                                default: strTmp += buf[index]; break;
+                            }
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 1;
+                            strTmp = "升级速率 ：";
+                            switch (buf[index])
+                            {
+                                case 0: strTmp += "RF_10K"; break;
+                                case 1: strTmp += "RF_25K"; break;
+                                default: strTmp += buf[index] + " 未知"; break;
+                            }
                             payloadNode.Nodes.Add(strTmp);
                             index += 1;
                         }
                         else if (cmdId == 0xAB)
                         {
                             // 应答
-                            node.Text += "-应答";
-                            strTmp = "执行结果：" + (buf[index] == 0xAA ? "成功" : "失败");
+                            if (buf.Length < index + 41) return payloadNode;
+
+                            strTmp = "未升级原因：";
+                            strTmp += ((buf[index] & 0x01) > 0 ? "5.0V电压，" : "");
+                            strTmp += ((buf[index] & 0x02) > 0 ? "3.4V电压，" : "");
+                            strTmp += ((buf[index] & 0x04) > 0 ? "SNR太弱，" : "");
+                            strTmp += ((buf[index] & 0x08) > 0 ? "RSSI太弱，" : "");
+                            strTmp += ((buf[index] & 0x10) > 0 ? "版本号相同，" : "");
+                            strTmp += ((buf[index] & 0x20) > 0 ? "版本号CRC16错误，" : "");
+                            if (strTmp != "未升级原因：")
+                            {
+                                strTmp.Remove(strTmp.Length - 1, 1);
+                            }
                             payloadNode.Nodes.Add(strTmp);
                             index += 1;
+                            strTmp = "程序版本：" + Encoding.UTF8.GetString(buf, index, 40).Trim();
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 40;
                         }
                         break;
 
-                    case "设置水表时钟":
-                        if (buf.Length == index + 6)
+                    case "发送升级数据包":
+                        if (cmdId == 0xAA)
                         {
-                            strTmp = "水表时钟：" + DateTime.Now.Year / 100
-                                    + buf[index + 5].ToString("X2") + "-"
-                                    + buf[index + 4].ToString("X2") + "-"
-                                    + buf[index + 3].ToString("X2") + " "
-                                    + buf[index + 2].ToString("X2") + ":"
-                                    + buf[index + 1].ToString("X2") + ":"
-                                    + buf[index].ToString("X2");
+                            // 请求
+                            if (buf.Length < index + 6) return payloadNode;
+
+                            strTmp = "包序号   ：" + (buf[index] + buf[index + 1] * 256);
                             payloadNode.Nodes.Add(strTmp);
-                            index += 6;
+                            index += 2;
+                            strTmp = "总包数   ：" + (buf[index] + buf[index + 1] * 256);
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 2;
+                            strTmp = "版本CRC16：" + (buf[index] + buf[index + 1] * 256).ToString("X4");
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 2;
+                            strTmp = "升级数据 ：" + (buf.Length - index) + " byte";
+                            payloadNode.Nodes.Add(strTmp);
                         }
-                        else if (buf.Length == index + 7)
+                        else if (cmdId == 0xAB)
                         {
-                            node.Text += "-应答";
-                            strTmp = "执行结果：" + (buf[index] == 0xAA ? "成功" : "失败");
-                            payloadNode.Nodes.Add(strTmp);
-                            index += 1;
-                            strTmp = "水表时钟：" + DateTime.Now.Year / 100
-                                    + buf[index + 5].ToString("X2") + "-"
-                                    + buf[index + 4].ToString("X2") + "-"
-                                    + buf[index + 3].ToString("X2") + " "
-                                    + buf[index + 2].ToString("X2") + ":"
-                                    + buf[index + 1].ToString("X2") + ":"
-                                    + buf[index].ToString("X2");
-                            payloadNode.Nodes.Add(strTmp);
-                            index += 6;
+                            // 应答 - 无
                         }
                         break;
 
-                    case "读取水表时钟":
-                        if (buf.Length == index + 6)
+                    case "查询升级状态-在App":
+                    case "查询升级状态-在Boot":
+                        if (cmdId == 0xAA)
                         {
-                            node.Text += "-应答";
-                            strTmp = "水表时钟：" + DateTime.Now.Year / 100
-                                    + buf[index + 5].ToString("X2") + "-"
-                                    + buf[index + 4].ToString("X2") + "-"
-                                    + buf[index + 3].ToString("X2") + " "
-                                    + buf[index + 2].ToString("X2") + ":"
-                                    + buf[index + 1].ToString("X2") + ":"
-                                    + buf[index].ToString("X2");
+                            // 请求
+                            if (buf.Length < index + 4) return payloadNode;
+
+                            strTmp = "总包数   ：" + (buf[index] + buf[index + 1] * 256);
                             payloadNode.Nodes.Add(strTmp);
-                            index += 6;
+                            index += 2;
+                            strTmp = "版本CRC16：" + (buf[index] + buf[index + 1] * 256).ToString("X4");
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 2;
+                        }
+                        else if (cmdId == 0xAB)
+                        {
+                            // 应答
+                            if (buf.Length < index + 95) return payloadNode;
+
+                            strTmp = "升级状态：";
+                            strTmp += ((buf[index] & 0x01) > 0 ? "未开始，" : "");
+                            strTmp += ((buf[index] & 0x02) > 0 ? "缺包等待，" : "");
+                            strTmp += ((buf[index] & 0x04) > 0 ? "升级完成，" : "");
+                            strTmp += ((buf[index] & 0x08) > 0 ? "程序CRC16错误，" : "");
+                            strTmp += ((buf[index] & 0x10) > 0 ? "版本CRC16错误，" : "");
+                            strTmp += ((buf[index] & 0x20) > 0 ? "总包数错误，" : "");
+                            if (strTmp != "升级状态：")
+                            {
+                                strTmp.Remove(strTmp.Length - 1, 1);
+                            }
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 1;
+                            strTmp = "程序版本：" + Encoding.UTF8.GetString(buf, index, 40).Trim();
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 40;
+
+                            temp32 = (buf[index] + buf[index + 1] * 256);
+                            strTmp = "总包数  ：" + temp32;
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 2;
+                            strTmp = "缺包数  ：" + Util.GetBitFlagCount(buf, index, temp32, 0);
+                            payloadNode.Nodes.Add(strTmp);
+                            index += 52;
                         }
                         break;
                 }

@@ -185,6 +185,40 @@ namespace ElectricPowerLib.Common
             return index;
         }
 
+        public static int GetBitFlagCount(byte[] bitFlags, int index, int maxCnt, byte bitFlag = 0)
+        {
+            byte aByte;
+            int bitIdx = 0, cnt = 0;
+
+            for (int i = index; i < bitFlags.Length; i++)
+            {
+                aByte = bitFlags[i++];
+
+                if (bitFlag == 0 && aByte == 0xFF)
+                {
+                    bitIdx += 8;
+                }
+                else if (bitFlag == 1 && aByte == 0x00)
+                {
+                    bitIdx += 8;
+                }
+                else
+                {
+                    for (int j = 0; j < 8 && bitIdx < maxCnt; j++)
+                    {
+                        if ((aByte & 0x01) == bitFlag)
+                        {
+                            cnt++;
+                        }
+                        aByte >>= 1;
+                        bitIdx++;
+                    }
+                }
+            }
+
+            return cnt;
+        }
+
         public static UInt16 GetCRC16(string str)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(str);
