@@ -197,6 +197,7 @@ namespace ElectricPowerLib.Protocol
         #endregion
 
         #region 协议帧提取
+
         // 协议帧提取
         public static FrameFormat ExplainRxPacket(byte[] rxBuf)
         {
@@ -785,7 +786,7 @@ namespace ElectricPowerLib.Protocol
             {
                 string strName = "未知的私有命令";
 
-                foreach (CmdExplain cmd in LowPowerMeterCmdTbl)
+                foreach (CmdExplain cmd in SangReiLowPowerMeterCmdTbl)
                 {
                     if (cmd.CmdId == cmdSubId) { strName = cmd.CmdName; }
                 }
@@ -828,7 +829,7 @@ namespace ElectricPowerLib.Protocol
             {
                 Color cmdColor = Color.Black;
 
-                foreach (CmdExplain cmd in LowPowerMeterCmdTbl)
+                foreach (CmdExplain cmd in SangReiLowPowerMeterCmdTbl)
                 {
                     if (cmd.CmdId == cmdSubId) { cmdColor = cmd.CmdColor; }
                 }
@@ -987,8 +988,11 @@ namespace ElectricPowerLib.Protocol
                     macNode.Nodes.Add(node);
                 }
 
-                payloadNode.Expand();
-                macNode.Nodes.Add(payloadNode);
+                if (payloadNode != null)
+                {
+                    payloadNode.Expand();
+                    macNode.Nodes.Add(payloadNode);
+                }
 
                 return macNode;
             }
@@ -1012,8 +1016,11 @@ namespace ElectricPowerLib.Protocol
                 macNode.Nodes.Add(strTmp);
 
                 payloadNode = ExplainUpgradeCmdFrame(rxFrame.Mac.Payload[0], rxFrame.Mac.Payload);
-                payloadNode.Expand();
-                macNode.Nodes.Add(payloadNode);
+                if (payloadNode != null)
+                {
+                    payloadNode.Expand();
+                    macNode.Nodes.Add(payloadNode);
+                }
 
                 return macNode;
             }
@@ -1696,12 +1703,12 @@ namespace ElectricPowerLib.Protocol
 
                 int SangReiID = (buf[index + 2] + buf[index + 3] * 256);
 
-                if (SangReiID == 0xDA26 && buf[index + 4] < 0x70)
+                if (SangReiID == 0x26DA && buf[index + 4] < 0x70)
                 {
                     // 桑锐水表命令
                     payloadNode = ExplainLowPowerMeterCmdFrame_SangReiWaterMeterCmd(buf);
                 }
-                else if (SangReiID == 0xDA26 && buf[index + 4] >= 0x70)
+                else if (SangReiID == 0x26DA && buf[index + 4] >= 0x70)
                 {
                     // 桑锐无线升级命令
                     payloadNode = ExplainLowPowerMeterCmdFrame_SangReiWirelessUpgradeCmd(buf);

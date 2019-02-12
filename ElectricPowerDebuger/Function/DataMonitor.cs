@@ -86,9 +86,9 @@ namespace ElectricPowerDebuger.Function
             CmdAmeter = new Command();
             CmdWater = new Command();
 
-            _evtLogAutoSaveChanged = new FrmMain.FormEventNotify(msg => 
+            _evtLogAutoSaveChanged = new FrmMain.FormEventNotify(isAutoSave => 
             { 
-                if(msg == "true")
+                if(isAutoSave == "true")
                 {
                     _isAutoSaveLog = true;
                     if( !Directory.Exists("空中监控报文"))
@@ -819,7 +819,7 @@ namespace ElectricPowerDebuger.Function
                 }
             }
             sw.Close();
-            MessageBox.Show("保存档案成功！");
+            MessageBox.Show("保存成功！");
         }
 
         private void btLoadLog_Click(object sender, EventArgs e)
@@ -853,44 +853,55 @@ namespace ElectricPowerDebuger.Function
             String strNo, strDate, strTime;
             string[] strSplit;
             byte[] byteArray;
+            int startIndex;
 
             while ((strRead = sr.ReadLine()) != null)
             {
                 try
                 {
                     strSplit = strRead.Trim().Split(' ');
+                    if(strSplit.Length < 4 )
+                    {
+                        continue;
+                    }
+
+                    DateTime timeCheck;
+
                     if (strRead.StartsWith("@"))
                     {
                         strNo = strSplit[1];
                         strDate = strSplit[0].Substring(1);
                         strTime = strSplit[2];
+                        startIndex = 3;
+                    }
+                    else if(strSplit[1].Length == 12)
+                    {
+                        strNo = strSplit[0];
+                        strDate = "";
+                        strTime = strSplit[1];
+                        startIndex = 2;
                     }
                     else
                     {
                         strNo = strSplit[0];
                         strDate = strSplit[1];
                         strTime = strSplit[2];
+                        startIndex = 3;
                     }
 
-                    DateTime timeCheck = DateTime.ParseExact(strDate + " " + strTime, "yyyy-MM-dd HH:mm:ss.fff", null);
+                    timeCheck = DateTime.ParseExact(strTime, "HH:mm:ss.fff", null);
 
-                    byteArray = new byte[strSplit.Length - 3];
-                    for (int iLoop = 3; iLoop < strSplit.Length; iLoop++)
+                    byteArray = new byte[strSplit.Length - startIndex];
+                    for (int iLoop = startIndex; iLoop < strSplit.Length; iLoop++)
                     {
-                        byteArray[iLoop - 3] = Convert.ToByte(strSplit[iLoop], 16);
+                        byteArray[iLoop - startIndex] = Convert.ToByte(strSplit[iLoop], 16);
                     }
 
                     dataTableAppend(byteArray, strNo, strDate, strTime);
                 }
-                catch(System.FormatException ex)
+                catch (Exception ex)
                 {
-                    rtbRxdata.Text = "无法识别的日志格式:" + strRead;
-                    MessageBox.Show("第" + tbLog.Rows.Count.ToString() + "行: 日志格式错误！" + ex.Message + "\r\n");
-                    break;
-                }
-                catch (System.Exception ex)
-                {
-                    MessageBox.Show("在读取第" + tbLog.Rows.Count.ToString() + "行时出现错误，" + ex.Message + "！\r\n", "错误信息", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    ShowMsg("第" + tbLog.Rows.Count.ToString() + "行日志格式错误，" + ex.Message, Color.Red);
                     break;
                 }
             }
@@ -956,6 +967,7 @@ namespace ElectricPowerDebuger.Function
             {
                 ShowMsg("更新报文异常:" + ex.Message + "\n" + ex.StackTrace, Color.Red, 
                     "\n" + Util.GetStringHexFromBytes(data, 0, data.Length, " "));
+                
             }
         }
         #endregion
@@ -1002,7 +1014,7 @@ namespace ElectricPowerDebuger.Function
                 else
                 {
                     strSrcAddr = RxFrame.Mac.SrcAddr == null ?
-                                        "" : Util.GetStringHexFromBytes(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
+                                "" : Util.GetStringHexFromBytes(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
                     strDstAddr = RxFrame.Mac.DstAddr == null ?
                                 "" : Util.GetStringHexFromBytes(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
                     strPanId = (RxFrame.Mac.PanID >> 8).ToString("X2") + (RxFrame.Mac.PanID & 0x00FF).ToString("X2");
@@ -1040,7 +1052,7 @@ namespace ElectricPowerDebuger.Function
                 else
                 {
                     strSrcAddr = RxFrame.Mac.SrcAddr == null ?
-                                        "" : Util.GetStringHexFromBytes(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
+                                "" : Util.GetStringHexFromBytes(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
                     strDstAddr = RxFrame.Mac.DstAddr == null ?
                                 "" : Util.GetStringHexFromBytes(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
                     strPanId = (RxFrame.Mac.PanID >> 8).ToString("X2") + (RxFrame.Mac.PanID & 0x00FF).ToString("X2");
@@ -1061,42 +1073,38 @@ namespace ElectricPowerDebuger.Function
                 strDstName = (strDstAddr == "FFFFFFFFFFFF" ? "广播" : "");
 
                 if (RxFrame.Nwk.SrcAddr != null
-                    && Util.GetStringHexFromBytes(RxFrame.Nwk.SrcAddr, 0, 6, "", true) == strSrcAddr)
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.SrcAddr, 0, RxFrame.Nwk.SrcAddr.Length, "", true) == strSrcAddr)
                 {
-                    strSrcName = (strSrcName == "" ? "start" : strSrcName);
+                    strSrcName = (strSrcName == "" ? "|-->" : strSrcName);
                 }
                 if (RxFrame.Nwk.DstAddr != null
-                    && Util.GetStringHexFromBytes(RxFrame.Nwk.DstAddr, 0, 6, "", true) == strDstAddr)
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.DstAddr, 0, RxFrame.Nwk.DstAddr.Length, "", true) == strDstAddr)
                 {
-                    strDstName = (strDstName == "" ? "end" : strDstName);
+                    strDstName = (strDstName == "" ? "-->|" : strDstName);
                 }
 
-                switch (strFrameType)
+                if(strFrameType.Contains("信标帧"))
                 {
-                    case "信标帧":
-                        strTmp = Util.GetStringHexFromBytes(RxFrame.Mac.Payload, RxFrame.Mac.Payload.Length - 6, 6, "", true);
-                        strSrcName = (strSrcAddr == strTmp ? "中心" + strSrcAddr.Substring(8) : "");
-                        break;
-
-                    case "场强收集":
-                    case "配置子节点":
-                    case "收集水表上报数据":
-                    case "水气表场强收集":
-                    case "收集绑定水表数据":
-                        strSrcName = (strSrcName == "start" ? "中心" + strSrcAddr.Substring(8) : strSrcName);
-                        break;
-
-                    case "场强收集应答":
-                    case "配置子节点应答":
-                    case "收集水表上报数据应答":
-                    case "水气表场强收集应答":
-                    case "收集绑定水表数据应答":
-                        strDstName = (strDstName == "end" ? "中心" + strDstAddr.Substring(8) : strDstName);
-                        break;
-
-                    default:
-                        break;
+                    strTmp = Util.GetStringHexFromBytes(RxFrame.Mac.Payload, RxFrame.Mac.Payload.Length - 6, 6, "", true);
+                    strSrcName = (strSrcAddr == strTmp ? "中心" + strSrcAddr.Substring(8) : "");
                 }
+                else if (strFrameType.Contains("场强收集应答")
+                    || strFrameType.Contains("配置子节点应答")
+                    || strFrameType.Contains("收集水表上报数据应答")
+                    || strFrameType.Contains("水气表场强收集应答")
+                    || strFrameType.Contains("收集绑定水表数据应答"))
+                {
+                    strDstName = (strDstName == "-->|" ? "中心" + strDstAddr.Substring(8) : strDstName);
+                }
+                else if (strFrameType.Contains("场强收集")
+                    || strFrameType.Contains("配置子节点")
+                    || strFrameType.Contains("收集水表上报数据")
+                    || strFrameType.Contains("水气表场强收集")
+                    || strFrameType.Contains("收集绑定水表数据"))
+                {
+                    strSrcName = (strSrcName == "|-->" ? "中心" + strSrcAddr.Substring(8) : strSrcName);
+                }
+
             }
             else if (protoVer == "尼泊尔-版本")
             {
@@ -1120,7 +1128,7 @@ namespace ElectricPowerDebuger.Function
                 else
                 {
                     strSrcAddr = RxFrame.Mac.SrcAddr == null ?
-                                        "" : Util.GetStringHexFromBytes(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
+                                "" : Util.GetStringHexFromBytes(RxFrame.Mac.SrcAddr, 0, RxFrame.Mac.SrcAddr.Length, "", true);
                     strDstAddr = RxFrame.Mac.DstAddr == null ?
                                 "" : Util.GetStringHexFromBytes(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
                     strPanId = (RxFrame.Mac.PanID >> 8).ToString("X2") + (RxFrame.Mac.PanID & 0x00FF).ToString("X2");
