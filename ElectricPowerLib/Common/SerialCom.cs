@@ -14,6 +14,7 @@ namespace ElectricPowerLib.Common
         public SerialPort serialPort;   //串行端口
         Thread thread;                  //接收线程
         volatile bool _keepReading;     //接收线程控制标志
+        volatile ArrayList readBuf = new ArrayList();
 
         /// <summary>
         /// 串口构造函数
@@ -99,6 +100,11 @@ namespace ElectricPowerLib.Common
             try
             {
                 serialPort.Open();
+                if (serialPort.IsOpen)
+                {
+                    serialPort.DiscardOutBuffer();  //清空发送缓冲区数据
+                    serialPort.DiscardInBuffer();   //清空接收缓存区数据  
+                }
             }
             catch (Exception e)
             {
@@ -122,10 +128,10 @@ namespace ElectricPowerLib.Common
             try
             {
                 StopReading();
-                if (serialPort.IsOpen)
+                if(serialPort.IsOpen)
                 {
                     serialPort.DiscardOutBuffer();  //清空发送缓冲区数据
-                    serialPort.DiscardInBuffer();   //清空接收缓存区数据               
+                    serialPort.DiscardInBuffer();   //清空接收缓存区数据  
                 }
                 serialPort.Close();
             }
@@ -164,6 +170,8 @@ namespace ElectricPowerLib.Common
         {
             if (!_keepReading)
             {
+                readBuf.Clear();
+
                 _keepReading = true;
                 thread = new Thread(new ThreadStart(ReadPort));
                 thread.Start();
@@ -188,8 +196,6 @@ namespace ElectricPowerLib.Common
         /// </summary>
         private void ReadPort()
         {
-            ArrayList readBuf = new ArrayList();
-            readBuf.Clear();
             byte bRead = 0;
 
             DateTime dt = DateTime.Now;
@@ -220,6 +226,7 @@ namespace ElectricPowerLib.Common
                     {
                         UnexpectedClosedEvent(null, null);
                     }
+                    readBuf.Clear();
                     return;
                 }
 
@@ -246,7 +253,7 @@ namespace ElectricPowerLib.Common
                     LogHelper.WriteLine("error.log", msg);
                 }
 
-                if (DataReceivedEvent != null && readBuf.Count != 0)
+                if (serialPort.IsOpen && DataReceivedEvent != null && readBuf.Count != 0)
                 {
                     byte[] rxBuf = new byte[readBuf.Count];
                     readBuf.CopyTo(rxBuf);

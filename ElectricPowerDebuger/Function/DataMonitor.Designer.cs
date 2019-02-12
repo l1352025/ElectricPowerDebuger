@@ -34,14 +34,11 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.btModuleChk = new System.Windows.Forms.Button();
-            this.txtCenterAddr = new System.Windows.Forms.TextBox();
             this.btClearLog = new System.Windows.Forms.Button();
             this.btLoadLog = new System.Windows.Forms.Button();
             this.btSaveLog = new System.Windows.Forms.Button();
             this.btOpenPort = new System.Windows.Forms.Button();
-            this.cmbBaudrate = new System.Windows.Forms.ComboBox();
             this.cmbChanel = new System.Windows.Forms.ComboBox();
-            this.label9 = new System.Windows.Forms.Label();
             this.lbChanel = new System.Windows.Forms.Label();
             this.cmbPort = new System.Windows.Forms.ComboBox();
             this.lbPort = new System.Windows.Forms.Label();
@@ -87,6 +84,15 @@
             this.colSN = new System.Data.DataColumn();
             this.colDate = new System.Data.DataColumn();
             this.colTime = new System.Data.DataColumn();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.combSpeed = new System.Windows.Forms.ComboBox();
+            this.combChanel2 = new System.Windows.Forms.ComboBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.combPort2 = new System.Windows.Forms.ComboBox();
+            this.btOpenPort2 = new System.Windows.Forms.Button();
             this.colPacket = new System.Data.DataColumn();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -135,16 +141,22 @@
             // 
             this.splitContainer2.Panel1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.splitContainer2.Panel1.Controls.Add(this.btModuleChk);
-            this.splitContainer2.Panel1.Controls.Add(this.txtCenterAddr);
             this.splitContainer2.Panel1.Controls.Add(this.btClearLog);
             this.splitContainer2.Panel1.Controls.Add(this.btLoadLog);
             this.splitContainer2.Panel1.Controls.Add(this.btSaveLog);
+            this.splitContainer2.Panel1.Controls.Add(this.btOpenPort2);
             this.splitContainer2.Panel1.Controls.Add(this.btOpenPort);
-            this.splitContainer2.Panel1.Controls.Add(this.cmbBaudrate);
+            this.splitContainer2.Panel1.Controls.Add(this.combChanel2);
+            this.splitContainer2.Panel1.Controls.Add(this.combSpeed);
             this.splitContainer2.Panel1.Controls.Add(this.cmbChanel);
-            this.splitContainer2.Panel1.Controls.Add(this.label9);
+            this.splitContainer2.Panel1.Controls.Add(this.combPort2);
             this.splitContainer2.Panel1.Controls.Add(this.lbChanel);
             this.splitContainer2.Panel1.Controls.Add(this.cmbPort);
+            this.splitContainer2.Panel1.Controls.Add(this.label12);
+            this.splitContainer2.Panel1.Controls.Add(this.label9);
+            this.splitContainer2.Panel1.Controls.Add(this.label11);
+            this.splitContainer2.Panel1.Controls.Add(this.label13);
+            this.splitContainer2.Panel1.Controls.Add(this.label10);
             this.splitContainer2.Panel1.Controls.Add(this.lbPort);
             this.splitContainer2.Panel1.Controls.Add(this.lvDataList);
             this.splitContainer2.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -169,7 +181,7 @@
             // 
             // btModuleChk
             // 
-            this.btModuleChk.Location = new System.Drawing.Point(680, 8);
+            this.btModuleChk.Location = new System.Drawing.Point(142, 31);
             this.btModuleChk.Name = "btModuleChk";
             this.btModuleChk.Size = new System.Drawing.Size(70, 22);
             this.btModuleChk.TabIndex = 5;
@@ -177,21 +189,13 @@
             this.btModuleChk.UseVisualStyleBackColor = true;
             this.btModuleChk.Click += new System.EventHandler(this.btModuleChk_Click);
             // 
-            // txtCenterAddr
-            // 
-            this.txtCenterAddr.Location = new System.Drawing.Point(433, 9);
-            this.txtCenterAddr.Name = "txtCenterAddr";
-            this.txtCenterAddr.Size = new System.Drawing.Size(88, 21);
-            this.txtCenterAddr.TabIndex = 4;
-            this.txtCenterAddr.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCenterAddr_KeyPress);
-            // 
             // btClearLog
             // 
             this.btClearLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btClearLog.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btClearLog.Location = new System.Drawing.Point(994, 7);
+            this.btClearLog.Location = new System.Drawing.Point(1014, 7);
             this.btClearLog.Name = "btClearLog";
-            this.btClearLog.Size = new System.Drawing.Size(82, 23);
+            this.btClearLog.Size = new System.Drawing.Size(62, 23);
             this.btClearLog.TabIndex = 3;
             this.btClearLog.Text = "清除日志";
             this.btClearLog.UseVisualStyleBackColor = false;
@@ -202,9 +206,9 @@
             this.btLoadLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btLoadLog.BackColor = System.Drawing.Color.SeaShell;
             this.btLoadLog.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btLoadLog.Location = new System.Drawing.Point(903, 7);
+            this.btLoadLog.Location = new System.Drawing.Point(944, 7);
             this.btLoadLog.Name = "btLoadLog";
-            this.btLoadLog.Size = new System.Drawing.Size(82, 23);
+            this.btLoadLog.Size = new System.Drawing.Size(64, 23);
             this.btLoadLog.TabIndex = 3;
             this.btLoadLog.Text = "导入日志";
             this.btLoadLog.UseVisualStyleBackColor = false;
@@ -214,9 +218,9 @@
             // 
             this.btSaveLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btSaveLog.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
-            this.btSaveLog.Location = new System.Drawing.Point(811, 7);
+            this.btSaveLog.Location = new System.Drawing.Point(875, 7);
             this.btSaveLog.Name = "btSaveLog";
-            this.btSaveLog.Size = new System.Drawing.Size(82, 23);
+            this.btSaveLog.Size = new System.Drawing.Size(63, 23);
             this.btSaveLog.TabIndex = 3;
             this.btSaveLog.Text = "保存日志";
             this.btSaveLog.UseVisualStyleBackColor = false;
@@ -225,25 +229,13 @@
             // btOpenPort
             // 
             this.btOpenPort.BackColor = System.Drawing.Color.Silver;
-            this.btOpenPort.Location = new System.Drawing.Point(230, 9);
+            this.btOpenPort.Location = new System.Drawing.Point(229, 7);
             this.btOpenPort.Name = "btOpenPort";
-            this.btOpenPort.Size = new System.Drawing.Size(82, 23);
+            this.btOpenPort.Size = new System.Drawing.Size(72, 23);
             this.btOpenPort.TabIndex = 3;
             this.btOpenPort.Text = "打开串口";
             this.btOpenPort.UseVisualStyleBackColor = false;
             this.btOpenPort.Click += new System.EventHandler(this.btOpenPort_Click);
-            // 
-            // cmbBaudrate
-            // 
-            this.cmbBaudrate.FormattingEnabled = true;
-            this.cmbBaudrate.Items.AddRange(new object[] {
-            "9600",
-            "19200",
-            "115200"});
-            this.cmbBaudrate.Location = new System.Drawing.Point(149, 10);
-            this.cmbBaudrate.Name = "cmbBaudrate";
-            this.cmbBaudrate.Size = new System.Drawing.Size(64, 20);
-            this.cmbBaudrate.TabIndex = 2;
             // 
             // cmbChanel
             // 
@@ -282,25 +274,16 @@
             "30",
             "31",
             "32"});
-            this.cmbChanel.Location = new System.Drawing.Point(577, 10);
+            this.cmbChanel.Location = new System.Drawing.Point(68, 33);
             this.cmbChanel.Name = "cmbChanel";
-            this.cmbChanel.Size = new System.Drawing.Size(56, 20);
+            this.cmbChanel.Size = new System.Drawing.Size(60, 20);
             this.cmbChanel.TabIndex = 2;
             this.cmbChanel.SelectedIndexChanged += new System.EventHandler(this.combChanel_SelectedIndexChanged);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(370, 14);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(65, 12);
-            this.label9.TabIndex = 1;
-            this.label9.Text = "中心地址：";
             // 
             // lbChanel
             // 
             this.lbChanel.AutoSize = true;
-            this.lbChanel.Location = new System.Drawing.Point(528, 14);
+            this.lbChanel.Location = new System.Drawing.Point(17, 36);
             this.lbChanel.Name = "lbChanel";
             this.lbChanel.Size = new System.Drawing.Size(53, 12);
             this.lbChanel.TabIndex = 1;
@@ -309,7 +292,7 @@
             // cmbPort
             // 
             this.cmbPort.FormattingEnabled = true;
-            this.cmbPort.Location = new System.Drawing.Point(75, 10);
+            this.cmbPort.Location = new System.Drawing.Point(68, 8);
             this.cmbPort.Name = "cmbPort";
             this.cmbPort.Size = new System.Drawing.Size(60, 20);
             this.cmbPort.TabIndex = 2;
@@ -318,11 +301,11 @@
             // lbPort
             // 
             this.lbPort.AutoSize = true;
-            this.lbPort.Location = new System.Drawing.Point(6, 15);
+            this.lbPort.Location = new System.Drawing.Point(5, 13);
             this.lbPort.Name = "lbPort";
             this.lbPort.Size = new System.Drawing.Size(65, 12);
             this.lbPort.TabIndex = 1;
-            this.lbPort.Text = "端口设置：";
+            this.lbPort.Text = "电表监控：";
             // 
             // lvDataList
             // 
@@ -349,9 +332,9 @@
             this.lvDataList.ContextMenuStrip = this.cnMenuDataList;
             this.lvDataList.FullRowSelect = true;
             this.lvDataList.GridLines = true;
-            this.lvDataList.Location = new System.Drawing.Point(0, 37);
+            this.lvDataList.Location = new System.Drawing.Point(0, 58);
             this.lvDataList.Name = "lvDataList";
-            this.lvDataList.Size = new System.Drawing.Size(1079, 579);
+            this.lvDataList.Size = new System.Drawing.Size(1079, 558);
             this.lvDataList.TabIndex = 0;
             this.lvDataList.UseCompatibleStateImageBehavior = false;
             this.lvDataList.View = System.Windows.Forms.View.Details;
@@ -640,6 +623,95 @@
             // 
             this.colTime.ColumnName = "时间";
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(399, 10);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(65, 12);
+            this.label10.TabIndex = 1;
+            this.label10.Text = "水表监控：";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(423, 35);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(41, 12);
+            this.label11.TabIndex = 1;
+            this.label11.Text = "信道：";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(531, 37);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(41, 12);
+            this.label12.TabIndex = 1;
+            this.label12.Text = "速率：";
+            // 
+            // combSpeed
+            // 
+            this.combSpeed.FormattingEnabled = true;
+            this.combSpeed.Items.AddRange(new object[] {
+            "10K",
+            "25K"});
+            this.combSpeed.Location = new System.Drawing.Point(568, 33);
+            this.combSpeed.Name = "combSpeed";
+            this.combSpeed.Size = new System.Drawing.Size(51, 20);
+            this.combSpeed.TabIndex = 2;
+            this.combSpeed.SelectedIndexChanged += new System.EventHandler(this.combSpeed_SelectedIndexChanged);
+            // 
+            // combChanel2
+            // 
+            this.combChanel2.FormattingEnabled = true;
+            this.combChanel2.Items.AddRange(new object[] {
+            "489.7 (水表)",
+            "484.7 (公共)"});
+            this.combChanel2.Location = new System.Drawing.Point(461, 33);
+            this.combChanel2.Name = "combChanel2";
+            this.combChanel2.Size = new System.Drawing.Size(60, 20);
+            this.combChanel2.TabIndex = 2;
+            this.combChanel2.SelectedIndexChanged += new System.EventHandler(this.combChanel2_SelectedIndexChanged);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(140, 13);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(77, 12);
+            this.label13.TabIndex = 1;
+            this.label13.Text = "19200bps 8E1";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(533, 10);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(77, 12);
+            this.label9.TabIndex = 1;
+            this.label9.Text = "19200bps 8E1";
+            // 
+            // combPort2
+            // 
+            this.combPort2.FormattingEnabled = true;
+            this.combPort2.Location = new System.Drawing.Point(461, 5);
+            this.combPort2.Name = "combPort2";
+            this.combPort2.Size = new System.Drawing.Size(60, 20);
+            this.combPort2.TabIndex = 2;
+            this.combPort2.Click += new System.EventHandler(this.combPort2_Click);
+            // 
+            // btOpenPort2
+            // 
+            this.btOpenPort2.BackColor = System.Drawing.Color.Silver;
+            this.btOpenPort2.Location = new System.Drawing.Point(625, 5);
+            this.btOpenPort2.Name = "btOpenPort2";
+            this.btOpenPort2.Size = new System.Drawing.Size(72, 23);
+            this.btOpenPort2.TabIndex = 3;
+            this.btOpenPort2.Text = "打开串口";
+            this.btOpenPort2.UseVisualStyleBackColor = false;
+            this.btOpenPort2.Click += new System.EventHandler(this.btOpenPort2_Click);
+            // 
             // colPacket
             // 
             this.colPacket.ColumnName = "原始报文";
@@ -696,7 +768,6 @@
         private System.Windows.Forms.ToolStripMenuItem 清空ToolStripMenuItem;
         private System.Windows.Forms.Label lbPort;
         private System.Windows.Forms.ComboBox cmbPort;
-        private System.Windows.Forms.ComboBox cmbBaudrate;
         private System.Windows.Forms.Button btClearLog;
         private System.Windows.Forms.Button btLoadLog;
         private System.Windows.Forms.Button btSaveLog;
@@ -726,9 +797,16 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ColumnHeader 源名称;
         private System.Windows.Forms.ColumnHeader 目的名称;
-        private System.Windows.Forms.TextBox txtCenterAddr;
-        private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button btScroll;
         private System.Windows.Forms.Button btModuleChk;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button btOpenPort2;
+        private System.Windows.Forms.ComboBox combChanel2;
+        private System.Windows.Forms.ComboBox combSpeed;
+        private System.Windows.Forms.ComboBox combPort2;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label13;
     }
 }

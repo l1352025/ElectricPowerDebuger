@@ -11,6 +11,8 @@ using System.IO;
 using System.Reflection;
 using ElectricPowerLib.Common;
 using ElectricPowerLib.Protocol;
+using System.Collections.Concurrent;
+using System.Threading;
 
 namespace ElectricPowerDebuger.Function
 {
@@ -20,7 +22,6 @@ namespace ElectricPowerDebuger.Function
         private int PortBufWrPos = 0;
         private byte[] PortRxBuf = new Byte[2000];
 
-        private string strCenterAddr = "888888888888";
         private int InvalidFrameNum = 0;
         private bool IsScrollToEnd = true;
 
@@ -28,6 +29,10 @@ namespace ElectricPowerDebuger.Function
         private bool _isAutoSaveLog;
         private FrmMain.FormEventNotify _evtLogAutoSaveChanged;
         private LogHelper _wirelessLog;
+        private SerialCom _scom;
+        private ConcurrentQueue<byte[]> _recvQueue;
+        private Thread _thrTransceiver;
+        byte[] TempBuf = new byte[20];
 
         private int xMsTimer = 0;
 
@@ -37,9 +42,11 @@ namespace ElectricPowerDebuger.Function
         {
             空闲          = 0x00,
             设置信道组,
-            模块版本检测
+            模块版本检测,
+            设置监控信道,
+            设置监控速率
         };
-        public struct Command
+        public class Command
         {
             public CmdType Type;
             public byte[] Params;
@@ -50,7 +57,8 @@ namespace ElectricPowerDebuger.Function
             public CmdRecvHandler RecvFunc; 
         };
 
-        public Command Cmd;
+        public static Command CmdAmeter;   // 电表发命令
+        public static Command CmdWater;    // 水表发命令
 
         public delegate void SerialDataRecievedEventHandler(object sender, SerialDataReceivedEventArgs e); 
 
@@ -62,13 +70,22 @@ namespace ElectricPowerDebuger.Function
             treeVwrProtol.DoubleBuffered(true);
             rtbRxdata.DoubleBuffered(true);
 
-            string strPortName = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/PortName", "");
-            cmbPort.Items.AddRange(new object[] { strPortName });
-            cmbPort.Text = strPortName;
-            cmbBaudrate.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/Baudrate", "19200");
+            cmbPort.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/PortName", "");
+            combPort2.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/Port2Name", "");
             cmbChanel.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/ChanelGrp", "30");
         
             _configPath = FrmMain.SystemConfigPath;
+            _scom = new SerialCom();
+            _scom.DataReceivedEvent += Scom_DataReceived;
+            _scom.UnexpectedClosedEvent += Scom_UnexpectedClosed;
+            _recvQueue = new ConcurrentQueue<byte[]>();
+            _thrTransceiver = new Thread(TransceiverHandle);
+            _thrTransceiver.IsBackground = true;
+            _thrTransceiver.Start();
+
+            CmdAmeter = new Command();
+            CmdWater = new Command();
+
             _evtLogAutoSaveChanged = new FrmMain.FormEventNotify(msg => 
             { 
                 if(msg == "true")
@@ -91,7 +108,7 @@ namespace ElectricPowerDebuger.Function
 
         }
 
-        #region 串口通信
+        #region 电表-串口通信
         private void cmbPort_Click(object sender, EventArgs e)
         {
             cmbPort.Items.Clear();
@@ -108,11 +125,6 @@ namespace ElectricPowerDebuger.Function
                 MessageBox.Show("请先选择通讯串口!", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (cmbBaudrate.SelectedIndex < 0 || cmbBaudrate.Text == "")
-            {
-                MessageBox.Show("请先选择通讯的波特率!", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
 
             if (btOpenPort.Text == "打开串口")
             {
@@ -121,10 +133,8 @@ namespace ElectricPowerDebuger.Function
                     btOpenPort.Text = "关闭串口"; ;
                     btOpenPort.BackColor = Color.GreenYellow;
                     cmbPort.Enabled = false;
-                    cmbBaudrate.Enabled = false;
 
                     XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/DataMonitor", "PortName", cmbPort.Text);
-                    XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/DataMonitor", "Baudrate", cmbBaudrate.Text);
 
                     CmdSetChanelGrp(Convert.ToByte(cmbChanel.Text));
                 }
@@ -133,7 +143,6 @@ namespace ElectricPowerDebuger.Function
                     btOpenPort.Text = "打开串口";
                     btOpenPort.BackColor = Color.Silver;
                     cmbPort.Enabled = true;
-                    cmbBaudrate.Enabled = true;
                 }
             }
             else
@@ -142,7 +151,6 @@ namespace ElectricPowerDebuger.Function
                 btOpenPort.Text = "打开串口";
                 btOpenPort.BackColor = Color.Silver;
                 cmbPort.Enabled = true;
-                cmbBaudrate.Enabled = true;
             }
         }
         private bool port_Ctrl(bool ctrl)
@@ -150,13 +158,11 @@ namespace ElectricPowerDebuger.Function
             if (true == ctrl)
             {
                 if (serialPort.IsOpen == false ||
-                    serialPort.BaudRate != Convert.ToInt32(cmbBaudrate.Text) ||
                     serialPort.PortName != cmbPort.Text)
                 {
                     try
                     {
                         serialPort.Close();
-                        serialPort.BaudRate = Convert.ToInt32(cmbBaudrate.Text);
                         serialPort.PortName = cmbPort.Text;
                         serialPort.Open();
                         return true;
@@ -233,13 +239,20 @@ namespace ElectricPowerDebuger.Function
                 }
             }
         }
+        #endregion
+
+        #region 电表-串口接收解析、命令发送
+
+        // 定时处理：发送命令、接收解析
         private void timerDataMonitor_Tick(object sender, EventArgs e)
         {
             int len, sum;
+            Command Cmd = CmdAmeter;
 
             try
             {  //test
 
+                // 发送命令
                 if (Cmd.IsEnable)
                 {
                     if (Cmd.WaitTime > 0)
@@ -263,13 +276,14 @@ namespace ElectricPowerDebuger.Function
                         }
                         catch (Exception ex)
                         {
-                            StatusUpdate(Cmd.Type.ToString() + "失败：", Color.Red, ex.Message);
+                            ShowMsg(Cmd.Type.ToString() + "失败：", Color.Red, ex.Message);
                             Cmd.Type = CmdType.空闲;
                             Cmd.IsEnable = false;
                         }
                     }
                 }
 
+                // 10ms 接收解析
                 if (xMsTimer++ > 10 / timerDataMonitor.Interval)
                 {
                     xMsTimer = 0;
@@ -317,7 +331,7 @@ namespace ElectricPowerDebuger.Function
                         {
                             sum = (PortRxBuf[(PortBufRdPos + 3) % PortRxBuf.Length] + PortRxBuf[(PortBufRdPos + 4) % PortRxBuf.Length] * 256) + 7;
                         }
-                        
+
 
                         if (sum > len)
                         {
@@ -348,41 +362,20 @@ namespace ElectricPowerDebuger.Function
                     }
                 }
 
-            }catch( Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show("Timer_Tick 异常：" + ex.Message + "\n exStack:" + ex.StackTrace + "\n exSource:" + ex.Source + "\n exTarget:" + ex.TargetSite);
             }
         }
 
-        #endregion
-
-        #region 中心地址设置
-        private void txtCenterAddr_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if ("0123456789\b\r\x03\x16\x18".IndexOf(e.KeyChar) < 0)
-            {
-                e.Handled = true;
-                return;
-            }
-            if (e.KeyChar == '\r' || (txtCenterAddr.Text.Length == ProtoLocal_South.LongAddrSize * 2) && e.KeyChar != '\b')
-            {
-                txtCenterAddr.Text = txtCenterAddr.Text.PadLeft(ProtoLocal_South.LongAddrSize * 2, '0');
-                if (txtCenterAddr.SelectionLength == 0)
-                {
-                    e.Handled = true;
-                }
-
-                strCenterAddr = txtCenterAddr.Text;
-            }
-        }
-        #endregion
-
-        #region 串口命令处理
         /// <summary>
         /// 命令发送
         /// </summary>
         private void TransmitCmd()
         {
+            Command Cmd = CmdAmeter;
+
             if (Cmd.Params != null && Cmd.Params.Length > 0)
             {
                 serialPort_SendData(Cmd.Params, 0, Cmd.Params.Length);
@@ -402,6 +395,8 @@ namespace ElectricPowerDebuger.Function
 
         private void CmdSetChanelGrp(byte chGrp)
         {
+            Command Cmd = CmdAmeter;
+
             if(serialPort.IsOpen == false || Cmd.Type != CmdType.空闲)
             {
                 return;
@@ -417,11 +412,13 @@ namespace ElectricPowerDebuger.Function
 
         private void RecieveCmdSetChanelGrp(byte[] rxBuf)
         {
+            Command Cmd = CmdAmeter;
+
             if (rxBuf.Length > 8
                 && rxBuf[0] == 0x55 && rxBuf[1] == 0xAA && rxBuf[2] == 0x55 && rxBuf[3] == 0xAA
                 && rxBuf[4] == 0x55 && rxBuf[5] == 0xAA && rxBuf[6] == 0x55 && rxBuf[7] == 0xAA)
             {
-                StatusUpdate("信道组设置成功：", Color.Red, rxBuf[8].ToString());
+                ShowMsg("信道组设置成功：", Color.Red, rxBuf[8].ToString());
                 PortBufRdPos = (UInt16)((PortBufRdPos + 9) % PortRxBuf.Length);
 
                 Cmd.Type = CmdType.空闲;
@@ -436,6 +433,8 @@ namespace ElectricPowerDebuger.Function
 
         private void CmdModuleCheck()
         {
+            Command Cmd = CmdAmeter;
+
             if (serialPort.IsOpen == false || Cmd.Type != CmdType.空闲)
             {
                 return;
@@ -451,6 +450,8 @@ namespace ElectricPowerDebuger.Function
 
         private void RecieveCmdModuleCheck(byte[] rxBuf)
         {
+            Command Cmd = CmdAmeter;
+
             // 55 AA 00 00 00 2F 55 AA 88 00 00 00 00 00 53 52 57 46 ... 00 CRC16
             if (rxBuf.Length > 10
                 && rxBuf[0] == 0x55 && rxBuf[1] == 0xAA && rxBuf[6] == 0x55 && rxBuf[7] == 0xAA
@@ -463,12 +464,290 @@ namespace ElectricPowerDebuger.Function
                     verInfo += Convert.ToChar(rxBuf[i]);
                 }
 
-                StatusUpdate("监控模块版本信息：", Color.Red, verInfo);
+                ShowMsg("监控模块版本信息：", Color.Red, verInfo);
                 PortBufRdPos = (UInt16)((PortBufRdPos + rxBuf[6] + 10) % PortRxBuf.Length);
 
                 Cmd.Type = CmdType.空闲;
                 Cmd.IsEnable = false;
             }
+        }
+        #endregion
+
+        #region 水表-串口通信
+
+        //串口选择
+        private void combPort2_Click(object sender, EventArgs e)
+        {
+            combPort2.Items.Clear();
+            combPort2.Items.AddRange(_scom.GetPortNames());
+        }
+
+        //串口打开/关闭
+        private void btOpenPort2_Click(object sender, EventArgs e)
+        {
+            if (combPort2.Text == "")
+            {
+                return;
+            }
+
+            if (btOpenPort2.Text == "打开串口" && true == PortCtrl(true))
+            {
+                btOpenPort2.Text = "关闭串口";
+                btOpenPort2.BackColor = Color.GreenYellow;
+                combPort2.Enabled = false;
+
+                XmlHelper.SetNodeValue(_configPath, "/Config", "Port2Name", combPort2.Text);
+            }
+            else
+            {
+                PortCtrl(false);
+                btOpenPort2.Text = "打开串口";
+                btOpenPort2.BackColor = Color.Silver;
+                combPort2.Enabled = true;
+            }
+        }
+
+        private bool PortCtrl(bool ctrl)
+        {
+            if (true == ctrl)
+            {
+                if (_scom.IsOpen == false)
+                {
+                    try
+                    {
+                        _scom.Config(combPort2.Text, Convert.ToInt32("19200"), "8E1");
+                        _scom.Open();
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowMsg("打开串口失败：" + ex.Message + "\r\n", Color.Red);
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    _scom.Close();
+                }
+                catch (System.Exception ex)
+                {
+                    ShowMsg("关闭串口失败：" + ex.Message + "\r\n", Color.Red);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        //串口发送
+        private bool Scom_SendData(byte[] buf)
+        {
+            bool ret = false;
+
+            if (true == _scom.IsOpen)
+            {
+                try
+                {
+                    _scom.WritePort(buf, 0, buf.Length);
+                    ret = true;
+                }
+                catch (Exception ex)
+                {
+                    ShowMsg("SerialPort_SendData error :" + ex.Message, Color.Red);
+                }
+            }
+
+            return ret;
+        }
+
+        //串口接收
+        private void Scom_DataReceived(byte[] buf)
+        {
+            _recvQueue.Enqueue(buf);
+        }
+
+        //串口异常断开
+        private void Scom_UnexpectedClosed(object sender, EventArgs e)
+        {
+            if (this.InvokeRequired)
+            {
+                Invoke(new EventHandler(Scom_UnexpectedClosed), new object[] { sender, e });
+                return;
+            }
+
+            btOpenPort2_Click(sender, e);
+
+            //ShowMsg("[ 串口连接已断开 ]" + " \r\n\r\n", Color.Red);
+        }
+        #endregion
+
+        #region 水表-命令发送、接收线程
+
+        // 发送、接收处理
+        private void TransceiverHandle()
+        {
+            TimeSpan timeWait = TimeSpan.MaxValue;
+            DateTime lastSendTime = DateTime.Now;
+            byte[] rxBuf;
+            Command Cmd = CmdWater;
+
+            while (Thread.CurrentThread.IsAlive)
+            {
+                // send and retry
+                if (Cmd.Type != CmdType.空闲 && timeWait.TotalMilliseconds > Cmd.WaitTime)
+                {
+                    if (Cmd.RetryTimes > 0)
+                    {
+                        if (false == Scom_SendData(Cmd.Params))
+                        {
+                            Cmd.RetryTimes = 0;
+                        }
+                        Cmd.RetryTimes--;
+                        lastSendTime = DateTime.Now;
+                    }
+                    else
+                    {
+                        Cmd.Type = CmdType.空闲;
+                        Cmd.IsEnable = false;
+                    }
+                }
+
+                // receive
+                if (_recvQueue.Count > 0 && _recvQueue.TryDequeue(out rxBuf))
+                {
+                    if (rxBuf.Length == 6 && rxBuf[0] == 0xAA && rxBuf[1] == 0xBB
+                        && rxBuf[2] == 0x02 && rxBuf[3] == 0x00 && rxBuf[4] == 0x00)
+                    {
+                        ShowMsg(Cmd.Type.ToString() + "-成功", Color.Blue);
+
+                        Cmd.Type = CmdType.空闲;
+                        Cmd.IsEnable = false;
+                    }
+                    else
+                    {
+                        dataTableAppend(rxBuf);
+                    }
+                }
+
+                // wait
+                Thread.Sleep(20);
+
+                timeWait = DateTime.Now - lastSendTime;
+            }
+        }
+
+        private enum ChanelMode
+        {
+            CommonAndWork = 0,
+            SendAndReceive
+        }
+        private enum RfSpeed
+        {
+            RF_5K = 0,
+            RF_10K,
+            RF_25K
+        }
+
+        private void combChanel2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/DataMonitor", "ChanelGrp2", combChanel2.SelectedIndex.ToString());
+
+            if(combChanel2.SelectedIndex == 0)
+            {
+                SetRfChanel(ChanelMode.SendAndReceive, 0, 4897, 4897);
+            }
+            else 
+            {
+                SetRfChanel(ChanelMode.SendAndReceive, 0, 4847, 4847);
+            }
+        }
+
+        private void combSpeed_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (combSpeed.SelectedIndex == 0)
+            {
+                SetRfBitrate(RfSpeed.RF_10K, RfSpeed.RF_10K);
+            }
+            else
+            {
+                SetRfBitrate(RfSpeed.RF_25K, RfSpeed.RF_25K);
+            }
+        }
+
+
+        /// <summary>
+        /// 设置RF信道
+        /// </summary>
+        /// <param name="chanelMode">信道模式 0 - 公共信道组+工作信道组， 1 - 发送频率、接收频率</param>
+        /// <param name="chanelGrp">工作信道组 1 -> 32</param>
+        /// <param name="sendFreq">发送频率</param>
+        /// <param name="recvFreq">接收频率</param>
+        private void SetRfChanel(ChanelMode chanelMode, byte chanelGrp, UInt16 sendFreq, UInt16 recvFreq)
+        {
+            int index = 0;
+            Command Cmd = CmdWater;
+
+            if (_scom.IsOpen == false || Cmd.Type != CmdType.空闲)
+            {
+                return;
+            }
+
+            TempBuf[index++] = 0xAA;    // 帧头
+            TempBuf[index++] = 0xBB;
+            TempBuf[index++] = 0;       // 数据域长度：先填0
+            TempBuf[index++] = 0x02;    // 命令字
+            TempBuf[index++] = (byte)chanelMode;
+            if (chanelMode == ChanelMode.CommonAndWork)
+            {
+                TempBuf[index++] = chanelGrp;
+            }
+            else if (chanelMode == ChanelMode.SendAndReceive)
+            {
+                TempBuf[index++] = (byte)(sendFreq & 0xFF);
+                TempBuf[index++] = (byte)(sendFreq >> 8);
+                TempBuf[index++] = (byte)(recvFreq & 0xFF);
+                TempBuf[index++] = (byte)(recvFreq >> 8);
+            }
+            TempBuf[2] = (byte)(index - 3); // 数据域长度设置
+            TempBuf[index++] = 0xCC;        // 帧尾
+
+            Cmd.Type = CmdType.设置监控信道;
+            Cmd.Params = new byte[index];
+            Array.Copy(TempBuf, 0, Cmd.Params, 0, Cmd.Params.Length);
+            Cmd.WaitTime = 300;
+            Cmd.RetryTimes = 1;
+            Cmd.IsEnable = true;
+        }
+        /// <summary>
+        /// 设置RF速率
+        /// </summary>
+        /// <param name="txSpeedCode">0 - 5K bit/s , 1 - 10K bit/s, 2 - 25K bit/s</param>
+        /// <param name="rxSpeedCode">0 - 5K bit/s , 1 - 10K bit/s, 2 - 25K bit/s</param>
+        private void SetRfBitrate(RfSpeed txSpeedCode, RfSpeed rxSpeedCode)
+        {
+            int index = 0;
+            Command Cmd = CmdWater;
+
+            if (_scom.IsOpen == false || Cmd.Type != CmdType.空闲)
+            {
+                return;
+            }
+
+            TempBuf[index++] = 0xAA;    // 帧头
+            TempBuf[index++] = 0xBB;
+            TempBuf[index++] = 0x03;    // 数据域长度：先填0
+            TempBuf[index++] = 0x03;    // 命令字
+            TempBuf[index++] = (byte)txSpeedCode;
+            TempBuf[index++] = (byte)rxSpeedCode;
+            TempBuf[index++] = 0xCC;    // 帧尾
+
+            Cmd.Type = CmdType.设置监控速率;
+            Cmd.Params = new byte[index];
+            Array.Copy(TempBuf, 0, Cmd.Params, 0, Cmd.Params.Length);
+            Cmd.WaitTime = 300;
+            Cmd.RetryTimes = 1;
+            Cmd.IsEnable = true;
         }
         #endregion
 
@@ -671,20 +950,20 @@ namespace ElectricPowerDebuger.Function
             tbLog.Rows.Add(newRow);
             try
             {
-                dataListUpdate();
+                Invoke( new EventHandler(dataListUpdate));
             }
             catch(Exception ex)
             {
-                StatusUpdate("更新报文异常:" + ex.Message + "\n" + ex.StackTrace, Color.Red, 
+                ShowMsg("更新报文异常:" + ex.Message + "\n" + ex.StackTrace, Color.Red, 
                     "\n" + Util.GetStringHexFromBytes(data, 0, data.Length, " "));
             }
         }
         #endregion
 
         #region 监控日志 - 列表
-        private void dataListUpdate()
+        private void dataListUpdate(object sender, EventArgs e)
         {
-            string strTmp = "", strChgrp = "", strChnl = "", strRssi = "", strLen = "";
+            string strTmp = "", strChgrp = "", strChnl = "", strRssi = "", strLen = "", strDstName = "", strSrcName = "";
             string strDstAddr = "", strSrcAddr = "", strPanId = "", strFsn = "", strFrameType = "", strComment = "";
             Color cmdColor = Color.Black;
             bool IsInvalidFrame = false;
@@ -777,6 +1056,47 @@ namespace ElectricPowerDebuger.Function
                 }
 
                 ProtoWireless_North.GetFrameTypeAndColor(RxFrame, out strFrameType, out cmdColor);
+
+                strSrcName = (strSrcAddr == "FFFFFFFFFFFF" ? "广播" : "");
+                strDstName = (strDstAddr == "FFFFFFFFFFFF" ? "广播" : "");
+
+                if (RxFrame.Nwk.SrcAddr != null
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.SrcAddr, 0, 6, "", true) == strSrcAddr)
+                {
+                    strSrcName = (strSrcName == "" ? "start" : strSrcName);
+                }
+                if (RxFrame.Nwk.DstAddr != null
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.DstAddr, 0, 6, "", true) == strDstAddr)
+                {
+                    strDstName = (strDstName == "" ? "end" : strDstName);
+                }
+
+                switch (strFrameType)
+                {
+                    case "信标帧":
+                        strTmp = Util.GetStringHexFromBytes(RxFrame.Mac.Payload, RxFrame.Mac.Payload.Length - 6, 6, "", true);
+                        strSrcName = (strSrcAddr == strTmp ? "中心" + strSrcAddr.Substring(8) : "");
+                        break;
+
+                    case "场强收集":
+                    case "配置子节点":
+                    case "收集水表上报数据":
+                    case "水气表场强收集":
+                    case "收集绑定水表数据":
+                        strSrcName = (strSrcName == "start" ? "中心" + strSrcAddr.Substring(8) : strSrcName);
+                        break;
+
+                    case "场强收集应答":
+                    case "配置子节点应答":
+                    case "收集水表上报数据应答":
+                    case "水气表场强收集应答":
+                    case "收集绑定水表数据应答":
+                        strDstName = (strDstName == "end" ? "中心" + strDstAddr.Substring(8) : strDstName);
+                        break;
+
+                    default:
+                        break;
+                }
             }
             else if (protoVer == "尼泊尔-版本")
             {
@@ -815,6 +1135,47 @@ namespace ElectricPowerDebuger.Function
                 }
 
                 ProtoWireless_NiBoEr.GetFrameTypeAndColor(RxFrame, out strFrameType, out cmdColor);
+
+                strSrcName = (strSrcAddr == "FFFFFFFFFFFF" ? "广播" : "");
+                strDstName = (strDstAddr == "FFFFFFFFFFFF" ? "广播" : "");
+
+                if (RxFrame.Nwk.SrcAddr != null
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.SrcAddr, 0, 6, "", true) == strSrcAddr)
+                {
+                    strSrcName = (strSrcName == "" ? "start" : strSrcName);
+                }
+                if (RxFrame.Nwk.DstAddr != null
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.DstAddr, 0, 6, "", true) == strDstAddr)
+                {
+                    strDstName = (strDstName == "" ? "end" : strDstName);
+                }
+
+                switch (strFrameType)
+                {
+                    case "信标帧":
+                        strTmp = Util.GetStringHexFromBytes(RxFrame.Mac.Payload, RxFrame.Mac.Payload.Length - 6, 6, "", true);
+                        strSrcName = (strSrcAddr == strTmp ? "中心" + strSrcAddr.Substring(8) : "");
+                        break;
+
+                    case "场强收集":
+                    case "配置子节点":
+                    case "收集水表上报数据":
+                    case "水气表场强收集":
+                    case "收集绑定水表数据":
+                        strSrcName = (strSrcName == "start" ? "中心" + strSrcAddr.Substring(8) : strSrcName);
+                        break;
+
+                    case "场强收集应答":
+                    case "配置子节点应答":
+                    case "收集水表上报数据应答":
+                    case "水气表场强收集应答":
+                    case "收集绑定水表数据应答":
+                        strDstName = (strDstName == "end" ? "中心" + strDstAddr.Substring(8) : strDstName);
+                        break;
+
+                    default:
+                        break;
+                }
             }
             else // if (protoVer == "巴西-版本")
             {
@@ -853,6 +1214,47 @@ namespace ElectricPowerDebuger.Function
                 }
 
                 ProtoWireless_BaXi.GetFrameTypeAndColor(RxFrame, out strFrameType, out cmdColor);
+
+                strSrcName = (strSrcAddr == "FFFFFFFFFFFF" ? "广播" : "");
+                strDstName = (strDstAddr == "FFFFFFFFFFFF" ? "广播" : "");
+
+                if(RxFrame.Nwk.SrcAddr != null
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.SrcAddr, 0, 6, "", true) == strSrcAddr)
+                {
+                    strSrcName = (strSrcName == "" ? "start" : strSrcName);
+                }
+                if (RxFrame.Nwk.DstAddr != null
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.DstAddr, 0, 6, "", true) == strDstAddr)
+                {
+                    strDstName = (strDstName == "" ? "end" : strDstName);
+                }
+
+                switch (strFrameType)
+                {
+                    case "信标帧":
+                        strTmp = Util.GetStringHexFromBytes(RxFrame.Mac.Payload, RxFrame.Mac.Payload.Length - 6, 6, "", true);
+                        strSrcName = (strSrcAddr == strTmp ? "中心"+ strSrcAddr.Substring(8) : "");
+                        break;
+
+                    case "场强收集":
+                    case "配置子节点":
+                    case "收集水表上报数据":
+                    case "水气表场强收集":
+                    case "收集绑定水表数据":
+                        strSrcName = (strSrcName == "start" ? "中心" + strSrcAddr.Substring(8) : strSrcName);
+                        break;
+
+                    case "场强收集应答":
+                    case "配置子节点应答":
+                    case "收集水表上报数据应答":
+                    case "水气表场强收集应答":
+                    case "收集绑定水表数据应答":
+                        strDstName = (strDstName == "end" ? "中心" + strDstAddr.Substring(8) : strDstName);
+                        break;
+
+                    default:
+                        break;
+                }
             }
 
 
@@ -864,12 +1266,9 @@ namespace ElectricPowerDebuger.Function
             lvi.SubItems.Add(strDstAddr);                       //目的地址
             lvi.SubItems.Add(strPanId);                           //PanID
             lvi.SubItems.Add(strFsn);                           //帧序号
-
             lvi.SubItems.Add(strFrameType);                     //帧类型
-            strTmp = (strSrcAddr == "FFFFFFFFFFFF") ? "广播" : ((strSrcAddr == strCenterAddr) ? "中心" : "");
-            lvi.SubItems.Add(strTmp);                           //源名称
-            strTmp = (strDstAddr == "FFFFFFFFFFFF") ? "广播" : ((strDstAddr == strCenterAddr) ? "中心" : "");
-            lvi.SubItems.Add(strTmp);                           //目的名称
+            lvi.SubItems.Add(strSrcName);                           //源名称
+            lvi.SubItems.Add(strDstName);                           //目的名称
             lvi.SubItems.Add(strComment);                       //备注
 
             lvi.ForeColor = (IsInvalidFrame == true) ? Color.Gray : cmdColor;
@@ -1069,8 +1468,15 @@ namespace ElectricPowerDebuger.Function
             rtbRxdata.SelectionColor = colFore;
         }
 
-        private void StatusUpdate(string str1, Color color1, string str2 = null)
+        delegate void UpdateUi(string str1, Color cl, string str2);
+        private void ShowMsg(string str1, Color color1, string str2 = null)
         {
+            if (this.InvokeRequired)
+            {
+                Invoke(new UpdateUi(ShowMsg), new object[]{str1, color1, str2});
+                return;
+            }
+
             rtbRxdata.Clear();
             rtbRxdataAdd(str1, color1);
             if(str2 != null)
@@ -1090,6 +1496,7 @@ namespace ElectricPowerDebuger.Function
                 _wirelessLog.Close();
                 _wirelessLog = null;
             }
+            _thrTransceiver.Abort();
         }
         #endregion
     }
