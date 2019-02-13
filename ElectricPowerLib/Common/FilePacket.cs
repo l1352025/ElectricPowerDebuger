@@ -10,6 +10,8 @@ namespace ElectricPowerLib.Common
     {
         private byte[] _dataBuffer;
         private byte[] _pktMissBitFlags;
+        private int _pktMissCnt;
+        private List<int> _pktMissList;
 
         public string FileName { get; private set; }
         public int FileSize { get; private set; }
@@ -18,8 +20,6 @@ namespace ElectricPowerLib.Common
         public int PacketSize { get; private set; }
         public int PacketCount { get; private set; }
         public int LastPktSize { get; private set; }
-        public int PktMissingCnt { get; private set; }
-        public List<int> PktMissingList { get; private set; }
         public int PktCurrIndex { get; set; }
         public int PktSendCnt { get; set; }
         public string Version { get; set; }
@@ -49,8 +49,8 @@ namespace ElectricPowerLib.Common
             PacketSize = packetSize;
             PacketCount = (FileSize + packetSize - 1)/packetSize;
             LastPktSize = ((FileSize % packetSize != 0) ? (FileSize % packetSize) : packetSize);
-            PktMissingCnt = PacketCount;
-
+            _pktMissCnt = PacketCount;
+            _pktMissList = new List<int>();
             _pktMissBitFlags = new byte[(PacketCount + 7) / 8];
             ClearPacketMissingBitFlags();
 
@@ -150,7 +150,7 @@ namespace ElectricPowerLib.Common
             byte aByte;
             int pktIdx = 0;
 
-            if(PktMissingCnt == PacketCount)
+            if(_pktMissCnt == PacketCount)
             {
                 for(int i = 0; i < PacketCount; i++)
                 {
@@ -181,13 +181,13 @@ namespace ElectricPowerLib.Common
                 }
             }
 
-            PktMissingCnt = list.Count;
+            _pktMissCnt = list.Count;
 
             return list;
         }
        
         // 方法二
-        public void GetCurrPacketMissingCnt(byte[] bitFlags, int index, out int currMissCnt, out int totalMissCnt, byte missFlag = 0)
+        public void GetCurrPacketMissingCnt(byte[] bitFlags, int index, out int currMissCnt, out List<int> totalMissList, byte missFlag = 0)
         {
             List<int> list = new List<int>();
             byte aByte;
@@ -219,10 +219,10 @@ namespace ElectricPowerLib.Common
                 }
             }
 
-            PktMissingList = (List<int>)PktMissingList.Union(list);
+            _pktMissList = (List<int>)_pktMissList.Union(list);
 
             currMissCnt = list.Count;
-            totalMissCnt = PktMissingList.Count;
+            totalMissList = _pktMissList;
         }
 
     }

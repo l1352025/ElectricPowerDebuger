@@ -25,8 +25,8 @@ namespace ElectricPowerDebuger.Dialog
 
         private void AddTaskDlg_Load(object sender, EventArgs e)
         {
-            strTaskParam = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/TaskParam", "2,1,7200,0,0");
-            strCustomDefineTask = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/CustomDefineTask", "请在此输入自定义抄表数据，并以空格分隔。");
+            strTaskParam = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator_TaskParam", "2,1,7200,0,0");
+            strCustomDefineTask = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator_CustomDefineTask", "请在此输入自定义抄表数据，并以空格分隔。");
             string[] strSplit = strTaskParam.Split(',');
             // 优先级
             if (strSplit[0] == "0")
@@ -191,7 +191,7 @@ namespace ElectricPowerDebuger.Dialog
                     strTaskParamNew += "FF,";
                     if (strCustomDefineTask != strCustomDefineTaskNew)
                     {
-                        XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "CustomDefineTask", strCustomDefineTaskNew);
+                        XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "ConcSimulator_CustomDefineTask", strCustomDefineTaskNew);
                     }
                 }
                 else
@@ -218,7 +218,7 @@ namespace ElectricPowerDebuger.Dialog
                 
                 if (strTaskParam != strTaskParamNew)
                 {
-                    XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "TaskParam", strTaskParamNew);
+                    XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "ConcSimulator_TaskParam", strTaskParamNew);
                 }
                 
                 byte[] taskContent = new byte[iLen + 2];

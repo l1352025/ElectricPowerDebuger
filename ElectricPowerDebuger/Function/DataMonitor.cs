@@ -70,9 +70,9 @@ namespace ElectricPowerDebuger.Function
             treeVwrProtol.DoubleBuffered(true);
             rtbRxdata.DoubleBuffered(true);
 
-            cmbPort.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/PortName", "");
-            combPort2.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/Port2Name", "");
-            cmbChanel.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/ChanelGrp", "30");
+            cmbPort.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor_PortName", "");
+            combPort2.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor_Port2Name", "");
+            cmbChanel.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor_ChanelGrp", "30");
         
             _configPath = FrmMain.SystemConfigPath;
             _scom = new SerialCom();
@@ -134,7 +134,7 @@ namespace ElectricPowerDebuger.Function
                     btOpenPort.BackColor = Color.GreenYellow;
                     cmbPort.Enabled = false;
 
-                    XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/DataMonitor", "PortName", cmbPort.Text);
+                    XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "DataMonitor_PortName", cmbPort.Text);
 
                     CmdSetChanelGrp(Convert.ToByte(cmbChanel.Text));
                 }
@@ -321,7 +321,7 @@ namespace ElectricPowerDebuger.Function
                             break;
                         }
 
-                        string protoVer = XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/Global/ProtocolVer");
+                        string protoVer = XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/ProtocolVer");
 
                         if (protoVer == "南网-版本" || protoVer == "北网-版本")
                         {
@@ -388,7 +388,7 @@ namespace ElectricPowerDebuger.Function
 
         private void combChanel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/DataMonitor", "ChanelGrp", cmbChanel.Text);
+            XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "DataMonitor_ChanelGrp", cmbChanel.Text);
 
             CmdSetChanelGrp(Convert.ToByte(cmbChanel.Text));
         }
@@ -496,7 +496,7 @@ namespace ElectricPowerDebuger.Function
                 btOpenPort2.BackColor = Color.GreenYellow;
                 combPort2.Enabled = false;
 
-                XmlHelper.SetNodeValue(_configPath, "/Config", "Port2Name", combPort2.Text);
+                XmlHelper.SetNodeValue(_configPath, "/Config", "DataMonitor_Port2Name", combPort2.Text);
             }
             else
             {
@@ -763,10 +763,11 @@ namespace ElectricPowerDebuger.Function
                 return;
             }
 
-            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/LogPath", Application.StartupPath);
+            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor_LogPath", Application.StartupPath);
             saveFileDlg.Filter = "*.txt(文本文件)|*.txt|*.*(所有文件)|*.*";
             saveFileDlg.DefaultExt = "txt";
             saveFileDlg.FileName = "";
+            saveFileDlg.InitialDirectory = (Directory.Exists(strDirectory) ? strDirectory : "");
             saveFileDlg.ShowDialog();
 
             strFileName = saveFileDlg.FileName;
@@ -778,7 +779,7 @@ namespace ElectricPowerDebuger.Function
             if (strDirectory != Path.GetDirectoryName(strFileName))
             {
                 strDirectory = Path.GetDirectoryName(strFileName);
-                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/DataMonitor", "LogPath", strDirectory);
+                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "DataMonitor_LogPath", strDirectory);
             }
             StreamWriter sw = new StreamWriter(strFileName, false);
 
@@ -826,11 +827,12 @@ namespace ElectricPowerDebuger.Function
         {
             string strDirectory, strFileName, strRead;
 
-            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor/LogPath", Application.StartupPath);
+            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/DataMonitor_LogPath", Application.StartupPath);
             openFileDlg.InitialDirectory = strDirectory;
             openFileDlg.Filter = "*.TXT(文本文件)|*.TXT|*.*(所有文件)|*.*";
             openFileDlg.DefaultExt = "TXT";
             openFileDlg.FileName = "";
+            openFileDlg.InitialDirectory = (Directory.Exists(strDirectory) ? strDirectory : "");
             if (DialogResult.OK != openFileDlg.ShowDialog())
             {
                 return;
@@ -846,7 +848,7 @@ namespace ElectricPowerDebuger.Function
             if (strDirectory != Path.GetDirectoryName(strFileName))
             {
                 strDirectory = Path.GetDirectoryName(strFileName);
-                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/DataMonitor", "LogPath", strDirectory);
+                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "DataMonitor_LogPath", strDirectory);
             }
             StreamReader sr = new StreamReader(strFileName, Encoding.GetEncoding("GB2312"));
 
@@ -990,7 +992,7 @@ namespace ElectricPowerDebuger.Function
 
             byte[] databuf = (byte[])curRow["原始报文"];
 
-            string protoVer = XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/Global/ProtocolVer");
+            string protoVer = XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/ProtocolVer");
 
             if (protoVer == "南网-版本")
             {
@@ -1019,9 +1021,10 @@ namespace ElectricPowerDebuger.Function
                                 "" : Util.GetStringHexFromBytes(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
                     strPanId = (RxFrame.Mac.PanID >> 8).ToString("X2") + (RxFrame.Mac.PanID & 0x00FF).ToString("X2");
                     strFsn = RxFrame.Mac.FrameSn.ToString("X2");
+
+                    strComment = RxFrame.PhrCrc != (databuf[3] ^ databuf[4]) ? "PHR校验错误、" : "";
                 }
 
-                strComment = RxFrame.PhrCrc != (databuf[3] ^ databuf[4]) ? "PHR校验错误、" : "";
                 ushort crc16 = ProtoWireless_South.GenCRC16(databuf, 6, databuf.Length - 8);
                 if (RxFrame.Crc16 != crc16)
                 {
@@ -1057,9 +1060,9 @@ namespace ElectricPowerDebuger.Function
                                 "" : Util.GetStringHexFromBytes(RxFrame.Mac.DstAddr, 0, RxFrame.Mac.DstAddr.Length, "", true);
                     strPanId = (RxFrame.Mac.PanID >> 8).ToString("X2") + (RxFrame.Mac.PanID & 0x00FF).ToString("X2");
                     strFsn = RxFrame.Mac.FrameSn.ToString("X2");
-                }
 
-                strComment = RxFrame.PhrCrc != (databuf[3] ^ databuf[4] ^ databuf[5]) ? "PHR校验错误、" : "";
+                    strComment = RxFrame.PhrCrc != (databuf[3] ^ databuf[4] ^ databuf[5]) ? "PHR校验错误、" : "";
+                }
 
                 ushort crc16 = ProtoWireless_North.GenCRC16(databuf, 3, databuf.Length - 5);
                 if (RxFrame.Crc16 != crc16)
@@ -1148,41 +1151,36 @@ namespace ElectricPowerDebuger.Function
                 strDstName = (strDstAddr == "FFFFFFFFFFFF" ? "广播" : "");
 
                 if (RxFrame.Nwk.SrcAddr != null
-                    && Util.GetStringHexFromBytes(RxFrame.Nwk.SrcAddr, 0, 6, "", true) == strSrcAddr)
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.SrcAddr, 0, RxFrame.Nwk.SrcAddr.Length, "", true) == strSrcAddr)
                 {
-                    strSrcName = (strSrcName == "" ? "start" : strSrcName);
+                    strSrcName = (strSrcName == "" ? "|-->" : strSrcName);
                 }
                 if (RxFrame.Nwk.DstAddr != null
-                    && Util.GetStringHexFromBytes(RxFrame.Nwk.DstAddr, 0, 6, "", true) == strDstAddr)
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.DstAddr, 0, RxFrame.Nwk.DstAddr.Length, "", true) == strDstAddr)
                 {
-                    strDstName = (strDstName == "" ? "end" : strDstName);
+                    strDstName = (strDstName == "" ? "-->|" : strDstName);
                 }
 
-                switch (strFrameType)
+                if (strFrameType.Contains("信标帧"))
                 {
-                    case "信标帧":
-                        strTmp = Util.GetStringHexFromBytes(RxFrame.Mac.Payload, RxFrame.Mac.Payload.Length - 6, 6, "", true);
-                        strSrcName = (strSrcAddr == strTmp ? "中心" + strSrcAddr.Substring(8) : "");
-                        break;
-
-                    case "场强收集":
-                    case "配置子节点":
-                    case "收集水表上报数据":
-                    case "水气表场强收集":
-                    case "收集绑定水表数据":
-                        strSrcName = (strSrcName == "start" ? "中心" + strSrcAddr.Substring(8) : strSrcName);
-                        break;
-
-                    case "场强收集应答":
-                    case "配置子节点应答":
-                    case "收集水表上报数据应答":
-                    case "水气表场强收集应答":
-                    case "收集绑定水表数据应答":
-                        strDstName = (strDstName == "end" ? "中心" + strDstAddr.Substring(8) : strDstName);
-                        break;
-
-                    default:
-                        break;
+                    strTmp = Util.GetStringHexFromBytes(RxFrame.Mac.Payload, RxFrame.Mac.Payload.Length - 6, 6, "", true);
+                    strSrcName = (strSrcAddr == strTmp ? "中心" + strSrcAddr.Substring(8) : "");
+                }
+                else if (strFrameType.Contains("场强收集应答")
+                    || strFrameType.Contains("配置子节点应答")
+                    || strFrameType.Contains("收集水表上报数据应答")
+                    || strFrameType.Contains("水气表场强收集应答")
+                    || strFrameType.Contains("收集绑定水表数据应答"))
+                {
+                    strDstName = (strDstName == "-->|" ? "中心" + strDstAddr.Substring(8) : strDstName);
+                }
+                else if (strFrameType.Contains("场强收集")
+                    || strFrameType.Contains("配置子节点")
+                    || strFrameType.Contains("收集水表上报数据")
+                    || strFrameType.Contains("水气表场强收集")
+                    || strFrameType.Contains("收集绑定水表数据"))
+                {
+                    strSrcName = (strSrcName == "|-->" ? "中心" + strSrcAddr.Substring(8) : strSrcName);
                 }
             }
             else // if (protoVer == "巴西-版本")
@@ -1226,45 +1224,39 @@ namespace ElectricPowerDebuger.Function
                 strSrcName = (strSrcAddr == "FFFFFFFFFFFF" ? "广播" : "");
                 strDstName = (strDstAddr == "FFFFFFFFFFFF" ? "广播" : "");
 
-                if(RxFrame.Nwk.SrcAddr != null
-                    && Util.GetStringHexFromBytes(RxFrame.Nwk.SrcAddr, 0, 6, "", true) == strSrcAddr)
+                if (RxFrame.Nwk.SrcAddr != null
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.SrcAddr, 0, RxFrame.Nwk.SrcAddr.Length, "", true) == strSrcAddr)
                 {
-                    strSrcName = (strSrcName == "" ? "start" : strSrcName);
+                    strSrcName = (strSrcName == "" ? "|-->" : strSrcName);
                 }
                 if (RxFrame.Nwk.DstAddr != null
-                    && Util.GetStringHexFromBytes(RxFrame.Nwk.DstAddr, 0, 6, "", true) == strDstAddr)
+                    && Util.GetStringHexFromBytes(RxFrame.Nwk.DstAddr, 0, RxFrame.Nwk.DstAddr.Length, "", true) == strDstAddr)
                 {
-                    strDstName = (strDstName == "" ? "end" : strDstName);
+                    strDstName = (strDstName == "" ? "-->|" : strDstName);
                 }
 
-                switch (strFrameType)
+                if (strFrameType.Contains("信标帧"))
                 {
-                    case "信标帧":
-                        strTmp = Util.GetStringHexFromBytes(RxFrame.Mac.Payload, RxFrame.Mac.Payload.Length - 6, 6, "", true);
-                        strSrcName = (strSrcAddr == strTmp ? "中心"+ strSrcAddr.Substring(8) : "");
-                        break;
-
-                    case "场强收集":
-                    case "配置子节点":
-                    case "收集水表上报数据":
-                    case "水气表场强收集":
-                    case "收集绑定水表数据":
-                        strSrcName = (strSrcName == "start" ? "中心" + strSrcAddr.Substring(8) : strSrcName);
-                        break;
-
-                    case "场强收集应答":
-                    case "配置子节点应答":
-                    case "收集水表上报数据应答":
-                    case "水气表场强收集应答":
-                    case "收集绑定水表数据应答":
-                        strDstName = (strDstName == "end" ? "中心" + strDstAddr.Substring(8) : strDstName);
-                        break;
-
-                    default:
-                        break;
+                    strTmp = Util.GetStringHexFromBytes(RxFrame.Mac.Payload, RxFrame.Mac.Payload.Length - 6, 6, "", true);
+                    strSrcName = (strSrcAddr == strTmp ? "中心" + strSrcAddr.Substring(8) : "");
+                }
+                else if (strFrameType.Contains("场强收集应答")
+                    || strFrameType.Contains("配置子节点应答")
+                    || strFrameType.Contains("收集水表上报数据应答")
+                    || strFrameType.Contains("水气表场强收集应答")
+                    || strFrameType.Contains("收集绑定水表数据应答"))
+                {
+                    strDstName = (strDstName == "-->|" ? "中心" + strDstAddr.Substring(8) : strDstName);
+                }
+                else if (strFrameType.Contains("场强收集")
+                    || strFrameType.Contains("配置子节点")
+                    || strFrameType.Contains("收集水表上报数据")
+                    || strFrameType.Contains("水气表场强收集")
+                    || strFrameType.Contains("收集绑定水表数据"))
+                {
+                    strSrcName = (strSrcName == "|-->" ? "中心" + strSrcAddr.Substring(8) : strSrcName);
                 }
             }
-
 
             lvi.SubItems.Add(strChgrp);                         //信道组
             lvi.SubItems.Add(strChnl);                          //频点
@@ -1361,7 +1353,7 @@ namespace ElectricPowerDebuger.Function
             PacketNode.Nodes.Add(AttrNode);
 
             // root--数据包--协议帧
-            string protoVer = XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/Global/ProtocolVer");
+            string protoVer = XmlHelper.GetNodeValue(FrmMain.SystemConfigPath, "Config/ProtocolVer");
 
             TreeNode protoTree;
             if (protoVer == "南网-版本")

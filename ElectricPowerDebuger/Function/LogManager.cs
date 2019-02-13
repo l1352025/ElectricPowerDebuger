@@ -53,9 +53,9 @@ namespace ElectricPowerDebuger.Function
                 combPortBaud.Enabled = false;
                 combPortChk.Enabled = false;
 
-                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/LogManager", "PortName", combPortNum.Text);
-                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/LogManager", "Baudrate", combPortBaud.Text);
-                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/LogManager", "BitAndCheck", combPortChk.Text);
+                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "LogManager_PortName", combPortNum.Text);
+                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "LogManager_Baudrate", combPortBaud.Text);
+                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "LogManager_BitAndCheck", combPortChk.Text);
             }
             else
             {

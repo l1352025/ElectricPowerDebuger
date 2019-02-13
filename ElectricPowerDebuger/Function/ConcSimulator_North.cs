@@ -63,7 +63,7 @@ namespace ElectricPowerDebuger.Function
 
             _errorLog = new LogHelper(_configPath + "/error.log");
 
-            _currProtol = XmlHelper.GetNodeDefValue(_configPath, "Config/Global/ProtocolVer", "");
+            _currProtol = XmlHelper.GetNodeDefValue(_configPath, "Config/ProtocolVer", "");
             _evtLogAutoSaveChanged = new FrmMain.FormEventNotify(msg =>
             {
                 if (msg == "true")
@@ -111,7 +111,7 @@ namespace ElectricPowerDebuger.Function
                 btPortCtrl.BackColor = Color.GreenYellow;
                 cbxPortNum.Enabled = false;
 
-                XmlHelper.SetNodeValue(_configPath, "/Config", "PortName", cbxPortNum.Text);
+                XmlHelper.SetNodeValue(_configPath, "/Config", "ConcSimulator_North_PortName", cbxPortNum.Text);
 
                 SendToCmdQueue("查询主节点地址");
             }
@@ -976,7 +976,7 @@ namespace ElectricPowerDebuger.Function
 
         private void LoadRecentCmdName()
         {
-            string recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North/RecentCmds");
+            string recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North_RecentCmds");
             if (recentCmds == "")
             {
                 return;
@@ -986,7 +986,7 @@ namespace ElectricPowerDebuger.Function
             cbxRecentUseCmd.Items.Clear();
             cbxRecentUseCmd.Items.AddRange(strs);
 
-            XmlHelper.SetNodeValue(_configPath, "/Config/ConcSimulator_North", "RecentCmds", recentCmds);
+            XmlHelper.SetNodeValue(_configPath, "/Config", "ConcSimulator_North_RecentCmds", recentCmds);
         }
         private void UpdateRecentCmdName(string cmdText = "")
         {
@@ -1004,7 +1004,7 @@ namespace ElectricPowerDebuger.Function
             }
             else
             {
-                recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North/RecentCmds");
+                recentCmds = XmlHelper.GetNodeValue(_configPath, "/Config/ConcSimulator_North_RecentCmds");
                 string[] strs = recentCmds.Split(';');
                 cbxRecentUseCmd.Items.Clear();
                 cbxRecentUseCmd.Items.AddRange(strs);
@@ -1020,7 +1020,7 @@ namespace ElectricPowerDebuger.Function
                 recentCmds += str + ";";
             }
 
-            XmlHelper.SetNodeValue(_configPath, "/Config/ConcSimulator_North", "RecentCmds", recentCmds);
+            XmlHelper.SetNodeValue(_configPath, "/Config", "ConcSimulator_North_RecentCmds", recentCmds);
         }
         #endregion
 

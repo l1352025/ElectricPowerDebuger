@@ -37,10 +37,19 @@
             this.btClearLog = new System.Windows.Forms.Button();
             this.btLoadLog = new System.Windows.Forms.Button();
             this.btSaveLog = new System.Windows.Forms.Button();
+            this.btOpenPort2 = new System.Windows.Forms.Button();
             this.btOpenPort = new System.Windows.Forms.Button();
+            this.combChanel2 = new System.Windows.Forms.ComboBox();
+            this.combSpeed = new System.Windows.Forms.ComboBox();
             this.cmbChanel = new System.Windows.Forms.ComboBox();
+            this.combPort2 = new System.Windows.Forms.ComboBox();
             this.lbChanel = new System.Windows.Forms.Label();
             this.cmbPort = new System.Windows.Forms.ComboBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.lbPort = new System.Windows.Forms.Label();
             this.lvDataList = new System.Windows.Forms.ListView();
             this.序号 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -84,15 +93,6 @@
             this.colSN = new System.Data.DataColumn();
             this.colDate = new System.Data.DataColumn();
             this.colTime = new System.Data.DataColumn();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.combSpeed = new System.Windows.Forms.ComboBox();
-            this.combChanel2 = new System.Windows.Forms.ComboBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.combPort2 = new System.Windows.Forms.ComboBox();
-            this.btOpenPort2 = new System.Windows.Forms.Button();
             this.colPacket = new System.Data.DataColumn();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -226,6 +226,17 @@
             this.btSaveLog.UseVisualStyleBackColor = false;
             this.btSaveLog.Click += new System.EventHandler(this.btSaveLog_Click);
             // 
+            // btOpenPort2
+            // 
+            this.btOpenPort2.BackColor = System.Drawing.Color.Silver;
+            this.btOpenPort2.Location = new System.Drawing.Point(625, 5);
+            this.btOpenPort2.Name = "btOpenPort2";
+            this.btOpenPort2.Size = new System.Drawing.Size(72, 23);
+            this.btOpenPort2.TabIndex = 3;
+            this.btOpenPort2.Text = "打开串口";
+            this.btOpenPort2.UseVisualStyleBackColor = false;
+            this.btOpenPort2.Click += new System.EventHandler(this.btOpenPort2_Click);
+            // 
             // btOpenPort
             // 
             this.btOpenPort.BackColor = System.Drawing.Color.Silver;
@@ -236,6 +247,30 @@
             this.btOpenPort.Text = "打开串口";
             this.btOpenPort.UseVisualStyleBackColor = false;
             this.btOpenPort.Click += new System.EventHandler(this.btOpenPort_Click);
+            // 
+            // combChanel2
+            // 
+            this.combChanel2.FormattingEnabled = true;
+            this.combChanel2.Items.AddRange(new object[] {
+            "489.7 (水表)",
+            "484.7 (公共)"});
+            this.combChanel2.Location = new System.Drawing.Point(461, 33);
+            this.combChanel2.Name = "combChanel2";
+            this.combChanel2.Size = new System.Drawing.Size(93, 20);
+            this.combChanel2.TabIndex = 2;
+            this.combChanel2.SelectedIndexChanged += new System.EventHandler(this.combChanel2_SelectedIndexChanged);
+            // 
+            // combSpeed
+            // 
+            this.combSpeed.FormattingEnabled = true;
+            this.combSpeed.Items.AddRange(new object[] {
+            "10K",
+            "25K"});
+            this.combSpeed.Location = new System.Drawing.Point(597, 32);
+            this.combSpeed.Name = "combSpeed";
+            this.combSpeed.Size = new System.Drawing.Size(51, 20);
+            this.combSpeed.TabIndex = 2;
+            this.combSpeed.SelectedIndexChanged += new System.EventHandler(this.combSpeed_SelectedIndexChanged);
             // 
             // cmbChanel
             // 
@@ -280,6 +315,15 @@
             this.cmbChanel.TabIndex = 2;
             this.cmbChanel.SelectedIndexChanged += new System.EventHandler(this.combChanel_SelectedIndexChanged);
             // 
+            // combPort2
+            // 
+            this.combPort2.FormattingEnabled = true;
+            this.combPort2.Location = new System.Drawing.Point(461, 5);
+            this.combPort2.Name = "combPort2";
+            this.combPort2.Size = new System.Drawing.Size(60, 20);
+            this.combPort2.TabIndex = 2;
+            this.combPort2.Click += new System.EventHandler(this.combPort2_Click);
+            // 
             // lbChanel
             // 
             this.lbChanel.AutoSize = true;
@@ -297,6 +341,51 @@
             this.cmbPort.Size = new System.Drawing.Size(60, 20);
             this.cmbPort.TabIndex = 2;
             this.cmbPort.Click += new System.EventHandler(this.cmbPort_Click);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(560, 36);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(41, 12);
+            this.label12.TabIndex = 1;
+            this.label12.Text = "速率：";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(533, 10);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(77, 12);
+            this.label9.TabIndex = 1;
+            this.label9.Text = "19200bps 8E1";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(423, 35);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(41, 12);
+            this.label11.TabIndex = 1;
+            this.label11.Text = "信道：";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(140, 13);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(77, 12);
+            this.label13.TabIndex = 1;
+            this.label13.Text = "19200bps 8E1";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(399, 10);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(65, 12);
+            this.label10.TabIndex = 1;
+            this.label10.Text = "水表监控：";
             // 
             // lbPort
             // 
@@ -622,95 +711,6 @@
             // colTime
             // 
             this.colTime.ColumnName = "时间";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(399, 10);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(65, 12);
-            this.label10.TabIndex = 1;
-            this.label10.Text = "水表监控：";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(423, 35);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(41, 12);
-            this.label11.TabIndex = 1;
-            this.label11.Text = "信道：";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(531, 37);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(41, 12);
-            this.label12.TabIndex = 1;
-            this.label12.Text = "速率：";
-            // 
-            // combSpeed
-            // 
-            this.combSpeed.FormattingEnabled = true;
-            this.combSpeed.Items.AddRange(new object[] {
-            "10K",
-            "25K"});
-            this.combSpeed.Location = new System.Drawing.Point(568, 33);
-            this.combSpeed.Name = "combSpeed";
-            this.combSpeed.Size = new System.Drawing.Size(51, 20);
-            this.combSpeed.TabIndex = 2;
-            this.combSpeed.SelectedIndexChanged += new System.EventHandler(this.combSpeed_SelectedIndexChanged);
-            // 
-            // combChanel2
-            // 
-            this.combChanel2.FormattingEnabled = true;
-            this.combChanel2.Items.AddRange(new object[] {
-            "489.7 (水表)",
-            "484.7 (公共)"});
-            this.combChanel2.Location = new System.Drawing.Point(461, 33);
-            this.combChanel2.Name = "combChanel2";
-            this.combChanel2.Size = new System.Drawing.Size(60, 20);
-            this.combChanel2.TabIndex = 2;
-            this.combChanel2.SelectedIndexChanged += new System.EventHandler(this.combChanel2_SelectedIndexChanged);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(140, 13);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(77, 12);
-            this.label13.TabIndex = 1;
-            this.label13.Text = "19200bps 8E1";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(533, 10);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(77, 12);
-            this.label9.TabIndex = 1;
-            this.label9.Text = "19200bps 8E1";
-            // 
-            // combPort2
-            // 
-            this.combPort2.FormattingEnabled = true;
-            this.combPort2.Location = new System.Drawing.Point(461, 5);
-            this.combPort2.Name = "combPort2";
-            this.combPort2.Size = new System.Drawing.Size(60, 20);
-            this.combPort2.TabIndex = 2;
-            this.combPort2.Click += new System.EventHandler(this.combPort2_Click);
-            // 
-            // btOpenPort2
-            // 
-            this.btOpenPort2.BackColor = System.Drawing.Color.Silver;
-            this.btOpenPort2.Location = new System.Drawing.Point(625, 5);
-            this.btOpenPort2.Name = "btOpenPort2";
-            this.btOpenPort2.Size = new System.Drawing.Size(72, 23);
-            this.btOpenPort2.TabIndex = 3;
-            this.btOpenPort2.Text = "打开串口";
-            this.btOpenPort2.UseVisualStyleBackColor = false;
-            this.btOpenPort2.Click += new System.EventHandler(this.btOpenPort2_Click);
             // 
             // colPacket
             // 

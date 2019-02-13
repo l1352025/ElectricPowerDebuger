@@ -83,17 +83,17 @@ namespace ElectricPowerDebuger.Function
         {
             InitializeComponent();
             this.Dock = DockStyle.Fill;
-            strConcAddr = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/ConcAddr", "");
+            strConcAddr = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator_ConcAddr", "");
             if (strConcAddr == "")
             {
                 strConcAddr = "000020160618";
-                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "ConcAddr", strConcAddr);
+                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "ConcSimulator_ConcAddr", strConcAddr);
             }
-            string strPortName = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/PortName", "");
+            string strPortName = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator_PortName", "");
             cmbPort.Items.AddRange(new object[] {strPortName});
             cmbPort.Text = strPortName;
-            cmbBaudrate.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/Baudrate", "");
-            if ("0" == XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/CommonMsgAutoScroll", "1"))
+            cmbBaudrate.Text = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator_Baudrate", "");
+            if ("0" == XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator_CommonMsgAutoScroll", "1"))
             {
                 tsmiAutoScrollCommMsg.Checked = false;
             }
@@ -135,8 +135,8 @@ namespace ElectricPowerDebuger.Function
                     cmbPort.Enabled = false;
                     cmbBaudrate.Enabled = false;
                     bPortOpened = true;
-                    XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "PortName", cmbPort.Text);
-                    XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "Baudrate", cmbBaudrate.Text);
+                    XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "ConcSimulator_PortName", cmbPort.Text);
+                    XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "ConcSimulator_Baudrate", cmbBaudrate.Text);
                 }
                 else
                 {
@@ -1070,7 +1070,7 @@ namespace ElectricPowerDebuger.Function
         }
         private void tsmiAutoScrollCommMsg_Click(object sender, EventArgs e)
         {
-            XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "CommonMsgAutoScroll", (tsmiAutoScrollCommMsg.Checked == true ? "1" : "0"));
+            XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "ConcSimulator_CommonMsgAutoScroll", (tsmiAutoScrollCommMsg.Checked == true ? "1" : "0"));
         }
         private void tsmiSaveCommMsgToFile_Click(object sender, EventArgs e)
         {
@@ -1082,7 +1082,7 @@ namespace ElectricPowerDebuger.Function
                 MessageBox.Show("没有通讯数据可以保存！", "信息", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Information);
                 return;
             }
-            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/CommMsgPath", System.Windows.Forms.Application.StartupPath);
+            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator_CommMsgPath", System.Windows.Forms.Application.StartupPath);
             saveFileDlg.Filter = "*.txt(文本文件)|*.txt";
             saveFileDlg.DefaultExt = "txt";
             saveFileDlg.FileName = "通讯记录";
@@ -1099,7 +1099,7 @@ namespace ElectricPowerDebuger.Function
             if (strDirectory != Path.GetDirectoryName(strFileName))
             {
                 strDirectory = Path.GetDirectoryName(strFileName);
-                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "CommMsgPath", strDirectory);
+                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "ConcSimulator_CommMsgPath", strDirectory);
             }
             try
             {
@@ -3219,7 +3219,7 @@ namespace ElectricPowerDebuger.Function
                 }
             }
 
-            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/DocumentPath", Application.StartupPath);
+            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator_DocumentPath", Application.StartupPath);
             openFileDlg.InitialDirectory = strDirectory;
             openFileDlg.Filter = "*.TXT(文本文件)|*.TXT";
             openFileDlg.DefaultExt = "TXT";
@@ -3239,7 +3239,7 @@ namespace ElectricPowerDebuger.Function
             if (strDirectory != Path.GetDirectoryName(strFileName))
             {
                 strDirectory = Path.GetDirectoryName(strFileName);
-                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "DocumentPath", strDirectory);
+                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "ConcSimulator_DocumentPath", strDirectory);
             }
             StreamReader sr = new StreamReader(strFileName, Encoding.GetEncoding("GB2312"));
 
@@ -3284,7 +3284,7 @@ namespace ElectricPowerDebuger.Function
                 return;
             }
 
-            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator/DocumentPath", Application.StartupPath);
+            strDirectory = XmlHelper.GetNodeDefValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator_DocumentPath", Application.StartupPath);
             saveFileDlg.Filter = "*.txt(文本文件)|*.txt";
             saveFileDlg.DefaultExt = "txt";
             saveFileDlg.FileName = "";
@@ -3299,7 +3299,7 @@ namespace ElectricPowerDebuger.Function
             if (strDirectory != Path.GetDirectoryName(strFileName))
             {
                 strDirectory = Path.GetDirectoryName(strFileName);
-                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/ConcSimulator", "DocumentPath", strDirectory);
+                XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config", "ConcSimulator_DocumentPath", strDirectory);
             }
             StreamWriter sw = new StreamWriter(strFileName, false);
             for (int i = 0; i < tbDocument.Rows.Count; i++)

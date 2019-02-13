@@ -33,8 +33,8 @@ namespace ElectricPowerDebuger
 
             XmlHelper.CheckXmlFile(SystemConfigPath);
 
-            combProtoVer.Text = XmlHelper.GetNodeDefValue(SystemConfigPath, "Config/Global/ProtocolVer", "北网-版本");
-            chkAutoSave.Checked = (XmlHelper.GetNodeDefValue(SystemConfigPath, "Config/Global/AutoSaveLog", "false") == "true" ? true : false);
+            combProtoVer.Text = XmlHelper.GetNodeDefValue(SystemConfigPath, "Config/ProtocolVer", "北网-版本");
+            chkAutoSave.Checked = (XmlHelper.GetNodeDefValue(SystemConfigPath, "Config/AutoSaveLog", "false") == "true" ? true : false);
         }
 
         private void combProtoVer_SelectedIndexChanged(object sender, EventArgs e)
@@ -44,7 +44,7 @@ namespace ElectricPowerDebuger
                 return;
             }
 
-            XmlHelper.SetNodeValue(SystemConfigPath, "Config/Global", "ProtocolVer", combProtoVer.Text);
+            XmlHelper.SetNodeValue(SystemConfigPath, "Config", "ProtocolVer", combProtoVer.Text);
 
             this.tabPage1.Controls.Remove(concSimulatorCurrent);
 
@@ -70,7 +70,7 @@ namespace ElectricPowerDebuger
         private void chkAutoSave_CheckedChanged(object sender, EventArgs e)
         {
             string isAutoSave = chkAutoSave.Checked ? "true" : "false";
-            XmlHelper.SetNodeValue(SystemConfigPath, "Config/Global", "AutoSaveLog", isAutoSave);
+            XmlHelper.SetNodeValue(SystemConfigPath, "Config", "AutoSaveLog", isAutoSave);
 
             if(LogAutoSaveStateChanged != null)
             {
