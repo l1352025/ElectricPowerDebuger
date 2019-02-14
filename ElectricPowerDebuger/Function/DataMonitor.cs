@@ -653,14 +653,8 @@ namespace ElectricPowerDebuger.Function
         {
             //XmlHelper.SetNodeValue(FrmMain.SystemConfigPath, "/Config/DataMonitor", "ChanelGrp2", combChanel2.SelectedIndex.ToString());
 
-            if(combChanel2.SelectedIndex == 0)
-            {
-                SetRfChanel(ChanelMode.SendAndReceive, 0, 4897, 4897);
-            }
-            else 
-            {
-                SetRfChanel(ChanelMode.SendAndReceive, 0, 4847, 4847);
-            }
+            ushort freq = Convert.ToUInt16(combChanel2.Text.Split(' ')[0].Replace(".", ""));
+            SetRfChanel(ChanelMode.SendAndReceive, 0, freq, freq);
         }
 
         private void combSpeed_SelectedIndexChanged(object sender, EventArgs e)
@@ -1497,6 +1491,10 @@ namespace ElectricPowerDebuger.Function
                 _wirelessLog = null;
             }
             _thrTransceiver.Abort();
+            if(_scom != null)
+            {
+                _scom.Close();
+            }
         }
         #endregion
     }

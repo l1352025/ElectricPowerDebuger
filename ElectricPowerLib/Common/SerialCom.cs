@@ -186,7 +186,8 @@ namespace ElectricPowerLib.Common
             if (_keepReading)
             {
                 _keepReading = false;
-                thread.Join(); //等待thread线程终止
+                //thread.Join(); //等待thread线程终止
+                thread.Abort();
                 thread = null;
             }
         }
