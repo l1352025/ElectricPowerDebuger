@@ -17,7 +17,7 @@ namespace ElectricPowerDebuger
 
         private static Control concSimulatorCurrent = new ConcSimulator_North();
         private static Control dataMonitor = new DataMonitor();
-        private static Control logManager = new LogManager();
+        //private static Control logManager = new LogManager();
 
         public delegate void FormEventNotify(string msg);
         //public static event FormEventNotify ProtocolVerChanged;
@@ -29,7 +29,7 @@ namespace ElectricPowerDebuger
             this.Text = Application.ProductName + "_Ver" + Application.ProductVersion + "   " + Application.CompanyName;
             this.tabPage1.Controls.Add(concSimulatorCurrent);
             this.tabPage2.Controls.Add(dataMonitor);
-            this.tabPage3.Controls.Add(logManager);
+            //this.tabPage3.Controls.Add(logManager);
 
             XmlHelper.CheckXmlFile(SystemConfigPath);
 

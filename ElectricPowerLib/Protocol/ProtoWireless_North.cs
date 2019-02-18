@@ -27,7 +27,7 @@ namespace ElectricPowerLib.Protocol
 #endif
     {
         public const ushort FrameHeader = 0xAA55;       // 帧头 55AA
-        public const byte FrameFixedLen = 8;            // 帧头，Rssi,长度,信道号,phy帧头校验,Mac帧(>18),phy载荷校验
+        public const byte FrameFixedLen = 15;           // 帧头，Rssi,长度,信道号,phy帧头校验,Mac帧(>18),phy载荷校验
         public const byte LongAddrSize = 6;             // 地址的长度
 
         public delegate TreeNode ExplainCallback(byte[] buf);

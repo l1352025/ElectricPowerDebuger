@@ -637,6 +637,9 @@ namespace ElectricPowerDebuger.Function
             }
         }
 
+        #endregion 
+
+        #region 水表监控-信道/速率设置
         private enum ChanelMode
         {
             CommonAndWork = 0,
@@ -1293,6 +1296,8 @@ namespace ElectricPowerDebuger.Function
                 IsScrollToEnd = true;
                 btScroll.Text = "停止滚动";
                 btScroll.ForeColor = Color.Green;
+
+                if (lvDataList.Items.Count == 0) return;
 
                 lvDataList.EnsureVisible(lvDataList.Items.Count-1);
             }

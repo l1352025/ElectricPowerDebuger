@@ -8,15 +8,17 @@ namespace ElectricPowerLib.Common
 {
     public class FilePacket
     {
+        private readonly byte[] _headerBuffer;
         private byte[] _dataBuffer;
         private byte[] _pktMissBitFlags;
         private int _pktMissCnt;
         private List<int> _pktMissList;
-
+        
         public string FileName { get; private set; }
         public int FileSize { get; private set; }
         public int FileKbSize { get; private set; }
         public int FileCrc16 { get; private set; }
+        public int FileSum16 { get; private set; }
         public int PacketSize { get; private set; }
         public int PacketCount { get; private set; }
         public int LastPktSize { get; private set; }
@@ -24,6 +26,7 @@ namespace ElectricPowerLib.Common
         public int PktSendCnt { get; set; }
         public string Version { get; set; }
         public int VersionCrc16 { get; set; }
+        public byte[] FileHeader { get { return _headerBuffer; } }
 
         public enum FindMode
         {
@@ -54,12 +57,17 @@ namespace ElectricPowerLib.Common
             _pktMissBitFlags = new byte[(PacketCount + 7) / 8];
             ClearPacketMissingBitFlags();
 
+            _headerBuffer = new byte[packetStartIndex];
+            fs.Seek(0, SeekOrigin.Begin);
+            fs.Read(_headerBuffer, 0, _headerBuffer.Length);
+
             _dataBuffer = new byte[FileSize];
             fs.Seek(packetStartIndex, SeekOrigin.Begin);
             fs.Read(_dataBuffer, 0, _dataBuffer.Length);
             fs.Close();
 
             FileCrc16 = Util.GetCRC16(_dataBuffer, 0, _dataBuffer.Length);
+            FileSum16 = Util.GetChecksum16(_dataBuffer, 0, _dataBuffer.Length);
         }
 
         public int CopyPacketToBuffer(byte[] dstBuffer, int dstIndex, int packetIndex)
@@ -93,7 +101,7 @@ namespace ElectricPowerLib.Common
             }
         }
 
-        public string GetString(string strPrefix, string strSuffix, FindMode findMode, int offset)
+        public string GetStringFromDataBuffer(string strPrefix, string strSuffix, FindMode findMode, int offset)
         {
             string strFind = "";
             int indexStart = -1, indexEnd = -1;

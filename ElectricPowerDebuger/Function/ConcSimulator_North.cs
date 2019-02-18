@@ -1414,15 +1414,15 @@ namespace ElectricPowerDebuger.Function
 
                             if (fileFlg == 3)
                             {
-                                info = _upgradeFile.GetString("SRWF-", "", FilePacket.FindMode.End, 3072);
+                                info = _upgradeFile.GetStringFromDataBuffer("SRWF-", "", FilePacket.FindMode.End, 3072);
                             }
                             else if (fileFlg == 8)
                             {
-                                info = _upgradeFile.GetString("SRWF-", "", FilePacket.FindMode.Begin, 1024);
+                                info = _upgradeFile.GetStringFromDataBuffer("SRWF-", "", FilePacket.FindMode.Begin, 1024);
                             }
                             else
                             {
-                                info = _upgradeFile.GetString("SRWF-", "", FilePacket.FindMode.Begin, _upgradeFile.FileSize);
+                                info = _upgradeFile.GetStringFromDataBuffer("SRWF-", "", FilePacket.FindMode.Begin, _upgradeFile.FileSize);
                             }
 
                             if (info != "")

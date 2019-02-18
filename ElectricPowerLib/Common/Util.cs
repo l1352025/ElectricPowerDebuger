@@ -93,7 +93,7 @@ namespace ElectricPowerLib.Common
         {
             string strResult = "";
             
-            if(DataByte == null)
+            if(DataByte == null || iStart + iLength > DataByte.Length || iStart < 0)
             {
                 return strResult;
             }
@@ -258,6 +258,25 @@ namespace ElectricPowerLib.Common
         public static byte GetChecksum(byte[] buffer, int index, int length)
         {
             byte sum = 0;
+
+            if (buffer.Length < index + length) throw new Exception("索引+长度 超出了buffer的大小");
+
+            for (int i = 0; i < length; i++)
+            {
+                sum += buffer[i + index];
+            }
+
+            return sum;
+        }
+
+        public static ushort GetChecksum16(string str)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(str);
+            return GetChecksum16(bytes, 0, bytes.Length);
+        }
+        public static ushort GetChecksum16(byte[] buffer, int index, int length)
+        {
+            ushort sum = 0;
 
             if (buffer.Length < index + length) throw new Exception("索引+长度 超出了buffer的大小");
 
