@@ -25,22 +25,24 @@ namespace ElectricPowerLib.Common
         public bool IsNoResponse;
         public CommandHandler SendFunc;
         public CommandHandler RecvFunc;
+        public CommandHandler TimeoutFunc;
 
         public Command()
-            : this(null, null, null, 0, 1)
+            : this(null, null, null, null, 0, 1)
         {
         }
         public Command(string cmdName)
-            : this(cmdName, null, null, 0, 1)
+            : this(cmdName, null, null, null, 0, 1)
         {
         }
-        public Command(string cmdName, CommandHandler sendFunc, CommandHandler recvFunc, int timeOut, int retryTimes)
+        public Command(string cmdName, CommandHandler sendFunc, CommandHandler recvFunc, CommandHandler timeoutFunc, int timeOut, int retryTimes)
         {
             Name = cmdName;
             TimeWaitMS = timeOut;
             RetryTimes = retryTimes;
             SendFunc = sendFunc;
             RecvFunc = recvFunc;
+            TimeoutFunc = timeoutFunc;
             Params = new List<object>();
             TxCnt = 0;
             Comment = "";

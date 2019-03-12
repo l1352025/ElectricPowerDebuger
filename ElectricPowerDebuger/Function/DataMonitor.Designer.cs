@@ -94,6 +94,8 @@
             this.colDate = new System.Data.DataColumn();
             this.colTime = new System.Data.DataColumn();
             this.colPacket = new System.Data.DataColumn();
+            this.label14 = new System.Windows.Forms.Label();
+            this.cbxSyncWord = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -147,11 +149,13 @@
             this.splitContainer2.Panel1.Controls.Add(this.btOpenPort2);
             this.splitContainer2.Panel1.Controls.Add(this.btOpenPort);
             this.splitContainer2.Panel1.Controls.Add(this.combChanel2);
+            this.splitContainer2.Panel1.Controls.Add(this.cbxSyncWord);
             this.splitContainer2.Panel1.Controls.Add(this.combSpeed);
             this.splitContainer2.Panel1.Controls.Add(this.cmbChanel);
             this.splitContainer2.Panel1.Controls.Add(this.combPort2);
             this.splitContainer2.Panel1.Controls.Add(this.lbChanel);
             this.splitContainer2.Panel1.Controls.Add(this.cmbPort);
+            this.splitContainer2.Panel1.Controls.Add(this.label14);
             this.splitContainer2.Panel1.Controls.Add(this.label12);
             this.splitContainer2.Panel1.Controls.Add(this.label9);
             this.splitContainer2.Panel1.Controls.Add(this.label11);
@@ -719,6 +723,27 @@
             this.colPacket.ColumnName = "原始报文";
             this.colPacket.DataType = typeof(byte[]);
             // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(668, 35);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(53, 12);
+            this.label14.TabIndex = 1;
+            this.label14.Text = "同步字：";
+            // 
+            // cbxSyncWord
+            // 
+            this.cbxSyncWord.FormattingEnabled = true;
+            this.cbxSyncWord.Items.AddRange(new object[] {
+            "98 F3",
+            "96 F4"});
+            this.cbxSyncWord.Location = new System.Drawing.Point(718, 31);
+            this.cbxSyncWord.Name = "cbxSyncWord";
+            this.cbxSyncWord.Size = new System.Drawing.Size(57, 20);
+            this.cbxSyncWord.TabIndex = 2;
+            this.cbxSyncWord.SelectedIndexChanged += new System.EventHandler(this.cbxSyncWord_SelectedIndexChanged);
+            // 
             // DataMonitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -810,5 +835,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ComboBox cbxSyncWord;
+        private System.Windows.Forms.Label label14;
     }
 }

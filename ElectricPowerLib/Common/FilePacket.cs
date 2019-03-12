@@ -140,7 +140,7 @@ namespace ElectricPowerLib.Common
 
         public void AddPacketMissingBitFlags(byte[] bitFlags, int index, int byteCnt)
         {
-            if (_pktMissBitFlags.Length != (index + byteCnt)
+            if (_pktMissBitFlags.Length != byteCnt
                 || bitFlags.Length < index + byteCnt)
             {
                 throw new Exception("缺包数位标记数组长度错误！");
@@ -169,7 +169,7 @@ namespace ElectricPowerLib.Common
 
             for (int i = 0; i < _pktMissBitFlags.Length; i++)
             {
-                aByte = _pktMissBitFlags[i++];
+                aByte = _pktMissBitFlags[i];
 
                 if (aByte == 0xFF)
                 {
@@ -203,7 +203,7 @@ namespace ElectricPowerLib.Common
 
             for (int i = index; i < bitFlags.Length ; i++)
             {
-                aByte = bitFlags[i++];
+                aByte = bitFlags[i];
 
                 if (missFlag == 0 && aByte == 0xFF)
                 {

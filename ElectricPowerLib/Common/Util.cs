@@ -192,15 +192,17 @@ namespace ElectricPowerLib.Common
 
             for (int i = index; i < bitFlags.Length; i++)
             {
-                aByte = bitFlags[i++];
+                aByte = bitFlags[i];
 
-                if (bitFlag == 0 && aByte == 0xFF)
+                if (aByte == 0xFF && bitIdx <= maxCnt - 8)
                 {
                     bitIdx += 8;
+                    cnt += (bitFlag == 1 ? 8 : 0);
                 }
-                else if (bitFlag == 1 && aByte == 0x00)
+                else if (aByte == 0x00 && bitIdx <= maxCnt - 8)
                 {
                     bitIdx += 8;
+                    cnt += (bitFlag == 0 ? 8 : 0);
                 }
                 else
                 {
@@ -213,6 +215,12 @@ namespace ElectricPowerLib.Common
                         aByte >>= 1;
                         bitIdx++;
                     }
+                }
+
+                if (bitIdx >= maxCnt)
+                {
+                    cnt = (cnt > maxCnt ? maxCnt : cnt);
+                    break;
                 }
             }
 

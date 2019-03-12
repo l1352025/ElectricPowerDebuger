@@ -44,7 +44,8 @@ namespace ElectricPowerDebuger.Function
             设置信道组,
             模块版本检测,
             设置监控信道,
-            设置监控速率
+            设置监控速率,
+            设置监控同步字
         };
         public class Command
         {
@@ -639,7 +640,7 @@ namespace ElectricPowerDebuger.Function
 
         #endregion 
 
-        #region 水表监控-信道/速率设置
+        #region 水表监控-信道/速率/同步字设置
         private enum ChanelMode
         {
             CommonAndWork = 0,
@@ -671,7 +672,12 @@ namespace ElectricPowerDebuger.Function
                 SetRfBitrate(RfSpeed.RF_25K, RfSpeed.RF_25K);
             }
         }
-
+        private void cbxSyncWord_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            byte sync1 = Convert.ToByte(cbxSyncWord.Text.Trim().Split(' ')[0], 16);
+            byte sync2 = Convert.ToByte(cbxSyncWord.Text.Trim().Split(' ')[1], 16);
+            SetRfSyncWord(sync1, sync2);
+        }
 
         /// <summary>
         /// 设置RF信道
@@ -740,6 +746,36 @@ namespace ElectricPowerDebuger.Function
             TempBuf[index++] = 0xCC;    // 帧尾
 
             Cmd.Type = CmdType.设置监控速率;
+            Cmd.Params = new byte[index];
+            Array.Copy(TempBuf, 0, Cmd.Params, 0, Cmd.Params.Length);
+            Cmd.WaitTime = 300;
+            Cmd.RetryTimes = 1;
+            Cmd.IsEnable = true;
+        }
+        /// <summary>
+        /// 设置RF同步字
+        /// </summary>
+        /// <param name="sync1">同步字1</param>
+        /// <param name="sync2">同步字2</param>
+        private void SetRfSyncWord(byte sync1, byte sync2)
+        {
+            int index = 0;
+            Command Cmd = CmdWater;
+
+            if (_scom.IsOpen == false || Cmd.Type != CmdType.空闲)
+            {
+                return;
+            }
+
+            TempBuf[index++] = 0xAA;    // 帧头
+            TempBuf[index++] = 0xBB;
+            TempBuf[index++] = 0x03;    // 数据域长度：先填0
+            TempBuf[index++] = 0x05;    // 命令字
+            TempBuf[index++] = sync1;
+            TempBuf[index++] = sync2;
+            TempBuf[index++] = 0xCC;    // 帧尾
+
+            Cmd.Type = CmdType.设置监控同步字;
             Cmd.Params = new byte[index];
             Array.Copy(TempBuf, 0, Cmd.Params, 0, Cmd.Params.Length);
             Cmd.WaitTime = 300;
@@ -1502,5 +1538,6 @@ namespace ElectricPowerDebuger.Function
             }
         }
         #endregion
+
     }
 }
