@@ -249,6 +249,30 @@ namespace ElectricPowerLib.Protocol
 
         #region 协议帧解析
 
+        // 解析 仪表类型名
+        public static string GetMeterTypeName(byte typeCode)
+        {
+            string typeName = "";
+
+            switch(typeCode)
+            {
+                case 0x10: typeName = "冷水水表"; break;
+                case 0x11: typeName = "热水水表"; break;
+                case 0x12: typeName = "直饮水水表"; break;
+                case 0x13: typeName = "中水水表"; break;
+                case 0x19: typeName = "电子水表"; break;
+                case 0x20: typeName = "热量表(计热)"; break;
+                case 0x21: typeName = "热量表(计冷)"; break;
+                case 0x30: typeName = "燃气表"; break;
+                case 0x40: typeName = "其他仪表"; break;
+                default: 
+                    typeName = "未知仪表"; 
+                    break;
+            }
+
+            return typeName;
+        }
+
         // 解析 数据项类型
         public static string GetDataType(FrameFormat frame)
         {
@@ -379,6 +403,10 @@ namespace ElectricPowerLib.Protocol
             {
                 return parentNode;
             }
+
+            // parentNode--仪表类型
+            strTmp = "仪表类型：" + frame.MeterType.ToString("X2") + " " + GetMeterTypeName(frame.MeterType);
+            parentNode.Nodes.Add(strTmp);
 
             // parentNode--通信地址
             strTmp = "通信地址：" + Util.GetStringHexFromBytes(frame.DevAddr, 0, LongAddrSize, "", true);

@@ -11,7 +11,6 @@ namespace ElectricPowerLib.Common
         private readonly byte[] _headerBuffer;
         private byte[] _dataBuffer;
         private byte[] _pktMissBitFlags;
-        private int _pktMissCnt;
         private List<int> _pktMissList;
         
         public string FileName { get; private set; }
@@ -22,6 +21,7 @@ namespace ElectricPowerLib.Common
         public int PacketSize { get; private set; }
         public int PacketCount { get; private set; }
         public int LastPktSize { get; private set; }
+        public int PktMissCnt { get; private set; }
         public int PktCurrIndex { get; set; }
         public int PktSendCnt { get; set; }
         public string Version { get; set; }
@@ -52,7 +52,7 @@ namespace ElectricPowerLib.Common
             PacketSize = packetSize;
             PacketCount = (FileSize + packetSize - 1)/packetSize;
             LastPktSize = ((FileSize % packetSize != 0) ? (FileSize % packetSize) : packetSize);
-            _pktMissCnt = PacketCount;
+            PktMissCnt = PacketCount;
             _pktMissList = new List<int>();
             _pktMissBitFlags = new byte[(PacketCount + 7) / 8];
             ClearPacketMissingBitFlags();
@@ -136,6 +136,7 @@ namespace ElectricPowerLib.Common
             {
                 _pktMissBitFlags[i] = 0xFF;
             }
+            PktMissCnt = PacketCount;
         }
 
         public void AddPacketMissingBitFlags(byte[] bitFlags, int index, int byteCnt)
@@ -150,6 +151,8 @@ namespace ElectricPowerLib.Common
             {
                 _pktMissBitFlags[i] &= bitFlags[i + index];
             }
+
+            PktMissCnt = 0xFFFF;   // cnt unknown
         }
 
         public List<int> GetPacketMissingList()
@@ -158,7 +161,7 @@ namespace ElectricPowerLib.Common
             byte aByte;
             int pktIdx = 0;
 
-            if(_pktMissCnt == PacketCount)
+            if(PktMissCnt == PacketCount)
             {
                 for(int i = 0; i < PacketCount; i++)
                 {
@@ -189,7 +192,7 @@ namespace ElectricPowerLib.Common
                 }
             }
 
-            _pktMissCnt = list.Count;
+            PktMissCnt = list.Count;
 
             return list;
         }
@@ -231,6 +234,8 @@ namespace ElectricPowerLib.Common
 
             currMissCnt = list.Count;
             totalMissList = _pktMissList;
+
+            PktMissCnt = _pktMissList.Count;
         }
 
     }

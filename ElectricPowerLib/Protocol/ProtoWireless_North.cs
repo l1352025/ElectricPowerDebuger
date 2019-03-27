@@ -2185,7 +2185,10 @@ namespace ElectricPowerLib.Protocol
                 payloadNode.Nodes.Add(strTmp);
                 index++;
 
-                index += 2;     // 跳过 0x68 + 0x10
+                index += 1;     // 跳过 0x68
+                strTmp = "仪表类型：" + buf[index].ToString("X2") + " " + ProtoCJT188_04.GetMeterTypeName(buf[index]);
+                payloadNode.Nodes.Add(strTmp);
+                index += 1;
 
                 strTmp = "水表地址：" + Util.GetStringHexFromBytes(buf, index, 7, "", true);
                 payloadNode.Nodes.Add(strTmp);
