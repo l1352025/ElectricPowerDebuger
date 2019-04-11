@@ -40,11 +40,13 @@
             this.btOpenPort2 = new System.Windows.Forms.Button();
             this.btOpenPort = new System.Windows.Forms.Button();
             this.combChanel2 = new System.Windows.Forms.ComboBox();
+            this.cbxSyncWord = new System.Windows.Forms.ComboBox();
             this.combSpeed = new System.Windows.Forms.ComboBox();
             this.cmbChanel = new System.Windows.Forms.ComboBox();
             this.combPort2 = new System.Windows.Forms.ComboBox();
             this.lbChanel = new System.Windows.Forms.Label();
             this.cmbPort = new System.Windows.Forms.ComboBox();
+            this.label14 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -94,8 +96,6 @@
             this.colDate = new System.Data.DataColumn();
             this.colTime = new System.Data.DataColumn();
             this.colPacket = new System.Data.DataColumn();
-            this.label14 = new System.Windows.Forms.Label();
-            this.cbxSyncWord = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -257,14 +257,26 @@
             this.combChanel2.FormattingEnabled = true;
             this.combChanel2.Items.AddRange(new object[] {
             "484.7 (公共)",
-            "489.7 (App时Rx)",
-            "486.9 (Boot时Rx)",
-            "489.2 (Boot时Tx)"});
+            "489.7 (App时-->)",
+            "486.6 (Boot时-->)",
+            "489.2 (Boot时<--)"});
             this.combChanel2.Location = new System.Drawing.Point(461, 33);
             this.combChanel2.Name = "combChanel2";
             this.combChanel2.Size = new System.Drawing.Size(102, 20);
             this.combChanel2.TabIndex = 2;
             this.combChanel2.SelectedIndexChanged += new System.EventHandler(this.combChanel2_SelectedIndexChanged);
+            // 
+            // cbxSyncWord
+            // 
+            this.cbxSyncWord.FormattingEnabled = true;
+            this.cbxSyncWord.Items.AddRange(new object[] {
+            "98 F3",
+            "96 F4"});
+            this.cbxSyncWord.Location = new System.Drawing.Point(718, 31);
+            this.cbxSyncWord.Name = "cbxSyncWord";
+            this.cbxSyncWord.Size = new System.Drawing.Size(57, 20);
+            this.cbxSyncWord.TabIndex = 2;
+            this.cbxSyncWord.SelectedIndexChanged += new System.EventHandler(this.cbxSyncWord_SelectedIndexChanged);
             // 
             // combSpeed
             // 
@@ -347,6 +359,15 @@
             this.cmbPort.Size = new System.Drawing.Size(60, 20);
             this.cmbPort.TabIndex = 2;
             this.cmbPort.Click += new System.EventHandler(this.cmbPort_Click);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(668, 35);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(53, 12);
+            this.label14.TabIndex = 1;
+            this.label14.Text = "同步字：";
             // 
             // label12
             // 
@@ -722,27 +743,6 @@
             // 
             this.colPacket.ColumnName = "原始报文";
             this.colPacket.DataType = typeof(byte[]);
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(668, 35);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(53, 12);
-            this.label14.TabIndex = 1;
-            this.label14.Text = "同步字：";
-            // 
-            // cbxSyncWord
-            // 
-            this.cbxSyncWord.FormattingEnabled = true;
-            this.cbxSyncWord.Items.AddRange(new object[] {
-            "98 F3",
-            "96 F4"});
-            this.cbxSyncWord.Location = new System.Drawing.Point(718, 31);
-            this.cbxSyncWord.Name = "cbxSyncWord";
-            this.cbxSyncWord.Size = new System.Drawing.Size(57, 20);
-            this.cbxSyncWord.TabIndex = 2;
-            this.cbxSyncWord.SelectedIndexChanged += new System.EventHandler(this.cbxSyncWord_SelectedIndexChanged);
             // 
             // DataMonitor
             // 

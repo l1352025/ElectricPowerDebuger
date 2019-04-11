@@ -1659,13 +1659,13 @@ namespace ElectricPowerLib.Protocol
                 strTmp = "命令标识：" + GetLowPowerMeterCmdName(buf[index]) + " (0x" + buf[index].ToString("X2") + ")";
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
-                strTmp = "工作信道组：" + buf[index];
+                strTmp = "信道组号：" + buf[index];
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
-                strTmp = "时隙号：" + (buf[index] + buf[index + 1] * 256);
+                strTmp = "时隙层次：" + (buf[index] + buf[index + 1] * 256);
                 payloadNode.Nodes.Add(strTmp);
                 index += 2;
-                strTmp = "硬件标识：" + buf[index].ToString("X2");
+                strTmp = "硬件版本：" + buf[index].ToString("X2");
                 payloadNode.Nodes.Add(strTmp);
                 index += 1;
                 strTmp = "软件版本：" + buf[index].ToString("X2");
