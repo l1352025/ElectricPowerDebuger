@@ -256,10 +256,10 @@
             // 
             this.combChanel2.FormattingEnabled = true;
             this.combChanel2.Items.AddRange(new object[] {
-            "484.7 (公共)",
-            "489.7 (App时-->)",
-            "486.6 (Boot时-->)",
-            "489.2 (Boot时<--)"});
+            "484.7 公共",
+            "489.7 App Tx",
+            "486.6 Boot Tx",
+            "489.2 Boot Rx"});
             this.combChanel2.Location = new System.Drawing.Point(461, 33);
             this.combChanel2.Name = "combChanel2";
             this.combChanel2.Size = new System.Drawing.Size(102, 20);
@@ -284,9 +284,9 @@
             this.combSpeed.Items.AddRange(new object[] {
             "10K",
             "25K"});
-            this.combSpeed.Location = new System.Drawing.Point(606, 32);
+            this.combSpeed.Location = new System.Drawing.Point(610, 32);
             this.combSpeed.Name = "combSpeed";
-            this.combSpeed.Size = new System.Drawing.Size(51, 20);
+            this.combSpeed.Size = new System.Drawing.Size(44, 20);
             this.combSpeed.TabIndex = 2;
             this.combSpeed.SelectedIndexChanged += new System.EventHandler(this.combSpeed_SelectedIndexChanged);
             // 
@@ -372,7 +372,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(569, 36);
+            this.label12.Location = new System.Drawing.Point(573, 36);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(41, 12);
             this.label12.TabIndex = 1;
