@@ -30,8 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>.\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -42,12 +48,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Command.cs" />
+    <Compile Include="Common\DataParse.cs" />
     <Compile Include="Common\DoubleBufferedHelper.cs" />
     <Compile Include="Common\FilePacket.cs" />
     <Compile Include="Common\LogHelper.cs" />
     <Compile Include="Common\SerialCom.cs" />
     <Compile Include="Common\Util.cs" />
     <Compile Include="Common\XmlHelper.cs" />
+    <Compile Include="Database\AccessHelper.cs" />
+    <Compile Include="Database\SqlDbHelper.cs" />
+    <Compile Include="Database\SQLiteHelper.cs" />
+    <Compile Include="Dialog\InputTwoParamDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+	<Compile Include="Dialog\InputTwoParamDlg.Designer.cs">
+      <DependentUpon>InputTwoParamDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\TimeoutMsgBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+	<Compile Include="Dialog\TimeoutMsgBox.Designer.cs">
+      <DependentUpon>TimeoutMsgBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\ProtoCJT188_04.cs" />
     <Compile Include="Protocol\ProtoDLT645_07.cs" />
@@ -57,18 +79,23 @@
     <Compile Include="Protocol\ProtoWireless_NiBoEr.cs" />
     <Compile Include="Protocol\ProtoWireless_North.cs" />
     <Compile Include="Protocol\ProtoWireless_South.cs" />
+	<EmbeddedResource Include="Dialog\InputTwoParamDlg.resx">
+      <DependentUpon>InputTwoParamDlg.cs</DependentUpon>
+    </EmbeddedResource>
+	<EmbeddedResource Include="Dialog\TimeoutMsgBox.resx">
+      <DependentUpon>TimeoutMsgBox.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Device\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /y $(TargetPath) $(ProjectDir)\..\ElectricPowerDebuger\lib\
+    <PostBuildEvent>xcopy  $(TargetPath) $(ProjectDir)\..\ElectricPowerDebuger\lib\ /y /d
+xcopy  $(TargetPath) E:\code\00_usr_lib\ /y /d
 
 if exist $(ProjectDir)\..\..\WaterMeter_WirelessUpgrade\WirelessUpgrade\lib\ (
     copy /y $(TargetPath) $(ProjectDir)\..\..\WaterMeter_WirelessUpgrade\WirelessUpgrade\lib\
-)
-
-if exist $(ProjectDir)\..\..\WaterMeterWirelessUpgrade\WirelessUpgrade\lib\ (
-    copy /y $(TargetPath) $(ProjectDir)\..\..\WaterMeterWirelessUpgrade\WirelessUpgrade\lib\
 )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
