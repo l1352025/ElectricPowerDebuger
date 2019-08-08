@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Command.cs" />
-    <Compile Include="Common\DataParse.cs" />
     <Compile Include="Common\DoubleBufferedHelper.cs" />
     <Compile Include="Common\FilePacket.cs" />
     <Compile Include="Common\LogHelper.cs" />
@@ -58,16 +57,17 @@
     <Compile Include="Database\AccessHelper.cs" />
     <Compile Include="Database\SqlDbHelper.cs" />
     <Compile Include="Database\SQLiteHelper.cs" />
+    <Compile Include="DataParser\DataParser.cs" />
     <Compile Include="Dialog\InputTwoParamDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-	<Compile Include="Dialog\InputTwoParamDlg.Designer.cs">
+    <Compile Include="Dialog\InputTwoParamDlg.Designer.cs">
       <DependentUpon>InputTwoParamDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialog\TimeoutMsgBox.cs">
       <SubType>Form</SubType>
     </Compile>
-	<Compile Include="Dialog\TimeoutMsgBox.Designer.cs">
+    <Compile Include="Dialog\TimeoutMsgBox.Designer.cs">
       <DependentUpon>TimeoutMsgBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -79,10 +79,10 @@
     <Compile Include="Protocol\ProtoWireless_NiBoEr.cs" />
     <Compile Include="Protocol\ProtoWireless_North.cs" />
     <Compile Include="Protocol\ProtoWireless_South.cs" />
-	<EmbeddedResource Include="Dialog\InputTwoParamDlg.resx">
+    <EmbeddedResource Include="Dialog\InputTwoParamDlg.resx">
       <DependentUpon>InputTwoParamDlg.cs</DependentUpon>
     </EmbeddedResource>
-	<EmbeddedResource Include="Dialog\TimeoutMsgBox.resx">
+    <EmbeddedResource Include="Dialog\TimeoutMsgBox.resx">
       <DependentUpon>TimeoutMsgBox.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>

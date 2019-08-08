@@ -7,7 +7,7 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using ElectricPowerLib.Common;
 
-namespace ElectricPowerLib.Common
+namespace ElectricPowerLib.DataParser
 {
     public enum DataType
     {
