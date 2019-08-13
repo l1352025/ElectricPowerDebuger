@@ -3,7 +3,7 @@ using System.Data;
 using System.Data.OleDb;
 using System.Collections;
 
-namespace ElectricPowerDebuger.Database
+namespace ElectricPowerLib.Database
 {
     public static class AccessHelper
     {

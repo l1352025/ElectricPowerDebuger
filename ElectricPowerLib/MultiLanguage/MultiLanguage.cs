@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace ElectricPowerDebuger.Common
+namespace ElectricPowerLib.MultiLanguage
 {
     public class LanguageDict
     {
-        // 自定义用户字典 zh-CN to en-US
+        /// <summary>
+        /// 中文->英文 字典定义示例: zh-CN to en-US
+        /// </summary>
         public static Dictionary<string, string> zh_CN_To_en_US = new Dictionary<string, string>()
         {
             // 界面
@@ -146,6 +148,16 @@ namespace ElectricPowerDebuger.Common
         public static string CurrentLanguage;
         public static Dictionary<string, string> CurrentResource;
         private static Dictionary<Object, string> DefaultResource = new Dictionary<Object, string>();
+
+        public MultiLanguage(Dictionary<string, string> dict_Zh_to_En)
+        {
+            if (dict_Zh_to_En == null)
+            {
+                throw new Exception("Dictionary<string, string> dict_Zh_to_En Can't be null !");
+            }
+
+            CurrentResource = dict_Zh_to_En;
+        }
         /// <summary>
         /// 初始化语言
         /// </summary>

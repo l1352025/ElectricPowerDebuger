@@ -5,7 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
 
-namespace ElectricPowerDebuger.Database
+namespace ElectricPowerLib.Database
 {   
     /// <summary>    
     /// 针对SQL Server数据库操作的通用类           

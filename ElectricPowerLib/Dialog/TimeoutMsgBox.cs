@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ElectricPowerDebuger.Dialog
+namespace ElectricPowerLib.Dialog
 {
     public partial class TimeoutMsgBox : Form
     {

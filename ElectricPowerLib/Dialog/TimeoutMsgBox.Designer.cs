@@ -1,4 +1,4 @@
-﻿namespace ElectricPowerDebuger.Dialog
+﻿namespace ElectricPowerLib.Dialog
 {
     partial class TimeoutMsgBox
     {

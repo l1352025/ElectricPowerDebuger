@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using SQLiteHelper = ElectricPowerLib.Database.SQLiteHelper;
 
 namespace ElectricPowerDebuger
 {

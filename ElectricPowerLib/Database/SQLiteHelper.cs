@@ -1,30 +1,63 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
+using System.Threading;
 
-namespace ElectricPowerDebuger.Database
+
+namespace ElectricPowerLib.Database
 {
-    class SQLiteHelper
+    public class SQLiteHelper
     {
-        /// <summary>
-        /// 连接字符串
-        /// </summary>
+        public enum SqlPoolSize
+        {
+            SQL_10w     = 100000,
+            SQL_20w     = 200000,
+            SQL_40w     = 400000,
+            SQL_60w     = 600000,
+            SQL_80w     = 800000
+        }
         private static string _connectionString;
+        private static SQLiteConnection _connectionCurrent;
+        private static SQLiteConnection _connectionDisk;
+        private static SQLiteConnection _connectionMemory;
+        private static ConcurrentQueue<SQLiteCommand> _queue1;
+        private static ConcurrentQueue<SQLiteCommand> _queue2;
+        private static ConcurrentQueue<SQLiteCommand> _currWriteQueue;
+        private static ConcurrentQueue<SQLiteCommand> _sqlCmdPool;
+        private static int _sqlCmdPoolSize;
+        private static Thread _threadWriteDB;
+        private static bool _isThreadWriteDbRuning;
+        private static bool _isClosingDB;
+        public string ConnectionString{ get {return _connectionString;} }
+        public SQLiteConnection ConnectionDisk { get { return _connectionDisk; } }
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="_connectionString">连接SQLite库字符串</param>
         public SQLiteHelper(string connStr)
+            : this(connStr, SqlPoolSize.SQL_40w)
         {
-            _connectionString = connStr;
         }
 
-        public SQLiteHelper(string datasource, string version, string password)
-            :this(string.Format("Data Source={0};Version={1};password={2}",datasource, version, password))
+        public SQLiteHelper(string connStr, SqlPoolSize sqlPoolSize)
         {
+            _connectionString = connStr;
+            _queue1 = new ConcurrentQueue<SQLiteCommand>();
+            _queue2 = new ConcurrentQueue<SQLiteCommand>();
+            _currWriteQueue = _queue1;
+            _sqlCmdPool = new ConcurrentQueue<SQLiteCommand>();
+            _sqlCmdPoolSize = (int)sqlPoolSize;
+
+            SQLiteCommand cmd;
+            for (int i = 0; i < _sqlCmdPoolSize; i++)
+            {
+                cmd = new SQLiteCommand();
+                _sqlCmdPool.Enqueue(cmd);
+            }
         }
 
         /// <summary>
@@ -52,10 +85,226 @@ namespace ElectricPowerDebuger.Database
                     con.Close();
                 }
             }
-            catch (Exception) { throw; }
+            catch (Exception) { return false; }
 
             return true;
         }
+
+        /// <summary>
+        /// 获取连接
+        /// </summary>
+        /// <returns>当前数据库连接</returns>
+        public SQLiteConnection OpenConnection()
+        {
+            try
+            {
+                if (_connectionCurrent == null)
+                {
+                    _connectionDisk = new SQLiteConnection(ConnectionString);
+                    _connectionCurrent = _connectionDisk;
+                    _connectionCurrent.Open();
+                }
+                if(_connectionCurrent.State != ConnectionState.Open)
+                {
+                    _connectionCurrent.Open();
+                }
+                return _connectionCurrent;
+            }
+            catch (Exception) { throw; }
+        }
+
+        /// <summary>
+        /// 关闭数据库连接
+        /// </summary>
+        public void CloseConnection()
+        {
+            try
+            {
+                if (_connectionMemory != null)
+                {
+                    _connectionMemory.Close();
+                    _connectionMemory = null;
+                }
+
+                if (_isThreadWriteDbRuning)
+                {
+                    StopWriteDbThread();
+                }
+                else if (_connectionDisk != null)
+                {
+                    _connectionDisk.Close();
+                    _connectionDisk = null;
+                }
+
+                _connectionCurrent = null;
+            }
+            catch (Exception) { throw; }
+        }
+
+        /// <summary>
+        /// 使用内存数据库
+        /// </summary>
+        public void MemoryDatabaseEnable()
+        {
+            try
+            {
+                if (_connectionMemory == null)
+                {
+                    _connectionMemory = new SQLiteConnection("Data Source = :memory:");
+                    _connectionCurrent = _connectionMemory;
+                    _connectionMemory.Open(); // allways open
+                    if (_connectionDisk == null)
+                    {
+                        _connectionDisk = new SQLiteConnection(ConnectionString);
+                    }
+                    if (_connectionDisk.State != ConnectionState.Open)
+                    {
+                        _connectionDisk.Open();
+                    }
+                    _connectionDisk.BackupDatabase(_connectionMemory, "main", "main", -1, null, -1);
+                    _connectionDisk.Close();
+
+                    StartWriteDbThread();
+                }
+            }
+            catch (Exception) { throw; }
+        }
+        /// <summary>
+        /// 禁用内存数据库
+        /// </summary>
+        public void MemoryDatabaseDisable()
+        {
+            try
+            {
+                MemoryDatabaseToDisk();
+
+                if (_connectionMemory != null)
+                {
+                    if (_connectionDisk.State != ConnectionState.Open)
+                    {
+                        _connectionDisk.Open();
+                    }
+                    _connectionCurrent = _connectionDisk;
+                    _connectionMemory.Close();
+                }
+            }
+            catch (Exception) { throw; }
+        }
+        /// <summary>
+        /// 备份内存数据库到磁盘
+        /// </summary>
+        public void MemoryDatabaseToDisk()
+        {
+            try
+            {
+                if (_connectionMemory != null && _isThreadWriteDbRuning == false)
+                {
+                    if (_connectionDisk == null)
+                    {
+                        _connectionDisk = new SQLiteConnection(ConnectionString);
+                    }
+                    if (_connectionMemory.State != ConnectionState.Open)
+                    {
+                        _connectionMemory.Open();
+                    }
+                    if (_connectionDisk.State != ConnectionState.Open)
+                    {
+                        _connectionDisk.Open();
+                    }
+                    _connectionMemory.BackupDatabase(_connectionDisk, "main", "main", -1, null, -1);
+                    _connectionDisk.Close();
+                }
+            }
+            catch (Exception) { throw; }
+        }
+
+        #region 非查询sql队列写数据库线程
+        /// <summary>
+        /// 启动写数据库线程
+        /// </summary>
+        private void StartWriteDbThread()
+        {
+            if (!_isThreadWriteDbRuning)
+            {
+                _isThreadWriteDbRuning = true;
+                _isClosingDB = false;
+                _threadWriteDB = new Thread(WriteSqlToDBTask);
+                _threadWriteDB.IsBackground = false;
+                _threadWriteDB.Start();
+            }
+        }
+        /// <summary>
+        /// 停止写数据库线程
+        /// </summary>
+        private void StopWriteDbThread()
+        {
+            if(_isThreadWriteDbRuning)
+            {
+                _isThreadWriteDbRuning = false;
+                _isClosingDB = true;
+                _threadWriteDB.Join();
+                _threadWriteDB = null;
+            }
+        }
+
+        /// <summary>
+        /// 写数据库线程
+        /// </summary>
+        private void WriteSqlToDBTask()
+        {
+            SQLiteTransaction trans;
+            SQLiteCommand cmd;
+            ConcurrentQueue<SQLiteCommand> currReadQueue;
+            int cnt = 0;
+            if (_connectionDisk == null)
+            {
+                _connectionDisk = new SQLiteConnection(ConnectionString);
+            }
+            if (_connectionDisk.State != ConnectionState.Open)
+            {
+                _connectionDisk.Open();
+            }
+
+            while (_isThreadWriteDbRuning || _queue1.Count > 0 || _queue2.Count > 0)
+            {
+                while (_currWriteQueue.Count < 20000 && cnt < 3 && _isClosingDB == false)
+                {
+                    Thread.Sleep(1000);
+                    cnt++;
+                }
+                cnt = 0;
+
+                currReadQueue = _currWriteQueue;
+                _currWriteQueue = (_currWriteQueue == _queue1 ? _queue2 : _queue1);
+
+                if (currReadQueue.Count == 0) continue;
+
+                trans = _connectionDisk.BeginTransaction();
+                while (currReadQueue.Count > 0 && currReadQueue.TryDequeue(out cmd))
+                {
+                    cmd.Connection = _connectionDisk;
+                    cmd.Transaction = trans;
+                    cmd.ExecuteNonQuery();
+
+                    cmd.Dispose();
+                }
+                trans.Commit();
+                GC.Collect();
+
+                if (_sqlCmdPool.Count < _sqlCmdPoolSize)
+                {
+                    for (int i = 0; i < _sqlCmdPoolSize - _sqlCmdPool.Count; i++)
+                    {
+                        cmd = new SQLiteCommand();
+                        _sqlCmdPool.Enqueue(cmd);
+                    }
+                }
+            }
+            
+            _connectionDisk.Close();
+            _connectionDisk = null;
+        }
+        #endregion
 
         /// <summary>
         /// 执行SQL命令 - 增、删、改
@@ -67,21 +316,67 @@ namespace ElectricPowerDebuger.Database
         {
             int affectRows = 0;
 
-            using (SQLiteConnection con = new SQLiteConnection(_connectionString))
+            try
             {
-                using (SQLiteCommand cmd = new SQLiteCommand(sqlText, con))
+                SQLiteConnection con = OpenConnection();
+                SQLiteCommand cmd = new SQLiteCommand(sqlText, con);
+
+                if (parameters != null && parameters.Length > 0) cmd.Parameters.AddRange(parameters);
+
+                affectRows = cmd.ExecuteNonQuery();
+
+                if (_connectionCurrent != _connectionDisk)
                 {
-                    try
+                    SQLiteCommand newCmd;
+                    if (_sqlCmdPool.TryDequeue(out newCmd) == false)
                     {
-                        if (parameters != null && parameters.Length > 0) cmd.Parameters.AddRange(parameters);
-
-                        con.Open();
-
-                        affectRows = cmd.ExecuteNonQuery();
+                        newCmd = (SQLiteCommand)cmd.Clone();
                     }
-                    catch (Exception) { throw; }
+                    newCmd.CommandText = cmd.CommandText;
+                    foreach (SQLiteParameter param in cmd.Parameters)
+                    {
+                        newCmd.Parameters.Add(param.Clone());
+                    }
+
+                    _currWriteQueue.Enqueue(newCmd);
                 }
             }
+            catch (Exception) { throw; }
+
+            return affectRows;
+        }
+        /// <summary>
+        /// 执行SQL命令 - 增、删、改
+        /// </summary>
+        /// <param name="cmd">已经设置好连接/命令字符串/参数/事务的命令</param>
+        /// <returns></returns>
+        public int ExecuteNonQuery(SQLiteCommand cmd)
+        {
+            int affectRows = 0;
+
+            try
+            {
+                affectRows = cmd.ExecuteNonQuery();
+
+                if (_connectionCurrent != _connectionDisk)
+                {
+                    SQLiteCommand newCmd;
+                    if (_sqlCmdPool.TryDequeue(out newCmd) == false)
+                    {
+                        newCmd = (SQLiteCommand)cmd.Clone();
+                    }
+                    newCmd.CommandText = cmd.CommandText;
+                    foreach (SQLiteParameter param in cmd.Parameters)
+                    {
+                        newCmd.Parameters.Add(param.Clone());
+                    }
+
+                    _currWriteQueue.Enqueue(newCmd);
+
+                    //_currWriteQueue.Enqueue((SQLiteCommand)cmd.Clone());
+                }
+            }
+            catch (Exception) { throw; }
 
             return affectRows;
         }
@@ -91,32 +386,70 @@ namespace ElectricPowerDebuger.Database
         /// <param name="list">key = sqlText, value = parameters</param>
         public void ExecuteNonQueryBatch(List< KeyValuePair<string, SQLiteParameter[]>> list)
         {
-            using (SQLiteConnection con = new SQLiteConnection(_connectionString))
+            try
             {
-                try
-                {
-                    con.Open();
-                }
-                catch (Exception) { throw; }
+                SQLiteConnection con = OpenConnection();
+                SQLiteTransaction trans = con.BeginTransaction();
+                SQLiteCommand cmd = new SQLiteCommand(con);
 
-                using (SQLiteTransaction trans = con.BeginTransaction())
+                foreach (var item in list)
                 {
-                    using (SQLiteCommand cmd = new SQLiteCommand(con))
+                    cmd.CommandText = item.Key;
+                    if (item.Value != null) cmd.Parameters.AddRange(item.Value);
+                    cmd.ExecuteNonQuery();
+
+                    if (_connectionCurrent != _connectionDisk)
                     {
-                        try
+                        SQLiteCommand newCmd;
+                        if (_sqlCmdPool.TryDequeue(out newCmd) == false)
                         {
-                            foreach (var item in list)
-                            {
-                                cmd.CommandText = item.Key;
-                                if (item.Value != null) cmd.Parameters.AddRange(item.Value);
-                                cmd.ExecuteNonQuery();
-                            }
-                            trans.Commit();
+                            newCmd = (SQLiteCommand)cmd.Clone();
                         }
-                        catch (Exception) { throw; }
+                        newCmd.CommandText = cmd.CommandText;
+                        foreach (SQLiteParameter param in cmd.Parameters)
+                        {
+                            newCmd.Parameters.Add(param.Clone());
+                        }
+
+                        _currWriteQueue.Enqueue(newCmd);
                     }
                 }
+                trans.Commit();
             }
+            catch (Exception) { throw; }
+        }
+        public void ExecuteNonQueryBatch(List<string> sqlTexts)
+        {
+            try
+            {
+                SQLiteConnection con = OpenConnection();
+                SQLiteTransaction trans = con.BeginTransaction();
+                SQLiteCommand cmd = new SQLiteCommand(con);
+
+                foreach (var item in sqlTexts)
+                {
+                    cmd.CommandText = item;
+                    cmd.ExecuteNonQuery();
+
+                    if (_connectionCurrent != _connectionDisk)
+                    {
+                        SQLiteCommand newCmd;
+                        if (_sqlCmdPool.TryDequeue(out newCmd) == false)
+                        {
+                            newCmd = (SQLiteCommand)cmd.Clone();
+                        }
+                        newCmd.CommandText = cmd.CommandText;
+                        foreach (SQLiteParameter param in cmd.Parameters)
+                        {
+                            newCmd.Parameters.Add(param.Clone());
+                        }
+
+                        _currWriteQueue.Enqueue(newCmd);
+                    }
+                }
+                trans.Commit();
+            }
+            catch (Exception) { throw; }
         }
 
         /// <summary>
@@ -127,15 +460,14 @@ namespace ElectricPowerDebuger.Database
         /// <param name="parameters">其他参数</param>
         public SQLiteDataReader ExecuteReader(string sqlText, params SQLiteParameter[] parameters)
         {
-            SQLiteConnection con = new SQLiteConnection(_connectionString);
-            SQLiteCommand cmd = new SQLiteCommand(sqlText, con);
             try
             {
+                SQLiteConnection con = OpenConnection();
+                SQLiteCommand cmd = new SQLiteCommand(sqlText, con);
+
                 if (parameters != null && parameters.Length > 0) cmd.Parameters.AddRange(parameters);
 
-                con.Open();
-
-                return cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                return cmd.ExecuteReader();
             }
             catch (Exception) { throw; }
         }
@@ -143,23 +475,18 @@ namespace ElectricPowerDebuger.Database
         public DataTable ExecuteReaderToDataTable(string sqlText, params SQLiteParameter[] parameters)
         {
             DataTable tb = new DataTable();
-
-            using (SQLiteConnection con = new SQLiteConnection(_connectionString))
+            
+            try
             {
-                using (SQLiteCommand cmd = new SQLiteCommand(sqlText, con))
-                {
-                    try
-                    {
-                        if (parameters != null && parameters.Length > 0) cmd.Parameters.AddRange(parameters);
+                SQLiteConnection con = OpenConnection();
+                SQLiteCommand cmd = new SQLiteCommand(sqlText, con);
 
-                        con.Open();
+                if (parameters != null && parameters.Length > 0) cmd.Parameters.AddRange(parameters);
 
-                        SQLiteDataAdapter adt = new SQLiteDataAdapter(cmd);
-                        adt.Fill(tb);
-                    }
-                    catch (Exception) { throw; }
-                }
+                SQLiteDataAdapter adt = new SQLiteDataAdapter(cmd);
+                adt.Fill(tb);
             }
+            catch (Exception) { throw; }
 
             return tb;
         }
@@ -172,28 +499,16 @@ namespace ElectricPowerDebuger.Database
         /// <param name="parameters">其他参数</param>
         public object ExecuteScalar(string sqlText, params SQLiteParameter[] parameters)
         {
-            using (SQLiteConnection con = new SQLiteConnection(_connectionString))
+            try
             {
-                using (SQLiteCommand cmd = new SQLiteCommand(sqlText, con))
-                {
-                    try
-                    {
-                        if (parameters != null && parameters.Length > 0) cmd.Parameters.AddRange(parameters);
+                SQLiteConnection con = OpenConnection();
+                SQLiteCommand cmd = new SQLiteCommand(sqlText, con);
 
-                        con.Open();
+                if (parameters != null && parameters.Length > 0) cmd.Parameters.AddRange(parameters);
 
-                        return cmd.ExecuteScalar();
-                    }
-                    catch (Exception) { throw; }
-                }
+                return cmd.ExecuteScalar();
             }
-        }
-
-        /// <summary>
-        /// 关闭数据库连接
-        /// </summary>
-        public void CloseConnection()
-        {
+            catch (Exception) { throw; }
         }
 
         /// <summary>

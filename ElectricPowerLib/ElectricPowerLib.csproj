@@ -70,6 +70,7 @@
     <Compile Include="Dialog\TimeoutMsgBox.Designer.cs">
       <DependentUpon>TimeoutMsgBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="MultiLanguage\MultiLanguage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\ProtoCJT188_04.cs" />
     <Compile Include="Protocol\ProtoDLT645_07.cs" />
