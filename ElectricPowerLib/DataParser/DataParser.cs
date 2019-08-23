@@ -90,8 +90,11 @@ namespace ElectricPowerLib.DataParser
             // 1.数据项: 回调函数解析
             if (this.showTpye == ShowType.DATA_ITEM)
             {
-                this.dataItem = new DataItem();
-
+                if (this.dataItem == null)
+                {
+                    this.dataItem = new DataItem();
+                }
+                
                 if (DataItem.callbackFunc != null && !string.IsNullOrEmpty(this.callbackName))
                 {
                     DataItem.callbackFunc(this.callbackName, this);
