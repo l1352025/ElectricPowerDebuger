@@ -6,6 +6,9 @@ using System.Text;
 
 namespace ElectricPowerLib.Common
 {
+    /// <summary>
+    /// 文件分包处理类
+    /// </summary>
     public class FilePacket
     {
         private readonly byte[] _headerBuffer;
@@ -13,6 +16,8 @@ namespace ElectricPowerLib.Common
         private byte[] _pktMissBitFlags;
         private List<int> _pktMissList;
         
+#pragma warning disable
+
         public string FileName { get; private set; }
         public int FileSize { get; private set; }
         public int FileKbSize { get; private set; }
@@ -28,12 +33,30 @@ namespace ElectricPowerLib.Common
         public int VersionCrc16 { get; set; }
         public byte[] FileHeader { get { return _headerBuffer; } }
 
+#pragma warning restore
+
+        /// <summary>
+        /// 查找模式：begin - 从头部开始，end - 从尾部开始
+        /// </summary>
         public enum FindMode
         {
+            /// <summary>
+            /// 从头部开始查找
+            /// </summary>
             Begin       = 0,
+
+            /// <summary>
+            /// 从尾部开始查找
+            /// </summary>
             End         = 1,
         }
 
+        /// <summary>
+        /// FilePacket 类实例化
+        /// </summary>
+        /// <param name="filePath">文件名</param>
+        /// <param name="packetSize">文件分包的固定大小</param>
+        /// <param name="packetStartIndex">文件分包的起始位置</param>
         public FilePacket(string filePath, int packetSize, int packetStartIndex = 0)
         {
             if (!File.Exists(filePath)) throw new Exception("文件不存在：" + filePath);
@@ -70,6 +93,13 @@ namespace ElectricPowerLib.Common
             FileSum16 = Util.GetChecksum16(_dataBuffer, 0, _dataBuffer.Length);
         }
 
+        /// <summary>
+        /// 拷贝当前文件缓存的一包数据
+        /// </summary>
+        /// <param name="dstBuffer">目的byte缓存</param>
+        /// <param name="dstIndex">目的byte缓存索引</param>
+        /// <param name="packetIndex">源文件缓存的包序号</param>
+        /// <returns>实际拷贝的长度，除了最后一包，其他都是固定长度</returns>
         public int CopyPacketToBuffer(byte[] dstBuffer, int dstIndex, int packetIndex)
         {
             int size = 0;
@@ -84,6 +114,14 @@ namespace ElectricPowerLib.Common
             return size;
         }
 
+        /// <summary>
+        /// 拷贝当前文件缓存的指定长度数据
+        /// </summary>
+        /// <param name="dstBuffer">目的byte缓存</param>
+        /// <param name="dstIndex">目的byte缓存索引</param>
+        /// <param name="srcIndex">源文件缓存索引</param>
+        /// <param name="size">拷贝的长度</param>
+        /// <returns>实际拷贝的长度</returns>
         public int CopyToBuffer(byte[] dstBuffer, int dstIndex, int srcIndex, int size)
         {
             if (dstIndex + size <= dstBuffer.Length)
@@ -101,6 +139,14 @@ namespace ElectricPowerLib.Common
             }
         }
 
+        /// <summary>
+        /// 在当前文件中查找字符串
+        /// </summary>
+        /// <param name="strPrefix">字符串前缀，如"SRWF-"</param>
+        /// <param name="strSuffix">字符串后缀，如以" " 或 "" 结束</param>
+        /// <param name="findMode">查找模式 FindMode, 从头部或尾部查找</param>
+        /// <param name="offset">要检索的长度，如 1024 byte</param>
+        /// <returns></returns>
         public string GetStringFromDataBuffer(string strPrefix, string strSuffix, FindMode findMode, int offset)
         {
             string strFind = "";
@@ -130,6 +176,9 @@ namespace ElectricPowerLib.Common
             return strFind;
         }
 
+        /// <summary>
+        /// 清空总累计缺包缓存
+        /// </summary>
         public void ClearPacketMissingBitFlags()
         {
             for(int i = 0; i < _pktMissBitFlags.Length; i++)
@@ -139,6 +188,12 @@ namespace ElectricPowerLib.Common
             PktMissCnt = PacketCount;
         }
 
+        /// <summary>
+        /// 添加当前缺包位标记 到 总累计缺包缓存
+        /// </summary>
+        /// <param name="bitFlags">当前缺包位标记缓存</param>
+        /// <param name="index">位标记起始位置</param>
+        /// <param name="byteCnt">位标记字节数</param>
         public void AddPacketMissingBitFlags(byte[] bitFlags, int index, int byteCnt)
         {
             if (_pktMissBitFlags.Length != byteCnt
@@ -155,6 +210,10 @@ namespace ElectricPowerLib.Common
             PktMissCnt = 0xFFFF;   // cnt unknown
         }
 
+        /// <summary>
+        /// 获取当前缺包序号列表
+        /// </summary>
+        /// <returns></returns>
         public List<int> GetPacketMissingList()
         {
             List<int> list = new List<int>();
@@ -198,6 +257,14 @@ namespace ElectricPowerLib.Common
         }
        
         // 方法二
+        /// <summary>
+        /// 获取当前包缺包数
+        /// </summary>
+        /// <param name="bitFlags">位标记所在缓存</param>
+        /// <param name="index">位标记在缓存中的起始索引</param>
+        /// <param name="currMissCnt">当前缓存中缺包数</param>
+        /// <param name="totalMissList">总累计缺包序号列表</param>
+        /// <param name="missFlag">缺包标记为 bit '0 或 ‘1’</param>
         public void GetCurrPacketMissingCnt(byte[] bitFlags, int index, out int currMissCnt, out List<int> totalMissList, byte missFlag = 0)
         {
             List<int> list = new List<int>();

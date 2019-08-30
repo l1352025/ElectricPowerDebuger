@@ -11,16 +11,44 @@ using ElectricPowerLib.Protocol;
 
 namespace ElectricPowerLib.Dialog
 {
+    /// <summary>
+    /// 表示有两个文本输入框的对话框
+    /// </summary>
     public partial class InputTwoParamDlg : Form
     {
         private int lenTxtParam1;
         private int lenTxtParam2;
 
+        /// <summary>
+        /// 参数输出回调函数的方法
+        /// </summary>
+        /// <param name="strParam1">输入框1的字符串</param>
+        /// <param name="strParam2">输入框2的字符串</param>
         public delegate void Callback(String strParam1, String strParam2);
+
+        /// <summary>
+        /// 输入完成并确定后，参数输出时调用
+        /// </summary>
         public Callback ParamsOutputProc;
+
+        /// <summary>
+        /// 获取或设置 输入框1 的字符串
+        /// </summary>
         public string Text1 { get { return txtParam1.Text; } set { txtParam1.Text = value; } }
+
+        /// <summary>
+        /// 获取或设置 输入框2 的字符串
+        /// </summary>
         public string Text2 { get { return txtParam2.Text; } set { txtParam2.Text = value; } }
 
+        /// <summary>
+        /// 初始化 InputTwoParamDlg 类的新实例
+        /// </summary>
+        /// <param name="title">对话框标题</param>
+        /// <param name="strLabel1">输入框1标签</param>
+        /// <param name="strLabel2">输入框2标签</param>
+        /// <param name="lenTxt1">输入框1可输入字符长度</param>
+        /// <param name="lenTxt2">输入框2可输入字符长度</param>
         public InputTwoParamDlg(string title, string strLabel1, string strLabel2, int lenTxt1 = 12, int lenTxt2 = 3)
         {
             InitializeComponent();
@@ -118,7 +146,7 @@ namespace ElectricPowerLib.Dialog
                 }
                 if (txtParam2.Text.Length >= lenTxtParam2 && e.KeyChar != '\b')
                 {
-                    if (txtParam1.SelectionLength == 0)
+                    if (txtParam2.SelectionLength == 0)
                     {
                         e.Handled = true;
                     }
@@ -161,6 +189,8 @@ namespace ElectricPowerLib.Dialog
             {
                 ParamsOutputProc(txtParam1.Text, txtParam2.Text);
             }
+
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.Close();
         }
 
@@ -168,6 +198,8 @@ namespace ElectricPowerLib.Dialog
         {
             txtParam1.Text = "";
             txtParam2.Text = "";
+
+            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.Close();
         }
 

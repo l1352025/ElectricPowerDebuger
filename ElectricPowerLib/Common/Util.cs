@@ -12,8 +12,19 @@ using System.Threading;
 
 namespace ElectricPowerLib.Common
 {
+    /// <summary>
+    /// 常用工具类：bytes/strHex转换，Bcd/Dec转换，Crc/累加和计算，bit位统计，byte数组中查找，
+    /// </summary>
     public class Util
     {
+        /// <summary>
+        /// Hex字符串 -> byte数组
+        /// </summary>
+        /// <param name="strSource">源字符串</param>
+        /// <param name="DataByte">目的byte数组</param>
+        /// <param name="iStart">写入byte数组的位置</param>
+        /// <param name="bReverse">是否倒置</param>
+        /// <returns>byte数组的长度</returns>
 		public static int GetBytesFromStringHex(string strSource, byte[] DataByte, int iStart, bool bReverse = false)
         {
             byte tmp;
@@ -47,6 +58,13 @@ namespace ElectricPowerLib.Common
             return (iPos - iStart);
         }
 
+        /// <summary>
+        /// Hex字符串 -> byte数组
+        /// </summary>
+        /// <param name="strSource">源字符串</param>
+        /// <param name="strSeparate">源字符串中每byte间的分隔符，如 "" 或 " " 或 ","</param>
+        /// <param name="bReverse">是否倒置</param>
+        /// <returns>byte数组</returns>
         public static byte[] GetBytesFromStringHex(string strSource, string strSeparate = "", bool bReverse = false)
         {
             byte tmp;
@@ -89,6 +107,15 @@ namespace ElectricPowerLib.Common
             return bytes;
         }
 
+        /// <summary>
+        /// byte数组 -> Hex字符串
+        /// </summary>
+        /// <param name="DataByte">源byte数组</param>
+        /// <param name="iStart">开始索引</param>
+        /// <param name="iLength">长度</param>
+        /// <param name="strSeparate">保存字符串时每byte间插入的分隔符，如 "" 或 " " 或 ","</param>
+        /// <param name="Reverse">是否倒置</param>
+        /// <returns>Hex字符串</returns>
         public static string GetStringHexFromBytes(byte[] DataByte, int iStart, int iLength, string strSeparate = "", bool Reverse = false)
         {
             string strResult = "";
@@ -114,43 +141,61 @@ namespace ElectricPowerLib.Common
             return strResult;
         }
 
+        /// <summary>
+        /// BCD码数字 转换为 十进制数字
+        /// </summary>
+        /// <param name="bcd"></param>
+        /// <returns></returns>
         public static byte BcdToDec(byte bcd)
         {
             return (byte)(bcd - (bcd >> 4) * 6);
         }
 
+        /// <summary>
+        /// 十进制数字 转换为 BCD码数字
+        /// </summary>
+        /// <param name="dec"></param>
+        /// <returns></returns>
         public static byte DecToBcd(byte dec)
         {
             return (byte)(dec + (dec / 10) * 6);
         }
 
-        public static int IndexOf(byte[] srcArray, byte[] bytes)
-        {
-            return IndexOf(srcArray, bytes, 0, srcArray.Length);
-        }
-
-        public static int IndexOf(byte[] srcArray, byte b)
-        {
-            return IndexOf(srcArray, new byte[] { b }, 0, srcArray.Length);
-        }
-
-        public static int IndexOf(byte[] srcArray, string str)
-        {
-            byte[] bytes = ( str != "" ? Encoding.UTF8.GetBytes(str) : new byte[] { 0x00 });
-            return IndexOf(srcArray, bytes, 0, srcArray.Length);
-        }
-
+        /// <summary>
+        /// byte数组中查找 byte值
+        /// </summary>
+        /// <param name="srcArray">源数组</param>
+        /// <param name="b">目的byte值</param>
+        /// <param name="startIndex">源数组开始查找的索引</param>
+        /// <param name="offset">查找的长度</param>
+        /// <returns>若找到返回第一次出现的位置，否则返回 -1</returns>
         public static int IndexOf(byte[] srcArray, byte b, int startIndex, int offset)
         {
             return IndexOf(srcArray, new byte[] { b }, startIndex, offset);
         }
 
+        /// <summary>
+        /// byte数组中查找 字符串
+        /// </summary>
+        /// <param name="srcArray">源数组</param>
+        /// <param name="str">目的字符串</param>
+        /// <param name="startIndex">源数组开始查找的索引</param>
+        /// <param name="offset">查找的长度</param>
+        /// <returns>若找到返回第一次出现的位置，否则返回 -1</returns>
         public static int IndexOf(byte[] srcArray, string str, int startIndex, int offset)
         {
             byte[] bytes = (str != "" ? Encoding.UTF8.GetBytes(str) : new byte[] { 0x00 });
             return IndexOf(srcArray, bytes, startIndex, offset);
         }
 
+        /// <summary>
+        /// byte数组中查找 byte数组
+        /// </summary>
+        /// <param name="srcArray">源数组</param>
+        /// <param name="bytes">目的数组</param>
+        /// <param name="startIndex">源数组开始查找的索引</param>
+        /// <param name="offset">查找的长度</param>
+        /// <returns>若找到返回第一次出现的位置，否则返回 -1</returns>
         public static int IndexOf(byte[] srcArray, byte[] bytes, int startIndex, int offset)
         {
             int index = -1, i, j;
@@ -185,6 +230,14 @@ namespace ElectricPowerLib.Common
             return index;
         }
 
+        /// <summary>
+        /// 获取 0或1 bit位标志数量
+        /// </summary>
+        /// <param name="bitFlags">bit位数据缓存</param>
+        /// <param name="index">起始索引</param>
+        /// <param name="maxCnt">最大bit位数量</param>
+        /// <param name="bitFlag">0 - 统计bit '0'， 1 - 统计bit '1'</param>
+        /// <returns>bit '0' 或 bit '1'的数量</returns>
         public static int GetBitFlagCount(byte[] bitFlags, int index, int maxCnt, byte bitFlag = 0)
         {
             byte aByte;
@@ -227,11 +280,25 @@ namespace ElectricPowerLib.Common
             return cnt;
         }
 
+        /// <summary>
+        /// 获取CRC16值，国网通用算法
+        /// </summary>
+        /// <param name="str">bytes的Hex字符串</param>
+        /// <returns>CRC16值</returns>
         public static UInt16 GetCRC16(string str)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(str);
             return GetCRC16(bytes, 0, bytes.Length);
         }
+
+        /// <summary>
+        /// 获取CRC16值，国网通用算法
+        /// </summary>
+        /// <param name="buffer">bytes数据缓冲区</param>
+        /// <param name="index">起始索引</param>
+        /// <param name="length">计算的长度</param>
+        /// <param name="seed">处理因子，缺省值0x8408</param>
+        /// <returns>CRC16值</returns>
         public static UInt16 GetCRC16(byte[] buffer, int index, int length, UInt16 seed = 0x8408)
         {
             UInt16 uiCRC = 0xffff;
@@ -258,11 +325,24 @@ namespace ElectricPowerLib.Common
             return uiCRC;
         }
 
+        /// <summary>
+        /// 获取8位累加和
+        /// </summary>
+        /// <param name="str">bytes的Hex字符串</param>
+        /// <returns>8位累加和</returns>
         public static byte GetChecksum(string str)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(str);
             return GetChecksum(bytes, 0, bytes.Length);
         }
+
+        /// <summary>
+        /// 获取8位累加和
+        /// </summary>
+        /// <param name="buffer">bytes数据缓冲区</param>
+        /// <param name="index">起始索引</param>
+        /// <param name="length">计算的长度</param>
+        /// <returns>8位累加和</returns>
         public static byte GetChecksum(byte[] buffer, int index, int length)
         {
             byte sum = 0;
@@ -277,11 +357,24 @@ namespace ElectricPowerLib.Common
             return sum;
         }
 
+        /// <summary>
+        /// 获取16位累加和
+        /// </summary>
+        /// <param name="str">bytes的Hex字符串</param>
+        /// <returns>16位累加和</returns>
         public static ushort GetChecksum16(string str)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(str);
             return GetChecksum16(bytes, 0, bytes.Length);
         }
+
+        /// <summary>
+        /// 获取16位累加和
+        /// </summary>
+        /// <param name="buffer">bytes数据缓冲区</param>
+        /// <param name="index">起始索引</param>
+        /// <param name="length">计算的长度</param>
+        /// <returns>16位累加和</returns>
         public static ushort GetChecksum16(byte[] buffer, int index, int length)
         {
             ushort sum = 0;
@@ -294,35 +387,6 @@ namespace ElectricPowerLib.Common
             }
 
             return sum;
-        }
-
-        /// <summary>
-        /// 打包645协议帧
-        /// </summary>
-        /// <param name="addr">表地址</param>
-        /// <param name="data">[控制域+长度+数据域]</param>
-        /// <returns>返回打包好的645协议帧</returns>
-        public static byte[] GetDlt645Frame(byte[] addr, byte[] data)
-        {
-            byte[] txBuf = new byte[10 + data.Length];
-            byte index = 0, crc = 0, iLoop;
-
-            txBuf[index++] = 0x68;
-            addr.CopyTo(txBuf, index);
-            index += (byte)addr.Length;
-            txBuf[index++] = 0x68;
-
-            data.CopyTo(txBuf, index);
-            index += (byte)data.Length;
-
-            for (iLoop = 0; iLoop < index; iLoop++)
-            {
-                crc += txBuf[iLoop];
-            }
-            txBuf[index++] = crc;
-            txBuf[index++] = 0x16;
-
-            return txBuf;
         }
 
 #if true
@@ -375,7 +439,12 @@ namespace ElectricPowerLib.Common
             }
         }
 
+        /// <summary>
         /// 将字节数组转换为结构体
+        /// </summary>
+        /// <param name="bytes">字节数组</param>
+        /// <param name="type">结构体类型</param>
+        /// <returns></returns>
         public object BytesToStruct(byte[] bytes, Type type)
         {
             //得到结构体大小
@@ -394,7 +463,13 @@ namespace ElectricPowerLib.Common
             Marshal.FreeHGlobal(structPtr);
             return obj;
         }
+        
+
+        /// <summary>
         /// 将结构转换为字节数组
+        /// </summary>
+        /// <param name="obj">结构体对象</param>
+        /// <returns>字节数组</returns>
         public byte[] StructTOBytes(object obj)
         {
             int size = Marshal.SizeOf(obj);
@@ -414,10 +489,11 @@ namespace ElectricPowerLib.Common
         /// <summary>
         /// 执行dos命令
         /// </summary>
-        /// <param name="executablePath">cmd.exe路径</param>
+        /// <param name="executablePath">批处理/exe文件路径</param>
         /// <param name="args">命令字符串/.bat文件/.cmd文件</param>
         /// <param name="workingFolder">命令执行的位置</param>
-        /// <param name="ignoreErrorCode"></param>
+        /// <param name="ignoreErrorCode">忽略错误码</param>
+        /// <param name="ignoreOutput">忽略输出</param>
         /// <returns></returns>
         public static string ExecuteWindowsCmd(string executablePath, string args, string workingFolder, bool ignoreErrorCode = true, bool ignoreOutput = true)
         {

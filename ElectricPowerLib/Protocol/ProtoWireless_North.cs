@@ -18,6 +18,8 @@ using ElectricPowerLib.Common;
 
 namespace ElectricPowerLib.Protocol
 {
+#pragma warning disable
+
 #if     ProtoVer_North
     public class ProtoWireless_North
 #elif   ProtoVer_NiBoEr
@@ -4420,4 +4422,6 @@ namespace ElectricPowerLib.Protocol
         }
         #endregion
     }
+
+#pragma warning restore
 }

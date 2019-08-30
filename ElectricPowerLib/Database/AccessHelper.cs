@@ -5,6 +5,9 @@ using System.Collections;
 
 namespace ElectricPowerLib.Database
 {
+
+#pragma warning disable
+
     public static class AccessHelper
     {
         //数据库连接字符串
@@ -17,7 +20,7 @@ namespace ElectricPowerLib.Database
         /// 给定连接的数据库用假设参数执行一个sql命令（不返回数据集）
         /// </summary>
         /// <param name="connectionString">一个有效的连接字符串</param>
-        /// <param name="commandText">存储过程名称或者sql命令语句</param>
+        /// <param name="cmdText">存储过程名称或者sql命令语句</param>
         /// <param name="commandParameters">执行命令所用参数的集合</param>
         /// <returns>执行命令所影响的行数</returns>
         public static int ExecuteNonQuery(string connectionString, string cmdText, params OleDbParameter[] commandParameters)
@@ -41,8 +44,8 @@ namespace ElectricPowerLib.Database
         ///举例: 
         /// int result = ExecuteNonQuery(connString, "PublishOrders", new OleDbParameter("@prodid", 24));
         /// </remarks>
-        /// <param name="conn">一个现有的数据库连接</param>
-        /// <param name="commandText">存储过程名称或者sql命令语句</param>
+        /// <param name="connection">一个现有的数据库连接</param>
+        /// <param name="cmdText">存储过程名称或者sql命令语句</param>
         /// <param name="commandParameters">执行命令所用参数的集合</param>
         /// <returns>执行命令所影响的行数</returns>
         public static int ExecuteNonQuery(OleDbConnection connection, string cmdText, params OleDbParameter[] commandParameters)
@@ -68,7 +71,7 @@ namespace ElectricPowerLib.Database
         /// int result = ExecuteNonQuery(trans, "PublishOrders", new OleDbParameter("@prodid", 24));
         /// </remarks>
         /// <param name="trans">一个现有的事务</param>
-        /// <param name="commandText">存储过程名称或者sql命令语句</param>
+        /// <param name="cmdText">存储过程名称或者sql命令语句</param>
         /// <param name="commandParameters">执行命令所用参数的集合</param>
         /// <returns>执行命令所影响的行数</returns>
         public static int ExecuteNonQuery(OleDbTransaction trans, string cmdText, params OleDbParameter[] commandParameters)
@@ -92,7 +95,7 @@ namespace ElectricPowerLib.Database
         /// OleDbDataReader r = ExecuteReader(connString, "PublishOrders", new OleDbParameter("@prodid", 24));
         /// </remarks>
         /// <param name="connectionString">一个有效的连接字符串</param>
-        /// <param name="commandText">存储过程名称或者sql命令语句</param>
+        /// <param name="cmdText">存储过程名称或者sql命令语句</param>
         /// <param name="commandParameters">执行命令所用参数的集合</param>
         /// <returns>包含结果的读取器</returns>
         public static OleDbDataReader ExecuteReader(string connectionString, string cmdText, params OleDbParameter[] commandParameters)
@@ -182,7 +185,7 @@ namespace ElectricPowerLib.Database
         /// Object obj = ExecuteScalar(connString, "PublishOrders", new OleDbParameter("@prodid", 24));
         /// </remarks>
         ///<param name="connectionString">一个有效的连接字符串</param>
-        /// <param name="commandText">存储过程名称或者sql命令语句</param>
+        /// <param name="cmdText">存储过程名称或者sql命令语句</param>
         /// <param name="commandParameters">执行命令所用参数的集合</param>
         /// <returns>用 Convert.To{Type}把类型转换为想要的 </returns>
         public static object ExecuteScalar(string connectionString, string cmdText, params OleDbParameter[] commandParameters)
@@ -206,8 +209,8 @@ namespace ElectricPowerLib.Database
         /// 例如: 
         /// Object obj = ExecuteScalar(connString, "PublishOrders", new OleDbParameter("@prodid", 24));
         /// </remarks>
-        /// <param name="conn">一个存在的数据库连接</param>
-        /// <param name="commandText">存储过程名称或者sql命令语句</param>
+        /// <param name="connection">一个存在的数据库连接</param>
+        /// <param name="cmdText">存储过程名称或者sql命令语句</param>
         /// <param name="commandParameters">执行命令所用参数的集合</param>
         /// <returns>用 Convert.To{Type}把类型转换为想要的 </returns>
         public static object ExecuteScalar(OleDbConnection connection, string cmdText, params OleDbParameter[] commandParameters)
@@ -224,7 +227,7 @@ namespace ElectricPowerLib.Database
         /// 将参数集合添加到缓存
         /// </summary>
         /// <param name="cacheKey">添加到缓存的变量</param>
-        /// <param name="cmdParms">一个将要添加到缓存的sql参数集合</param>
+        /// <param name="commandParameters">一个将要添加到缓存的sql参数集合</param>
         public static void CacheParameters(string cacheKey, params OleDbParameter[] commandParameters)
         {
             parmCache[cacheKey] = commandParameters;
@@ -283,4 +286,6 @@ namespace ElectricPowerLib.Database
             }
         }
     }
+
+#pragma warning restore
 }

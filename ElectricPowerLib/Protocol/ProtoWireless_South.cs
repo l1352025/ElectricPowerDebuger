@@ -8,6 +8,7 @@ using ElectricPowerLib.Common;
 
 namespace ElectricPowerLib.Protocol
 {
+#pragma warning disable
     public class ProtoWireless_South
     {
         public const ushort FrameHeader = 0xAA55;       // 帧头
@@ -1807,4 +1808,6 @@ namespace ElectricPowerLib.Protocol
         }
         #endregion
     }
+
+#pragma warning restore
 }

@@ -9,6 +9,9 @@ using ElectricPowerLib.Common;
 
 namespace ElectricPowerLib.DataParser
 {
+
+#pragma warning disable
+
     public enum DataType
     {
         BIN,
@@ -474,4 +477,6 @@ namespace ElectricPowerLib.DataParser
         }
 
     }
+
+#pragma warning restore
 }

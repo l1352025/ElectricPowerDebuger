@@ -1,18 +1,12 @@
-﻿/// <summary>
-/// 文 件 名：XmlHelper.cs
-/// 创建标识：2014-8-13 Created by Noble V1.0.0.0
-/// 功能说明：XML处理类
-/// 版    本： 1.0.0.0
-/// 注意事项：
-/// 
-/// 更新记录：
-///</summary>
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.XPath;
 using System.IO;
 
 namespace ElectricPowerLib.Common
 {
+    /// <summary>
+    /// XML读写辅助类
+    /// </summary>
     public class XmlHelper
     {
         private static XPathDocument ConvertStringToXml(string s)
@@ -49,19 +43,12 @@ namespace ElectricPowerLib.Common
         /// <param name="xmlInfo">XML文件路径 或者字符串</param>
         /// <param name="selectNode">XML选择的节点路径</param>
         /// <returns>返回节点的值</returns>
-        public static string GetNodeValue(string xmlInfo, string selectNode, bool isString = false)
+        public static string GetNodeValue(string xmlInfo, string selectNode)
         {
             XPathDocument xPath = null;
             try
             {
-                if (isString)
-                {
-                    xPath = ConvertStringToXml(xmlInfo);
-                }
-                else
-                {
-                    xPath = new XPathDocument(xmlInfo);
-                }
+                xPath = new XPathDocument(xmlInfo);
                 XPathNavigator xNav = xPath.CreateNavigator();
                 XPathNavigator xnSelectNode = xNav.SelectSingleNode(selectNode);
                 return xnSelectNode.InnerXml;
@@ -80,79 +67,47 @@ namespace ElectricPowerLib.Common
         /// </summary>
         /// <param name="xmlInfo">XML文件路径 或者字符串</param>
         /// <param name="selectNode">XML选择的节点路径</param>
+        /// <param name="defaultValue">选择节点若不存在，则返回该默认值</param>
         /// <returns>返回节点的值</returns>
-        public static string GetNodeDefValue(string xmlInfo, string selectNode, string DefaultValue, bool isString = false)
+        public static string GetNodeDefValue(string xmlInfo, string selectNode, string defaultValue)
         {
             XPathDocument xPath = null;
             try
             {
-
-                if (isString)
-                {
-                    xPath = ConvertStringToXml(xmlInfo);
-                }
-                else
-                {
-                    xPath = new XPathDocument(xmlInfo);
-                }
+                xPath = new XPathDocument(xmlInfo);
                 XPathNavigator xNav = xPath.CreateNavigator();
                 XPathNavigator xnSelectNode = xNav.SelectSingleNode(selectNode);
                 return xnSelectNode.InnerXml;
             }
             catch
             {
-                return DefaultValue;
+                return defaultValue;
             }
             finally
             {
                 xPath = null;
             }
         }
-        /// <summary>
-        /// 获取XML 节点的值
-        /// </summary>
-        /// <param name="path">创建只读的Xml类</param>
-        /// <param name="selectNode">XML选择的节点路径</param>
-        /// <returns>返回节点的值</returns>
-        public static string GetNodeValue(XPathDocument xPath, string selectNode)
-        {
-            try
-            {
-                XPathNavigator xNav = xPath.CreateNavigator();
-                XPathNavigator xnSelectNode = xNav.SelectSingleNode(selectNode);
-                return xnSelectNode.InnerXml;
-            }
-            catch
-            {
-                return "";
-            }
-        }
+     
         /// <summary>
         /// 读取数据
         /// </summary>
         /// <param name="xmlInfo">XML文件路径 或者字符串</param>
-        /// <param name="node">节点</param>
-        /// <param name="attribute">属性名，非空时返回该属性值，否则返回串联值</param>
+        /// <param name="selectNode">节点</param>
+        /// <param name="attribute">属性名，非空时返回该属性值，否则返回null</param>
         /// <returns>string</returns>
         /**************************************************
          * 使用示列:
          * XmlHelper.GetNodeValue(path, "/Node", "")
          * XmlHelper.GetNodeValue(path, "/Node/Element[@Attribute='Name']", "Attribute")
          ************************************************/
-        public static string GetNodeValue(string xmlInfo, string selectNode, string attribute, bool isString = false)
+        public static string GetNodeValue(string xmlInfo, string selectNode, string attribute)
         {
             XPathDocument xPath = null;
             try
             {
 
-                if (isString)
-                {
-                    xPath = ConvertStringToXml(xmlInfo);
-                }
-                else
-                {
-                    xPath = new XPathDocument(xmlInfo);
-                }
+                xPath = new XPathDocument(xmlInfo);
                 XPathNavigator xNav = xPath.CreateNavigator();
                 XPathNavigator xnSelectNode = xNav.SelectSingleNode(selectNode);
                 return (attribute == null ? xnSelectNode.InnerXml : xnSelectNode.GetAttribute(attribute, ""));
@@ -166,26 +121,7 @@ namespace ElectricPowerLib.Common
                 xPath = null;
             }
         }
-        /// <summary>
-        /// 读取数据
-        /// </summary>
-        /// <param name="path">创建只读的Xml类</param>
-        /// <param name="node">节点</param>
-        /// <param name="attribute">属性名，非空时返回该属性值，否则返回串联值</param>
-        /// <returns>string</returns>
-        public static string GetNodeValue(XPathDocument xPath, string selectNode, string attribute)
-        {
-            try
-            {
-                XPathNavigator xNav = xPath.CreateNavigator();
-                XPathNavigator xnSelectNode = xNav.SelectSingleNode(selectNode);
-                return (attribute == null ? xnSelectNode.InnerXml : xnSelectNode.GetAttribute(attribute, ""));
-            }
-            catch
-            {
-                return "";
-            }
-        }
+        
         /// <summary>
         /// 更新节点
         /// </summary>

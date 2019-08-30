@@ -5,6 +5,9 @@ using System.Windows.Forms;
 
 namespace ElectricPowerLib.MultiLanguage
 {
+    /// <summary>
+    /// 语言字典， key - 默认语言，value - 转换后的语言
+    /// </summary>
     public class LanguageDict
     {
         /// <summary>
@@ -143,12 +146,30 @@ namespace ElectricPowerLib.MultiLanguage
         };
     }
 
+    /// <summary>
+    /// 多语言处理类
+    /// </summary>
     public class MultiLanguage
     {
+        /// <summary>
+        /// 当前语言：如 zh-CN
+        /// </summary>
         public static string CurrentLanguage;
+
+        /// <summary>
+        /// 当前多语言转换字典：default text -> current text
+        /// </summary>
         public static Dictionary<string, string> CurrentResource;
+
+        /// <summary>
+        /// 保存控件的默认语言字典：ctrl -> default text
+        /// </summary>
         private static Dictionary<Object, string> DefaultResource = new Dictionary<Object, string>();
 
+        /// <summary>
+        /// MultiLanguage类实例化，必须指定使用的语言字典
+        /// </summary>
+        /// <param name="dict_Zh_to_En">语言字典</param>
         public MultiLanguage(Dictionary<string, string> dict_Zh_to_En)
         {
             if (dict_Zh_to_En == null)
@@ -204,8 +225,7 @@ namespace ElectricPowerLib.MultiLanguage
         /// <summary>
         /// 根据语言标识符得到转换后的值
         /// </summary>
-        /// <param name="languageFlag"></param>
-        /// <param name="value"></param>
+        /// <param name="key">语言标识符</param>
         /// <returns></returns>
         public static string GetCurrentText(string key)
         {
@@ -240,6 +260,11 @@ namespace ElectricPowerLib.MultiLanguage
             return strRet;
         }
 
+        /// <summary>
+        /// 获取默认语言
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string GetDefaultText(string value)
         {
             string strRet = "";
@@ -272,6 +297,7 @@ namespace ElectricPowerLib.MultiLanguage
 
             return strRet;
         }
+       
         /// <summary>
         /// 获取控件默认语言
         /// </summary>
@@ -350,7 +376,7 @@ namespace ElectricPowerLib.MultiLanguage
         /// <summary>
         /// 更新控件默认语言
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="ctrl"></param>
         public static void UpdateControlDefaultText(Control ctrl)
         {
             string objText = "";
@@ -711,10 +737,11 @@ namespace ElectricPowerLib.MultiLanguage
 
             }
         }
+        
         /// <summary>
-        /// 递归转化树
+        /// 递归转化树节点的语言
         /// </summary>
-        /// <param name="menuItem"></param>
+        /// <param name="node">树节点</param>
         private static void GetNodeText(TreeNode node)
         {
 

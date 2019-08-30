@@ -6,6 +6,8 @@ using System.Windows.Forms;
 
 namespace ElectricPowerLib.Protocol
 {
+#pragma warning disable
+
     public class ProtoLocal_South
     {
         public const byte FrameHeader = 0x68;           // 帧头
@@ -99,4 +101,6 @@ namespace ElectricPowerLib.Protocol
             return rxData;
         }
     }
+
+#pragma warning restore
 }

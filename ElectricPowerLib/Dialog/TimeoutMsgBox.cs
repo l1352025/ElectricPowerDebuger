@@ -9,18 +9,33 @@ using System.Windows.Forms;
 
 namespace ElectricPowerLib.Dialog
 {
+    /// <summary>
+    /// 倒计时关闭的消息提示框
+    /// </summary>
     public partial class TimeoutMsgBox : Form
     {
         Timer _timer;
         uint _timerCnt;
         uint _timeoutSec;
 
-        public TimeoutMsgBox(string msg, uint timeoutSec, Color bgcolor)
+        /// <summary>
+        /// TimeoutMsgBox 实例化
+        /// </summary>
+        /// <param name="msg">提示消息</param>
+        /// <param name="timeoutSec">倒计时关闭时间，单位s</param>
+        /// <param name="bgcolor">提示框背景色</param>
+        private TimeoutMsgBox(string msg, uint timeoutSec, Color bgcolor)
             :this(msg, timeoutSec)
         {
             this.BackColor = bgcolor;
         }
-        public TimeoutMsgBox(string msg, uint timeoutSec)
+
+        /// <summary>
+        /// TimeoutMsgBox 实例化
+        /// </summary>
+        /// <param name="msg">提示消息</param>
+        /// <param name="timeoutSec">倒计时关闭时间，单位s</param>
+        private TimeoutMsgBox(string msg, uint timeoutSec)
         {
             InitializeComponent();
 
@@ -42,10 +57,22 @@ namespace ElectricPowerLib.Dialog
             _timerCnt = 0;
         }
 
+        /// <summary>
+        /// 弹框显示提示消息，倒计时完成后关闭
+        /// </summary>
+        /// <param name="msg">提示消息</param>
+        /// <param name="timeoutSec">倒计时关闭时间，单位s</param>
         public static void Show(string msg, uint timeoutSec)
         {
             Show(msg, timeoutSec, Color.Black);
         }
+
+        /// <summary>
+        /// 弹框显示提示消息，倒计时完成后关闭
+        /// </summary>
+        /// <param name="msg">提示消息</param>
+        /// <param name="timeoutSec">倒计时关闭时间，单位s</param>
+        /// <param name="bgcolor">提示框背景色</param>
         public static void Show(string msg, uint timeoutSec, Color bgcolor)
         {
             TimeoutMsgBox msgbox = new TimeoutMsgBox(msg, timeoutSec, bgcolor);

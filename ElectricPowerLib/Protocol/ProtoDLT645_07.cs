@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 namespace ElectricPowerLib.Protocol
 {
+#pragma warning disable
     public class ProtoDLT645_07
     {
         public const byte FrameHeader = 0x68;           // 帧头
@@ -1661,4 +1662,6 @@ namespace ElectricPowerLib.Protocol
 
         #endregion
     }
+
+#pragma warning restore
 }

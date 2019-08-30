@@ -8,6 +8,7 @@ using ElectricPowerLib.Common;
 
 namespace ElectricPowerLib.Protocol
 {
+#pragma warning disable
     public class ProtoLocal_North
     {
         public const byte FrameHeader = 0x68;           // 帧头
@@ -3882,4 +3883,6 @@ namespace ElectricPowerLib.Protocol
         }
         #endregion
     }
+
+#pragma warning restore
 }

@@ -28,6 +28,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\ElectricPowerLib.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -94,6 +95,7 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy  $(TargetPath) $(ProjectDir)\..\ElectricPowerDebuger\lib\ /y /d
 xcopy  $(TargetPath) E:\code\00_usr_lib\ /y /d
+xcopy  $(TargetDir)$(TargetName).xml E:\code\00_usr_lib\ /y /d
 
 if exist $(ProjectDir)\..\..\WaterMeter_WirelessUpgrade\WirelessUpgrade\lib\ (
     copy /y $(TargetPath) $(ProjectDir)\..\..\WaterMeter_WirelessUpgrade\WirelessUpgrade\lib\

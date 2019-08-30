@@ -5,13 +5,32 @@ using System.Collections;
 
 namespace ElectricPowerLib.Common
 {
+    /// <summary>
+    /// 串口处理类
+    /// </summary>
     public class SerialCom
     {
-        public delegate void EventHandle(byte[] readBuffer); //接收数据处理函数委托
-        public event EventHandle DataReceivedEvent;          //接收到数据引发事件
-        public event EventHandler UnexpectedClosedEvent;     //端口异常关闭引发事件
+        /// <summary>
+        /// 串口接收事件的处理方法
+        /// </summary>
+        /// <param name="recvdData">接收的数据</param>
+        public delegate void EventHandle(byte[] recvdData); //接收数据处理函数委托
 
+        /// <summary>
+        /// 串口接收事件，收到一包数据时发生
+        /// </summary>
+        public event EventHandle DataReceivedEvent;   
+      
+        /// <summary>
+        /// 串口关闭事件，串口拔除或异常端口时发生
+        /// </summary>
+        public event EventHandler UnexpectedClosedEvent;    
+
+        /// <summary>
+        /// 当前实例所使用的串口对象
+        /// </summary>
         public SerialPort serialPort;   //串行端口
+
         Thread thread;                  //接收线程
         volatile bool _keepReading;     //接收线程控制标志
         volatile ArrayList readBuf = new ArrayList();
@@ -26,6 +45,10 @@ namespace ElectricPowerLib.Common
             _keepReading = false;
         }
 
+        /// <summary>
+        /// 获取当前可用串口号列表
+        /// </summary>
+        /// <returns></returns>
         public string[] GetPortNames()
         {
             return SerialPort.GetPortNames();
@@ -68,10 +91,6 @@ namespace ElectricPowerLib.Common
                     break;
             }
 
-            Config(name, baudrate, databits, stopbits, parity);
-        }
-        public void Config(string name, int baudrate, int databits, StopBits stopbits, Parity parity)
-        {
             serialPort.PortName = name;
             serialPort.BaudRate = baudrate;
             serialPort.DataBits = databits;

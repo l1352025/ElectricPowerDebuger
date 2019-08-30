@@ -474,6 +474,37 @@ namespace ElectricPowerDebuger.Function
         }
         #endregion
 
+        #region DLT645/07 协议打包
+        /// <summary>
+        /// 打包645协议帧
+        /// </summary>
+        /// <param name="addr">表地址</param>
+        /// <param name="data">[控制域+长度+数据域]</param>
+        /// <returns>返回打包好的645协议帧</returns>
+        public static byte[] GetDlt645Frame(byte[] addr, byte[] data)
+        {
+            byte[] txBuf = new byte[10 + data.Length];
+            byte index = 0, crc = 0, iLoop;
+
+            txBuf[index++] = 0x68;
+            addr.CopyTo(txBuf, index);
+            index += (byte)addr.Length;
+            txBuf[index++] = 0x68;
+
+            data.CopyTo(txBuf, index);
+            index += (byte)data.Length;
+
+            for (iLoop = 0; iLoop < index; iLoop++)
+            {
+                crc += txBuf[iLoop];
+            }
+            txBuf[index++] = crc;
+            txBuf[index++] = 0x16;
+
+            return txBuf;
+        }
+        #endregion
+
         #region 解释信息包
         private void ExplainPacket(ProtoLocal_South.PacketFormat CommData)
         {
@@ -2679,7 +2710,7 @@ namespace ElectricPowerDebuger.Function
             TaskContent[index++] = 0xFE;
             TaskContent[index++] = 0xFE;
             byte[] DltAddr = new byte[ProtoLocal_South.LongAddrSize];       // 目的地址，发送时填充
-            byte[] DltFrame = Util.GetDlt645Frame(DltAddr, DltCmd);
+            byte[] DltFrame = GetDlt645Frame(DltAddr, DltCmd);
             Array.Copy(DltFrame, 0, TaskContent, index, DltFrame.Length);
 
             byte multiTaskFlag = TaskContent[0];    // 单播/多播标识
@@ -2732,7 +2763,7 @@ namespace ElectricPowerDebuger.Function
                 DltAddr = new byte[ProtoLocal_South.LongAddrSize];
                 txData.DstAddr.CopyTo(DltAddr, 0);
             }
-            byte[] frame = Util.GetDlt645Frame(DltAddr, DltCmd);
+            byte[] frame = GetDlt645Frame(DltAddr, DltCmd);
             Array.Copy(frame, 0, TaskContent, iStart, frame.Length);
 
             Array.Copy(TaskContent, txData.DataBuf, TaskContent.Length);
@@ -2834,7 +2865,7 @@ namespace ElectricPowerDebuger.Function
             byte[] DltAddr = new byte[ProtoLocal_South.LongAddrSize] { 0x99, 0x99, 0x99, 0x99, 0x99, 0x99 };
             //byte[] DltAddr = new byte[ProtoLocal_South.LongAddrSize] { 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA};
 
-            byte[] frame = Util.GetDlt645Frame(DltAddr, DltCmd);
+            byte[] frame = GetDlt645Frame(DltAddr, DltCmd);
             Array.Copy(frame, 0, TaskContent, iStart, frame.Length);
 
             Array.Copy(TaskContent, 10, txData.DataBuf, index, TaskContent.Length - 10);

@@ -9,6 +9,8 @@ using System.Threading;
 
 namespace ElectricPowerLib.Database
 {
+#pragma warning disable
+
     public class SQLiteHelper
     {
         public enum SqlPoolSize
@@ -37,12 +39,17 @@ namespace ElectricPowerLib.Database
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="_connectionString">连接SQLite库字符串</param>
+        /// <param name="connStr">连接SQLite库字符串</param>
         public SQLiteHelper(string connStr)
             : this(connStr, SqlPoolSize.SQL_40w)
         {
         }
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="connStr">连接SQLite库字符串</param>
+        /// <param name="sqlPoolSize">sql语句缓存池大小</param>
         public SQLiteHelper(string connStr, SqlPoolSize sqlPoolSize)
         {
             _connectionString = connStr;
@@ -559,7 +566,7 @@ namespace ElectricPowerLib.Database
         /// <param name="colValues">字段名对应的数据</param>
         /// <param name="key">关键字</param>
         /// <param name="value">关键字对应的值</param>
-        /// <param name="operation">运算符：=,<,>,...，默认“=”</param>
+        /// <param name="operation">运算符：=,大于，小于,...，默认“=”</param>
         public int UpdateValues(string tableName, string[] colNames, string[] colValues, string key, string value, string operation = "=")
         {
             //当字段名称和字段数值不对应时引发异常
@@ -584,6 +591,7 @@ namespace ElectricPowerLib.Database
         /// <param name="tableName">数据表名称</param>
         /// <param name="colNames">字段名</param>
         /// <param name="colValues">字段名对应的数据</param>
+        /// <param name="operations">运算符：=,大于，小于,...，默认“=”</param>
         public int DeleteValuesOR(string tableName, string[] colNames, string[] colValues, string[] operations)
         {
             //当字段名称和字段数值不对应时引发异常
@@ -607,6 +615,7 @@ namespace ElectricPowerLib.Database
         /// <param name="tableName">数据表名称</param>
         /// <param name="colNames">字段名</param>
         /// <param name="colValues">字段名对应的数据</param>
+        /// <param name="operations">=，大于，小于，...</param>
         public int DeleteValuesAND(string tableName, string[] colNames, string[] colValues, string[] operations)
         {
             //当字段名称和字段数值不对应时引发异常
@@ -644,11 +653,9 @@ namespace ElectricPowerLib.Database
 
         /// <summary>
         /// 删除数据表
-        /// </summary> +
-        /// <returns>The table.</returns>
+        /// </summary> 
         /// <param name="tableName">数据表名</param>
-        /// <param name="colNames">字段名</param>
-        /// <param name="colTypes">字段名类型</param>
+        /// <returns>受影响的行数</returns>
         public int DeleteTable(string tableName)
         {
             string queryString = "trop table " + tableName;
@@ -690,4 +697,6 @@ namespace ElectricPowerLib.Database
         }
 
     }
+
+#pragma warning restore
 }
