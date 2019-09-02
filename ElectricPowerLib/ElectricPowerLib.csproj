@@ -59,6 +59,7 @@
     <Compile Include="Database\SqlDbHelper.cs" />
     <Compile Include="Database\SQLiteHelper.cs" />
     <Compile Include="DataParser\DataParser.cs" />
+    <Compile Include="DataParser\Parser.cs" />
     <Compile Include="Dialog\InputTwoParamDlg.cs">
       <SubType>Form</SubType>
     </Compile>

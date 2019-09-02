@@ -281,6 +281,41 @@ namespace ElectricPowerLib.Common
         }
 
         /// <summary>
+        /// 获取CRC8值，6009协议
+        /// </summary>
+        /// <param name="buffer">bytes数据缓冲区</param>
+        /// <param name="index">起始索引</param>
+        /// <param name="length">计算的长度</param>
+        /// <returns></returns>
+        public static byte GetCRC8(byte[] buffer, int index, int length)
+        {
+            byte crc8 = 0;
+
+            if (buffer.Length < index + length)
+            {
+                throw new Exception("beyound buffer length");
+            }
+
+            for (int iLoop = index; iLoop < (index + length); iLoop++)
+            {
+                crc8 ^= buffer[iLoop];
+                for (int i = 0; i < 8; i++)
+                {
+                    if ((crc8 & 0x01) > 0)
+                    {
+                        crc8 >>= 1;
+                        crc8 ^= 0x8C;
+                    }
+                    else
+                    {
+                        crc8 >>= 1;
+                    }
+                }
+            }
+            return crc8;
+        }
+
+        /// <summary>
         /// 获取CRC16值，国网通用算法
         /// </summary>
         /// <param name="str">bytes的Hex字符串</param>
