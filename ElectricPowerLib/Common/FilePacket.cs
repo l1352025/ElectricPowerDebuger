@@ -32,6 +32,7 @@ namespace ElectricPowerLib.Common
         public string Version { get; set; }
         public int VersionCrc16 { get; set; }
         public byte[] FileHeader { get { return _headerBuffer; } }
+        public byte[] FileBuffer { get { return _dataBuffer; } }
 
 #pragma warning restore
 
@@ -146,7 +147,7 @@ namespace ElectricPowerLib.Common
         /// <param name="strSuffix">字符串后缀，如以" " 或 "" 结束</param>
         /// <param name="findMode">查找模式 FindMode, 从头部或尾部查找</param>
         /// <param name="offset">要检索的长度，如 1024 byte</param>
-        /// <returns></returns>
+        /// <returns>若找到返回该字符串，否则返回空字符串""</returns>
         public string GetStringFromDataBuffer(string strPrefix, string strSuffix, FindMode findMode, int offset)
         {
             string strFind = "";
