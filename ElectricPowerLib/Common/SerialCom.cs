@@ -265,12 +265,10 @@ namespace ElectricPowerLib.Common
                             Thread.Sleep(5);
                         }
                         ts = DateTime.Now - dt;
-                    } while (ts.TotalMilliseconds < timeValue);  //判断一帧是否已接收完
+                    } while (_keepReading && ts.TotalMilliseconds < timeValue);  //判断一帧是否已接收完
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    string msg = "SerialCom.ReadPort() Error: " + ex.Message;
-                    LogHelper.WriteLine("error.log", msg);
                 }
 
                 if (serialPort.IsOpen && DataReceivedEvent != null && readBuf.Count != 0)
