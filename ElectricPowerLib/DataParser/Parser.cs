@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ElectricPowerLib.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,9 @@ namespace ElectricPowerLib.DataParser
         private static UInt16 u16Tmp;
         private static double doubleTmp;
         private static string[] details;
+        private static byte u8Tmp;
+        private static bool isNegative = false;
+        private static int signIdx = 0xFF;
 
         /// <summary>
         /// 解析 整数10进制数
@@ -31,27 +35,33 @@ namespace ElectricPowerLib.DataParser
 
             u32Tmp = 0;
             details = detail.Split(',');
+            signIdx = length - 1;
+            if (details.Length == 3 && details[2] == "signed"
+                && (buffer[index + signIdx] & 0x80) > 0)
+            {
+                isNegative = true;
+            }
             for (i = 0; i < length; i++)
             {
-                u32Tmp += ((UInt32)buffer[index++] << i * 8);
+                u8Tmp = (i == signIdx && isNegative ? (byte)(buffer[index] & 0x7F) : buffer[index]);
+                u32Tmp += ((UInt32)u8Tmp << i * 8);
+                index++;
             }
 
-            if (details.Length == 3)
+            if (details.Length >= 2)
             {
-                if (details[1] == "*")
+                if (details[0] == "*")
                 {
-                    u32Tmp = (UInt32)(u32Tmp * Convert.ToUInt32(details[2]));
+                    u32Tmp = (UInt32)(u32Tmp * Convert.ToUInt32(details[1]));
                 }
-                else if (details[1] == "/")
+                else if (details[0] == "/")
                 {
-                    u32Tmp = (UInt32)(u32Tmp / Convert.ToUInt32(details[2]));
+                    u32Tmp = (UInt32)(u32Tmp / Convert.ToUInt32(details[1]));
                 }
             }
 
-            if (details.Length == 3 && details[0] == "signed"
-                && (u32Tmp & (1 << (i * 8 - 1))) > 0)
+            if (isNegative)
             {
-                u32Tmp &= ~(1u << (i * 8 - 1));
                 value = "-" + u32Tmp;
                 objValue = Convert.ToInt32(value);
             }
@@ -114,20 +124,32 @@ namespace ElectricPowerLib.DataParser
         {
             string value = "";
             int i;
+
             details = detail.Split(',');
             int len = Convert.ToByte(details[0]);
+            signIdx = (length > len ? length - len - 1 : length - 1);
             doubleTmp = 0;
             u32Tmp = 0;
-            index = index;
+
+            if (details.Length == 4 && details[3] == "signed"
+                && (buffer[index + signIdx] & 0x80) > 0)
+            {
+                isNegative = true;
+            }
             for (i = 0; i < length - len; i++)
             {
-                u32Tmp += (UInt32)(buffer[index++] << i * 8);
+                u8Tmp = (i == signIdx && isNegative ? (byte)(buffer[index] & 0x7F) : buffer[index]);
+                u32Tmp += ((UInt32)u8Tmp << i * 8);
+                index++;
             }
+            if (length > len) signIdx = 0xFF;
 
             u16Tmp = 0;
             for (i = 0; i < len; i++)
             {
-                u16Tmp += (UInt16)(buffer[index++] << i * 8);
+                u8Tmp = (i == signIdx && isNegative ? (byte)(buffer[index] & 0x7F) : buffer[index]);
+                u16Tmp += (UInt16)(u8Tmp << i * 8);
+                index++;
             }
             if (details[1] == "*")
             {
@@ -139,8 +161,16 @@ namespace ElectricPowerLib.DataParser
             }
 
             doubleTmp = (double)u32Tmp + doubleTmp;
-            value = doubleTmp.ToString();
-            objValue = doubleTmp;
+            if (isNegative)
+            {
+                value = "-" + doubleTmp;
+                objValue = Convert.ToDouble(value);
+            }
+            else
+            {
+                value = doubleTmp.ToString();
+                objValue = doubleTmp;
+            }
 
             return value;
         }
@@ -152,7 +182,6 @@ namespace ElectricPowerLib.DataParser
         /// <param name="index">起始索引</param>
         /// <param name="length">长度</param>
         /// <param name="detail">可选详细：分隔符 "[Normal,Reverse],[ '', ',', ' ']" </param>
-        /// <param name="objValue">解析后的值</param>
         /// <returns>解析后的字符串</returns>
         public static string GetHexStr(byte[] buffer, int index, int length, string detail)
         {
@@ -178,7 +207,6 @@ namespace ElectricPowerLib.DataParser
         /// <param name="index">起始索引</param>
         /// <param name="length">长度</param>
         /// <param name="detail">可选详细："[Normal,Reverse]"</param>
-        /// <param name="objValue">解析后的值</param>
         /// <returns>解析后的字符串</returns>
         public static string GetAscii(byte[] buffer, int index, int length, string detail)
         {
@@ -201,80 +229,80 @@ namespace ElectricPowerLib.DataParser
         /// <param name="buffer">数据缓存</param>
         /// <param name="index">起始索引</param>
         /// <param name="length">长度</param>
-        /// <param name="detail">可选详细："[Normal,Reverse],[BIN,BCD],[yy[yy]-MM-dd ][HH:mm[:ss]]" </param>
-        /// <param name="objValue">解析后的值</param>
+        /// <param name="isReverse">是否反序</param>
+        /// <param name="isBcd">是否BCD格式</param>
+        /// <param name="detail">可选详细："[yy[yy]-MM-dd ][HH:mm[:ss]]" </param>
+        /// <param name="objValue">解析后的time值</param>
         /// <returns>解析后的字符串</returns>
-        public static string GetTime(byte[] buffer, int index, int length, string detail, out object objValue)
+        public static string GetTime(byte[] buffer, int index, int length, bool isReverse, bool isBcd, string detail, out object objValue)
         {
             string value = "";
             int i;
 
-            details = detail.Split(',');
-
             byte[] timeBuf = new byte[length];
-            byte[] time = new byte[7] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-            int timeStart = 0;
             Array.Copy(buffer, index, timeBuf, 0, timeBuf.Length);
-            if (details[0] == "Reverse")
+            if (isReverse) //  not bigEndian
             {
                 Array.Reverse(timeBuf, 0, timeBuf.Length);
             }
-            if (details[1] == "BIN")
+            if (!isBcd)     // DataType.BIN
             {
                 for (i = 0; i < timeBuf.Length; i++)
                 {
-                    timeBuf[i] = (byte)(timeBuf[i] + (timeBuf[i] / 10) * 6);    // dec to bcd
+                    timeBuf[i] = Util.DecToBcd(timeBuf[i]);
                 }
             }
-            if (detail == "yyyy-MM-dd"
-                || detail == "yyyy-MM-dd HH:mm:ss")
-            {
-                timeStart = 0;
-            }
-            else if (detail == "yy-MM-dd"
-                || detail == "yy-MM-dd HH:mm:ss")
-            {
-                time[0] = 0x20;
-                timeStart = 1;
-            }
-            else if (detail == "HH:mm"
-                || detail == "HH:mm:ss")
-            {
-                timeStart = 4;
-            }
 
-            for (i = timeStart; i < timeStart + timeBuf.Length; i++)
+            try
             {
-                time[i] = timeBuf[i - timeStart];
-            }
+                string timeStr = detail;
+                string strTmp;
+                index = 0;
+                if (timeStr.Contains("yyyy"))
+                {
+                    strTmp = timeBuf[index].ToString("X2") + timeBuf[index + 1].ToString("X2");
+                    timeStr = timeStr.Replace("yyyy", strTmp);
+                    index += 2;
+                }
+                if (timeStr.Contains("yy"))
+                {
+                    strTmp = timeBuf[index++].ToString("X2");
+                    timeStr = timeStr.Replace("yy", strTmp);
+                }
+                if (timeStr.Contains("MM"))
+                {
+                    strTmp = timeBuf[index++].ToString("X2");
+                    timeStr = timeStr.Replace("MM", strTmp);
+                }
+                if (timeStr.Contains("dd"))
+                {
+                    strTmp = timeBuf[index++].ToString("X2");
+                    timeStr = timeStr.Replace("dd", strTmp);
+                }
+                if (timeStr.Contains("HH"))
+                {
+                    strTmp = timeBuf[index++].ToString("X2");
+                    timeStr = timeStr.Replace("HH", strTmp);
+                }
+                if (timeStr.Contains("mm"))
+                {
+                    strTmp = timeBuf[index++].ToString("X2");
+                    timeStr = timeStr.Replace("mm", strTmp);
+                }
+                if (timeStr.Contains("ss"))
+                {
+                    strTmp = timeBuf[index++].ToString("X2");
+                    timeStr = timeStr.Replace("ss", strTmp);
+                }
 
-            if (time[4] == 0xFF)
-            {
-                // yyyy-MM-dd
-                value = time[0].ToString("X2")
-                    + time[1].ToString("X2") + "-"
-                    + time[2].ToString("X2") + "-"
-                    + time[3].ToString("X2");
+                value = timeStr;
             }
-            else if (time[1] == 0xFF)
+            catch (Exception)
             {
-                // HH:mm:ss
-                value = time[4].ToString("X2") + ":"
-                    + time[5].ToString("X2") + ":"
-                    + (time[6] == 0xFF ? "" : time[6].ToString("X2"));
+                value = "解析错误";
             }
-            else
-            {
-                // yyyy-MM-dd HH:mm:ss
-                value = time[0].ToString("X2")
-                    + time[1].ToString("X2") + "-"
-                    + time[2].ToString("X2") + "-"
-                    + time[3].ToString("X2") + " "
-                    + time[4].ToString("X2") + ":"
-                    + time[5].ToString("X2") + ":"
-                    + time[6].ToString("X2");
-            }
-            objValue = DateTime.Parse(value);
+            DateTime.TryParse(value, out DateTime time);
+            objValue = time;
 
             return value;
         }

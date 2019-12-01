@@ -19,12 +19,12 @@ namespace ElectricPowerLib.DataParser
     }
     public enum ShowType
     {
-        INT_DEC,        // 整数10进制显示, 需指定缩放倍数：[unsigned,signed],[*,/],[倍数]
+        INT_DEC,        // 整数10进制显示, 需指定[乘以|除以]，[倍数]，[unsigned|signed]：*, 100，signed  
         INT_HEX,        // 整数16进制显示
-        DOUBLE,         // 浮点数显示，需指定小数部分字节数，乘以或除以， 被乘/除数：2,/,1000  或  2,*,1000  
+        DOUBLE,         // 浮点数显示，需指定小数部分字节数，乘以|除以，倍数，[unsigned|signed]：2,/,1000，signed  
         STR_ASCII,      // ASCII字符串显示
         STR_HEX,        // HEX字符串显示，详细需指定分隔符：""  / " "  /  ","
-        STR_TIME,       // 时间显示，详细需指定时间格式：yyyy-MM-dd / yy-MM-dd / yyyy-MM-dd HH:mm:ss  / yy-MM-dd HH:mm:ss  /  HH:mm:ss  /  HH:mm
+        STR_TIME,       // 时间显示，详细需指定时间格式：yyyy-MM-dd HH:mm:ss (年月日时分秒的部分或全部)
         STR_CASE,       // Case显示，详细需指定每个case含义：0-读取，1-设置，其他-未知 / 0xAA-成功，0xAB-失败，... ，其他-未知
         
         STR_VAR,        // 可变字符串显示，需调用回调函数填充字段内容
@@ -70,6 +70,8 @@ namespace ElectricPowerLib.DataParser
             UInt32 u32Tmp;
             UInt16 u16Tmp;
             byte u8Tmp;
+            bool isNegative = false;
+            int signIdx = 0xFF;
             double doubleTmp;
             string[] details;
 
@@ -122,27 +124,33 @@ namespace ElectricPowerLib.DataParser
                     u32Tmp = 0;
                     index = this.offset;
                     details = this.showDetail.Split(',');
+                    signIdx = this.length - 1;
+                    if (details.Length == 3 && details[2] == "signed"
+                        && (this.buffer[index + signIdx] & 0x80) > 0)
+                    {
+                        isNegative = true;
+                    }
                     for (i = 0; i < this.length; i++)
                     {
-                        u32Tmp += ((UInt32)this.buffer[index++] << i * 8);
+                        u8Tmp = (i == signIdx && isNegative ? (byte)(this.buffer[index] & 0x7F) : this.buffer[index]);
+                        u32Tmp += ((UInt32)u8Tmp << i * 8);
+                        index++;
                     }
 
-                    if (details.Length == 3)
+                    if (details.Length >= 2)
                     {
-                        if (details[1] == "*")
+                        if (details[0] == "*")
                         {
-                            u32Tmp = (UInt32)(u32Tmp * Convert.ToUInt32(details[2]));
+                            u32Tmp = (UInt32)(u32Tmp * Convert.ToUInt32(details[1]));
                         }
-                        else if (details[1] == "/")
+                        else if (details[0] == "/")
                         {
-                            u32Tmp = (UInt32)(u32Tmp / Convert.ToUInt32(details[2]));
+                            u32Tmp = (UInt32)(u32Tmp / Convert.ToUInt32(details[1]));
                         }
                     }
 
-                    if (details.Length == 3 && details[0] == "signed"
-                        && (u32Tmp & (1 << (i * 8 - 1))) > 0)
+                    if (isNegative)
                     {
-                        u32Tmp &= ~(1u << (i * 8 - 1));
                         this.value = "-" + u32Tmp;
                         this.objValue = Convert.ToInt32(this.value);
                     }
@@ -179,18 +187,29 @@ namespace ElectricPowerLib.DataParser
                 case ShowType.DOUBLE:
                     details = this.showDetail.Split(',');
                     int len = Convert.ToByte(details[0]);
+                    signIdx = (this.length > len ? this.length - len - 1 : this.length - 1);
                     doubleTmp = 0;
                     u32Tmp = 0;
                     index = this.offset;
+                    if (details.Length == 4 && details[3] == "signed"
+                        && (this.buffer[index + signIdx] & 0x80) > 0)
+                    {
+                        isNegative = true;
+                    }
                     for (i = 0; i < this.length - len; i++)
                     {
-                        u32Tmp += (UInt32)(this.buffer[index++] << i * 8);
+                        u8Tmp = (i == signIdx && isNegative ? (byte)(this.buffer[index] & 0x7F) : this.buffer[index]);
+                        u32Tmp += ((UInt32)u8Tmp << i * 8);
+                        index++;
                     }
+                    if(this.length > len) signIdx = 0xFF;
 
                     u16Tmp = 0;
                     for (i = 0; i < len; i++)
                     {
-                        u16Tmp += (UInt16)(this.buffer[index++] << i * 8);
+                        u8Tmp = (i == signIdx && isNegative ? (byte)(this.buffer[index] & 0x7F) : this.buffer[index]);
+                        u16Tmp += (UInt16)(u8Tmp << i * 8);
+                        index++;
                     }
                     if (details[1] == "*")
                     {
@@ -202,8 +221,16 @@ namespace ElectricPowerLib.DataParser
                     }
 
                     doubleTmp = (double)u32Tmp + doubleTmp;
-                    this.value = doubleTmp.ToString();
-                    this.objValue = doubleTmp;
+                    if (isNegative)
+                    {
+                        this.value = "-" + doubleTmp;
+                        this.objValue = Convert.ToDouble(this.value);
+                    }
+                    else
+                    {
+						this.value = doubleTmp.ToString();
+                        this.objValue = doubleTmp;
+                    }
                     break;
 
                 case ShowType.STR_ASCII:
@@ -216,8 +243,6 @@ namespace ElectricPowerLib.DataParser
 
                 case ShowType.STR_TIME:
                     byte[] timeBuf = new byte[this.length];
-                    byte[] time = new byte[7] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-                    int timeStart = 0;
                     Array.Copy(this.buffer, this.offset, timeBuf, 0, timeBuf.Length);
                     if (this.bigEndian == false)
                     {
@@ -230,55 +255,57 @@ namespace ElectricPowerLib.DataParser
                             timeBuf[i] = Util.DecToBcd(timeBuf[i]);
                         }
                     }
-                    if (this.showDetail == "yyyy-MM-dd"
-                        || this.showDetail == "yyyy-MM-dd HH:mm:ss")
-                    {
-                        timeStart = 0;
-                    }
-                    else if (this.showDetail == "yy-MM-dd"
-                        || this.showDetail == "yy-MM-dd HH:mm:ss")
-                    {
-                        time[0] = 0x20;
-                        timeStart = 1;
-                    }
-                    else if (this.showDetail == "HH:mm"
-                        || this.showDetail == "HH:mm:ss")
-                    {
-                        timeStart = 4;
-                    }
 
-                    for (i = timeStart; i < timeStart + timeBuf.Length; i++)
+                    try
                     {
-                        time[i] = timeBuf[i - timeStart];
-                    }
+                        string timeStr = this.showDetail;
+                        string strTmp;
+                        index = 0;
+                        if (timeStr.Contains("yyyy"))
+                        {
+                            strTmp = timeBuf[index].ToString("X2") + timeBuf[index + 1].ToString("X2");
+                            timeStr = timeStr.Replace("yyyy", strTmp);
+                            index += 2;
+                        }
+                        if (timeStr.Contains("yy"))
+                        {
+                            strTmp = timeBuf[index++].ToString("X2");
+                            timeStr = timeStr.Replace("yy", strTmp);
+                        }
+                        if (timeStr.Contains("MM"))
+                        {
+                            strTmp = timeBuf[index++].ToString("X2");
+                            timeStr = timeStr.Replace("MM", strTmp);
+                        }
+                        if (timeStr.Contains("dd"))
+                        {
+                            strTmp = timeBuf[index++].ToString("X2");
+                            timeStr = timeStr.Replace("dd", strTmp);
+                        }
+                        if (timeStr.Contains("HH"))
+                        {
+                            strTmp = timeBuf[index++].ToString("X2");
+                            timeStr = timeStr.Replace("HH", strTmp);
+                        }
+                        if (timeStr.Contains("mm"))
+                        {
+                            strTmp = timeBuf[index++].ToString("X2");
+                            timeStr = timeStr.Replace("mm", strTmp);
+                        }
+                        if (timeStr.Contains("ss"))
+                        {
+                            strTmp = timeBuf[index++].ToString("X2");
+                            timeStr = timeStr.Replace("ss", strTmp);
+                        }
 
-                    if (time[4] == 0xFF)
-                    {
-                        // yyyy-MM-dd
-                        this.value = time[0].ToString("X2")
-                            + time[1].ToString("X2") + "-"
-                            + time[2].ToString("X2") + "-"
-                            + time[3].ToString("X2");
+                        this.value = timeStr;
                     }
-                    else if (time[1] == 0xFF)
+                    catch (Exception)
                     {
-                        // HH:mm:ss
-                        this.value = time[4].ToString("X2") + ":"
-                            + time[5].ToString("X2") + ":"
-                            + (time[6] == 0xFF ? "" : time[6].ToString("X2"));
+                        this.value = "解析错误";
                     }
-                    else
-                    {
-                        // yyyy-MM-dd HH:mm:ss
-                        this.value = time[0].ToString("X2")
-                            + time[1].ToString("X2") + "-"
-                            + time[2].ToString("X2") + "-"
-                            + time[3].ToString("X2") + " "
-                            + time[4].ToString("X2") + ":"
-                            + time[5].ToString("X2") + ":"
-                            + time[6].ToString("X2");
-                    }
-
+                    DateTime.TryParse(value, out DateTime time);
+                    objValue = time;
                     break;
 
                 case ShowType.STR_CASE:
