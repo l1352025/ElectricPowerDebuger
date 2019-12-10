@@ -19,9 +19,9 @@ namespace ElectricPowerLib.DataParser
     }
     public enum ShowType
     {
-        INT_DEC,        // 整数10进制显示, 需指定[乘以|除以]，[倍数]，[unsigned|signed]：*, 100，signed  
+        INT_DEC,        // 整数10进制显示, 需指定[乘以|除以]，[倍数]，[unsigned|signed|-unsigned]：*, 100，signed  
         INT_HEX,        // 整数16进制显示
-        DOUBLE,         // 浮点数显示，需指定小数部分字节数，乘以|除以，倍数，[unsigned|signed]：2,/,1000，signed  
+        DOUBLE,         // 浮点数显示，需指定小数部分字节数，乘以|除以，倍数，[unsigned|signed|-unsigned]：2,/,1000，-unsigned(原码表示) 
         STR_ASCII,      // ASCII字符串显示
         STR_HEX,        // HEX字符串显示，详细需指定分隔符：""  / " "  /  ","
         STR_TIME,       // 时间显示，详细需指定时间格式：yyyy-MM-dd HH:mm:ss (年月日时分秒的部分或全部)
@@ -69,6 +69,7 @@ namespace ElectricPowerLib.DataParser
             int i, index;
             UInt32 u32Tmp;
             UInt16 u16Tmp;
+            Int32 i32Tmp;
             byte u8Tmp;
             bool isNegative = false;
             int signIdx = 0xFF;
@@ -125,7 +126,7 @@ namespace ElectricPowerLib.DataParser
                     index = this.offset;
                     details = this.showDetail.Split(',');
                     signIdx = this.length - 1;
-                    if (details.Length == 3 && details[2] == "signed"
+                    if (details.Length == 3 && details[2] == "-unsigned"
                         && (this.buffer[index + signIdx] & 0x80) > 0)
                     {
                         isNegative = true;
@@ -135,6 +136,23 @@ namespace ElectricPowerLib.DataParser
                         u8Tmp = (i == signIdx && isNegative ? (byte)(this.buffer[index] & 0x7F) : this.buffer[index]);
                         u32Tmp += ((UInt32)u8Tmp << i * 8);
                         index++;
+                    }
+
+                    i32Tmp = 0;
+                    if (details.Length == 3 && details[2] == "signed")
+                    {
+                        if (details[0] == "*")
+                        {
+                            i32Tmp = (Int32)((Int32)u32Tmp * Convert.ToUInt32(details[1]));
+                        }
+                        else if (details[0] == "/")
+                        {
+                            i32Tmp = (Int32)((Int32)u32Tmp / Convert.ToUInt32(details[1]));
+                        }
+                        this.value = i32Tmp.ToString();
+                        this.objValue = i32Tmp;
+
+                        break;
                     }
 
                     if (details.Length >= 2)
@@ -191,7 +209,7 @@ namespace ElectricPowerLib.DataParser
                     doubleTmp = 0;
                     u32Tmp = 0;
                     index = this.offset;
-                    if (details.Length == 4 && details[3] == "signed"
+                    if (details.Length == 4 && details[3] == "-unsigned"
                         && (this.buffer[index + signIdx] & 0x80) > 0)
                     {
                         isNegative = true;
@@ -204,29 +222,45 @@ namespace ElectricPowerLib.DataParser
                     }
                     if(this.length > len) signIdx = 0xFF;
 
-                    u16Tmp = 0;
+                    UInt32 u32Tmp2 = 0;
                     for (i = 0; i < len; i++)
                     {
                         u8Tmp = (i == signIdx && isNegative ? (byte)(this.buffer[index] & 0x7F) : this.buffer[index]);
-                        u16Tmp += (UInt16)(u8Tmp << i * 8);
+                        u32Tmp2 += (UInt32)(u8Tmp << i * 8);
                         index++;
                     }
-                    if (details[1] == "*")
+
+                    if (details.Length == 4 && details[3] == "signed")
                     {
-                        doubleTmp = (double)(u16Tmp * Convert.ToDouble(details[2]));
+                        i32Tmp = (len == 2 ? (Int16)u32Tmp2 : (Int32)u32Tmp2);
+                        if (details[1] == "*")
+                        {
+                            doubleTmp = (double)(i32Tmp * Convert.ToDouble(details[2]));
+                        }
+                        else if (details[1] == "/")
+                        {
+                            doubleTmp = (double)(i32Tmp / Convert.ToDouble(details[2]));
+                        }
                     }
-                    else if (details[1] == "/")
+                    else if(details.Length >= 3)
                     {
-                        doubleTmp = (double)(u16Tmp / Convert.ToDouble(details[2]));
+                        if (details[1] == "*")
+                        {
+                            doubleTmp = (double)(u32Tmp2 * Convert.ToDouble(details[2]));
+                        }
+                        else if (details[1] == "/")
+                        {
+                            doubleTmp = (double)(u32Tmp2 / Convert.ToDouble(details[2]));
+                        }
                     }
 
                     doubleTmp = (double)u32Tmp + doubleTmp;
-                    if (isNegative)
+                    if (isNegative)     // -unsigned
                     {
                         this.value = "-" + doubleTmp;
                         this.objValue = Convert.ToDouble(this.value);
                     }
-                    else
+                    else                // unsigned / signed
                     {
 						this.value = doubleTmp.ToString();
                         this.objValue = doubleTmp;

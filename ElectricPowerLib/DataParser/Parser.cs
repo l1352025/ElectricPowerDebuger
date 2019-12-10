@@ -11,32 +11,30 @@ namespace ElectricPowerLib.DataParser
     /// </summary>
     public class Parser
     {
-        private static UInt32 u32Tmp;
-        private static UInt16 u16Tmp;
-        private static double doubleTmp;
-        private static string[] details;
-        private static byte u8Tmp;
-        private static bool isNegative = false;
-        private static int signIdx = 0xFF;
-
         /// <summary>
         /// 解析 整数10进制数
         /// </summary>
         /// <param name="buffer">数据缓存</param>
         /// <param name="index">起始索引</param>
         /// <param name="length">长度</param>
-        /// <param name="detail">可选详细："[unsigned,signed],[*,/],[倍数]"</param>
+        /// <param name="detail">可选详细："[unsigned,signed],[*,/],[倍数],[unsigned,signed,-unsigned]"</param>
         /// <param name="objValue">解析后的值 Int32/UInt32</param>
         /// <returns>解析后的字符串</returns>
         public static string GetIntDec(byte[] buffer, int index, int length, string detail, out object objValue)
         {
             string value = "";
             int i;
+            UInt32 u32Tmp;
+            Int32 i32Tmp;
+            string[] details;
+            byte u8Tmp;
+            bool isNegative = false;
+            int signIdx = 0xFF;
 
             u32Tmp = 0;
             details = detail.Split(',');
             signIdx = length - 1;
-            if (details.Length == 3 && details[2] == "signed"
+            if (details.Length == 3 && details[2] == "-unsigned"
                 && (buffer[index + signIdx] & 0x80) > 0)
             {
                 isNegative = true;
@@ -46,6 +44,23 @@ namespace ElectricPowerLib.DataParser
                 u8Tmp = (i == signIdx && isNegative ? (byte)(buffer[index] & 0x7F) : buffer[index]);
                 u32Tmp += ((UInt32)u8Tmp << i * 8);
                 index++;
+            }
+
+            i32Tmp = 0;
+            if (details.Length == 3 && details[3] == "signed")
+            {
+                if (details[0] == "*")
+                {
+                    i32Tmp = (Int32)((Int32)u32Tmp * Convert.ToUInt32(details[1]));
+                }
+                else if (details[0] == "/")
+                {
+                    i32Tmp = (Int32)((Int32)u32Tmp / Convert.ToUInt32(details[1]));
+                }
+                value = i32Tmp.ToString();
+                objValue = i32Tmp;
+
+                return value;
             }
 
             if (details.Length >= 2)
@@ -87,6 +102,7 @@ namespace ElectricPowerLib.DataParser
         {
             string value = "";
             int i;
+            UInt32 u32Tmp;
 
             u32Tmp = 0;
             for (i = 0; i < length; i++)
@@ -117,13 +133,20 @@ namespace ElectricPowerLib.DataParser
         /// <param name="buffer">数据缓存</param>
         /// <param name="index">起始索引</param>
         /// <param name="length">长度</param>
-        /// <param name="detail">可选详细：小数位数及倍率 "[小数字节数],[*,/],[倍数]" </param>
+        /// <param name="detail">可选详细：小数位数及倍率 "[小数字节数],[*,/],[倍数],[unsigned,signed,-unsigned]" </param>
         /// <param name="objValue">解析后的值</param>
         /// <returns>解析后的字符串</returns>
         public static string GetDouble(byte[] buffer, int index, int length, string detail, out object objValue)
         {
             string value = "";
             int i;
+            UInt32 u32Tmp;
+            Int32 i32Tmp;
+            double doubleTmp;
+            string[] details;
+            byte u8Tmp;
+            bool isNegative = false;
+            int signIdx = 0xFF;
 
             details = detail.Split(',');
             int len = Convert.ToByte(details[0]);
@@ -131,7 +154,7 @@ namespace ElectricPowerLib.DataParser
             doubleTmp = 0;
             u32Tmp = 0;
 
-            if (details.Length == 4 && details[3] == "signed"
+            if (details.Length == 4 && details[3] == "-unsigned"
                 && (buffer[index + signIdx] & 0x80) > 0)
             {
                 isNegative = true;
@@ -144,20 +167,37 @@ namespace ElectricPowerLib.DataParser
             }
             if (length > len) signIdx = 0xFF;
 
-            u16Tmp = 0;
+            UInt32 u32Tmp2 = 0;
             for (i = 0; i < len; i++)
             {
                 u8Tmp = (i == signIdx && isNegative ? (byte)(buffer[index] & 0x7F) : buffer[index]);
-                u16Tmp += (UInt16)(u8Tmp << i * 8);
+                u32Tmp2 += (UInt32)(u8Tmp << i * 8);
                 index++;
             }
-            if (details[1] == "*")
+
+            if (details.Length == 4 && details[3] == "signed")
             {
-                doubleTmp = (double)(u16Tmp * Convert.ToDouble(details[2]));
+                i32Tmp = (len == 2 ? (Int16)u32Tmp2 : (Int32)u32Tmp2);
+
+                if (details[1] == "*")
+                {
+                    doubleTmp = (double)(i32Tmp * Convert.ToDouble(details[2]));
+                }
+                else if (details[1] == "/")
+                {
+                    doubleTmp = (double)(i32Tmp / Convert.ToDouble(details[2]));
+                }
             }
-            else if (details[1] == "/")
+            else if (details.Length >= 3)
             {
-                doubleTmp = (double)(u16Tmp / Convert.ToDouble(details[2]));
+                if (details[1] == "*")
+                {
+                    doubleTmp = (double)(u32Tmp2 * Convert.ToDouble(details[2]));
+                }
+                else if (details[1] == "/")
+                {
+                    doubleTmp = (double)(u32Tmp2 / Convert.ToDouble(details[2]));
+                }
             }
 
             doubleTmp = (double)u32Tmp + doubleTmp;
@@ -187,6 +227,8 @@ namespace ElectricPowerLib.DataParser
         {
             string value = "";
             int i;
+            UInt32 u32Tmp;
+            string[] details;
 
             u32Tmp = 0;
             details = detail.Split(',');
@@ -212,6 +254,8 @@ namespace ElectricPowerLib.DataParser
         {
             string value = "";
             int i;
+            UInt32 u32Tmp;
+            string[] details;
 
             u32Tmp = 0;
             details = detail.Split(',');
