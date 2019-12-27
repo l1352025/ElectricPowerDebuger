@@ -512,7 +512,7 @@ namespace ElectricPowerLib.DataParser
             {
                 try
                 {
-                    if (length > 1 && currOffset >= (index + length))
+                    if (length > 1 && currOffset + field.length > (index + length))
                     {
                         field.buffer = buf;
                         field.offset = currOffset;
